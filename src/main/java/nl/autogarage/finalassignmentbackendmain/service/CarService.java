@@ -4,11 +4,13 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
+import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,13 +29,21 @@ public class CarService {
         if (optionalCar.isPresent()){
             throw new DuplicateErrorException("Car with license plate already exists");
         }
-
-
         Car car = transferInputDtoToCar(carInputDto);
         carRepository.save((car));
         CarOutputDto carOutputDto = transferCarToOutputDto(car);
         return carOutputDto;
     }
+
+    public CarOutputDto getCarByLicenseplate(String licenseplate){
+        Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
+        if(optionalCar.isEmpty()){
+            throw new RecordNotFoundException("Car with not found with licenseplate" + licenseplate);
+        }
+            Car car = optionalCar.get();
+            CarOutputDto carOUtputDto = transferCarToOutputDto(car);
+            return carOUtputDto;
+        }
 
 //
 

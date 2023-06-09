@@ -25,8 +25,8 @@ public class CarController {
 
 
     @PostMapping("/add")
-    public ResponseEntity<Object> addCar (@Valid @RequestBody CarInputDto carInputDto, BindingResult bindingResult){
-        if (bindingResult.hasFieldErrors()){
+    public ResponseEntity<Object> addCar(@Valid @RequestBody CarInputDto carInputDto, BindingResult bindingResult) {
+        if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
         }
         CarOutputDto carOutputDto = carService.addCar(carInputDto);
@@ -35,23 +35,30 @@ public class CarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CarOutputDto>>getAllCars(){
+    public ResponseEntity<List<CarOutputDto>> getAllCars() {
         return ResponseEntity.ok().body(carService.getAllCars());
     }
 
 
+    @GetMapping("/licenseplate")
+    public ResponseEntity<CarOutputDto> getCarById(@RequestParam String licenseplate) {
+        CarOutputDto carOutputDto = carService.getCarByLicenseplate(licenseplate);
+        return ResponseEntity.ok(carOutputDto);
+    }
+
+//@GetMapping  find owner
 
 
-    public String errorToStringHandling (BindingResult bindingResult){
+
+    public String errorToStringHandling(BindingResult bindingResult) {
         StringBuilder sb = new StringBuilder();
-        for (FieldError fe : bindingResult.getFieldErrors()){
+        for (FieldError fe : bindingResult.getFieldErrors()) {
             sb.append(fe.getField() + ": ");
             sb.append(fe.getDefaultMessage());
             sb.append("\n");
         }
         return sb.toString();
     }
-
 
 
 }

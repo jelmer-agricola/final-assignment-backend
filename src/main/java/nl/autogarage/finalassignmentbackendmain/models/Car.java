@@ -21,8 +21,7 @@ public class Car {
 
     @Id
     @Column (nullable = false, unique = true)
-        private String licenseplate;
-//    message = "This must be unique and contain a licenceplate")
+    private String licenseplate;
     private String brand;
 
 //    Carstatus
