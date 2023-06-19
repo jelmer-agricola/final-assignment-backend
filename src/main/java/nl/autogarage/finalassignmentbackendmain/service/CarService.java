@@ -8,6 +8,7 @@ import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundExcepti
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class CarService {
     }
 
     //Create
-    public CarOutputDto addCar(CarInputDto carInputDto) {
+    public CarOutputDto createCar (CarInputDto carInputDto) {
         Optional <Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
 //        Eeerst een exception schrijven en dan error gooien
         if (optionalCar.isPresent()){
@@ -34,7 +35,7 @@ public class CarService {
         CarOutputDto carOutputDto = transferCarToOutputDto(car);
         return carOutputDto;
     }
-
+    //    Get car by id
     public CarOutputDto getCarByLicenseplate(String licenseplate){
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
         if(optionalCar.isEmpty()){
@@ -44,8 +45,6 @@ public class CarService {
             CarOutputDto carOUtputDto = transferCarToOutputDto(car);
             return carOUtputDto;
         }
-
-//
 
 
     public List<CarOutputDto> getAllCars() {
@@ -57,10 +56,41 @@ public class CarService {
         return carOutputDtos;
     }
 
-    //    Get car by id
+
 
 
 //    updateCar
+public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
+    Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
+    if (car.isEmpty()) {
+        throw new RecordNotFoundException("Sorry we did not find a car with license plate: " + licensePlate);
+    } else {
+        Car updatedCar = car.get();
+        updatedCar.setBrand(carOutputDto.getBrand());
+        updatedCar.setLicenseplate(carOutputDto.getLicenseplate());
+
+//        updatedCar.set(carOutputDto.getCarStatus());
+        carRepository.save(updatedCar);
+        return transferCarToOutputDto(updatedCar);
+    }
+}
+
+
+// Record not found exception hieronder werkt. echter return werkt niet
+
+    public String deleteCar(String licensePlate) {
+        Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
+        if (car.isEmpty()) {
+            throw new RecordNotFoundException("Car not found with license plate: " + licensePlate);
+        }
+        carRepository.delete(car.get());
+        return "Car with license plate " + licensePlate + " successfully deleted";
+    }
+
+
+
+
+
 
     public CarOutputDto transferCarToOutputDto(Car car) {
         CarOutputDto carOutputDto = new CarOutputDto();

@@ -29,7 +29,7 @@ public class CarController {
         if (bindingResult.hasFieldErrors()) {
             return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
         }
-        CarOutputDto carOutputDto = carService.addCar(carInputDto);
+        CarOutputDto carOutputDto = carService.createCar(carInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + carOutputDto).toUriString());
         return ResponseEntity.created(uri).body(carOutputDto);
     }
@@ -46,7 +46,23 @@ public class CarController {
         return ResponseEntity.ok(carOutputDto);
     }
 
+
+
 //@GetMapping  find owner
+
+    @PutMapping("/licenseplate")
+    public ResponseEntity<CarOutputDto> updateCar(@RequestParam String licenseplate, @RequestBody CarOutputDto carOutputDto) {
+        return ResponseEntity.ok(carService.updateCar(licenseplate, carOutputDto));
+    }
+
+
+//    @PutMapping updaten van onderdelen
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteCar(@RequestParam String licenseplate) {
+        String message = carService.deleteCar(licenseplate);
+        return ResponseEntity.ok(message);
+    }
 
 
 
