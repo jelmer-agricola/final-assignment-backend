@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "cars")
-
-
 public class Car {
     // in eindopdracht primary key maken van kenteken
     //@NotNull
@@ -23,6 +21,7 @@ public class Car {
     @Column (nullable = false, unique = true)
     private String licenseplate;
     private String brand;
+    private Integer mileage;
 
 //    Carstatus
 

@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 public class CarInputDto {
 
-    //@NotNull
+    @NotNull
     private String licenseplate;
     private String brand;
+    private Integer mileage;
 
 
 }
