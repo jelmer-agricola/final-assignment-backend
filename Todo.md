@@ -1,21 +1,25 @@
 
-update checken 
-en delete heeft geen succes message
 
 
-milage toevoegen?
+Carpart
+
+Inspection 
+Invoice
+
+
+
+
+test schrijven voor makkelijke klasse. 
+
+users niet testen en security ook niet 
+
+Niet eruit gekomen met get van get allcarparts
+
 
 in service evt checker voor eisen van nummerplaat --> licenseplate validator
-- [ ] s
-- [ ] s
-- [ ] s
-- [ ] s
-- [ ] s
-- [ ] s
-- [ ] s
 
 
-
+**Finished** 
 - [x] kenteken als id gebruiken voor car
   BEGINNENN MET create operations en post request
 -[x] Recordnotfound exception (iets wordt gevraagd wat niet bestaat )
