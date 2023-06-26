@@ -9,7 +9,9 @@ import lombok.Setter;
 public class CarOutputDto {
 
 
-        private String licenseplate;
-        private String brand;
-    }
+    private String licenseplate;
+    private String brand;
+    private Integer mileage;
+
+}
 

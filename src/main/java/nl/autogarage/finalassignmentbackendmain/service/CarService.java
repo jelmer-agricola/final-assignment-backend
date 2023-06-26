@@ -98,6 +98,7 @@ public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
 
         carOutputDto.setLicenseplate(car.getLicenseplate());
         carOutputDto.setBrand(car.getBrand());
+        carOutputDto.setMileage(car.getMileage());
 
         return carOutputDto;
 
@@ -108,6 +109,7 @@ public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
 
         car.setLicenseplate(carInputDto.getLicenseplate());
         car.setBrand(carInputDto.getBrand());
+        car.setMileage(carInputDto.getMileage());
 
         return car;
 
