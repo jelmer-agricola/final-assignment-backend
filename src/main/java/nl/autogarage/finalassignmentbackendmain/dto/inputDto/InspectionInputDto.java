@@ -8,11 +8,9 @@ import lombok.Setter;
 @Setter
 public class InspectionInputDto {
 
-    @NotNull
-    private String inspectionCode;
-    private String inspectorName;
-    private String remarks;
-    private boolean passed;
+    private Long id;
+    private Long costEstimate;
+    private String description;
+    private boolean repairApproved;
 
-    // Getters and Setters (omitted for brevity)
 }

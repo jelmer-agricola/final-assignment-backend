@@ -8,10 +8,8 @@ import lombok.Setter;
 public class InspectionOutputDto {
 
     private Long id;
-    private String inspectionCode;
-    private String inspectorName;
-    private String remarks;
-    private boolean passed;
+    private Long costEstimate;
+    private String description;
+    private boolean  repairApproved;
 
-    // Getters and Setters (omitted for brevity)
 }

@@ -45,14 +45,17 @@ public class InvoiceService {
 
 
 
-    public InvoiceOutputDto updateInvoice(InvoiceOutputDto invoiceOutputDto) {
-        Long id = invoiceOutputDto.getId();
-        Invoice existingInvoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Invoice with ID " + id + " does not exist"));
-        Invoice updatedInvoice = transferOutputDtoToInvoice(invoiceOutputDto, existingInvoice);
-        Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
-        return transferInvoiceToOutputDto(savedInvoice);
+    public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
+        Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
+        if (optionalInvoice.isEmpty()) {
+            throw new RecordNotFoundException("No Invoice with id: " + id);
+        } else {
+            Invoice updatedInvoice = optionalInvoice.get();
+            updatedInvoice.setPaid(invoiceOutputDto.isPaid());
+            Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
+            return transferInvoiceToOutputDto(savedInvoice);
+        }
     }
-
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -87,11 +90,11 @@ public class InvoiceService {
         }
         return outputDtoList;
     }
-
-    private Invoice transferOutputDtoToInvoice(InvoiceOutputDto invoiceOutputDto, Invoice existingInvoice) {
-        existingInvoice.setRepairCost(invoiceOutputDto.getRepairCost());
-        existingInvoice.setInvoice(invoiceOutputDto.getInvoice());
-        existingInvoice.setPaid(invoiceOutputDto.isPaid());
-        return existingInvoice;
-    }
+//
+//    private Invoice transferOutputDtoToInvoice(InvoiceOutputDto invoiceOutputDto, Invoice existingInvoice) {
+//        existingInvoice.setRepairCost(invoiceOutputDto.getRepairCost());
+//        existingInvoice.setInvoice(invoiceOutputDto.getInvoice());
+//        existingInvoice.setPaid(invoiceOutputDto.isPaid());
+//        return existingInvoice;
+//    }
 }
