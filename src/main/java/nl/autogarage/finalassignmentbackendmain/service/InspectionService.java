@@ -1,8 +1,10 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
+import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,13 @@ public class InspectionService {
 
     public List<InspectionOutputDto> getAllInspections() {
         List<Inspection> inspections = inspectionRepository.findAll();
-        return transferInspectionListToOutputDtoList(inspections);
+        List<InspectionOutputDto> inspectionOutputDtos = new ArrayList<>();
+        for (Inspection inspection : inspections) {
+            inspectionOutputDtos.add(transferInspectionToOutputDto(inspection));
+        }
+        return inspectionOutputDtos;
     }
+
 
     public InspectionOutputDto getInspectionById(Long id) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
@@ -42,13 +49,19 @@ public class InspectionService {
     }
 
     public InspectionOutputDto updateInspection(Long id, InspectionOutputDto inspectionOutputDto) {
-        Inspection existingInspection = inspectionRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Inspection with ID " + id + " does not exist"));
-
-        Inspection updatedInspection = transferOutputDtoToInspection(inspectionOutputDto, existingInspection);
-        Inspection savedInspection = inspectionRepository.save(updatedInspection);
-        return transferInspectionToOutputDto(savedInspection);
+        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
+        if (optionalInspection.isEmpty()) {
+            throw new RecordNotFoundException("No insepction with id: " + id);
+        } else {
+            Inspection updateInspection = optionalInspection.get();
+            updateInspection.setDescription(inspectionOutputDto.getDescription());
+            updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
+            updateInspection.setRepairApproved(inspectionOutputDto.isRepairApproved());
+            Inspection savedInspection = inspectionRepository.save(updateInspection);
+            return transferInspectionToOutputDto(savedInspection);
+        }
     }
+
 
     public String deleteInspection(Long id) {
         if (inspectionRepository.existsById(id)) {
@@ -75,19 +88,5 @@ public class InspectionService {
         return outputDto;
     }
 
-    private List<InspectionOutputDto> transferInspectionListToOutputDtoList(List<Inspection> inspections) {
-        List<InspectionOutputDto> outputDtoList = new ArrayList<>();
-        for (Inspection inspection : inspections) {
-            InspectionOutputDto outputDto = transferInspectionToOutputDto(inspection);
-            outputDtoList.add(outputDto);
-        }
-        return outputDtoList;
-    }
 
-    private Inspection transferOutputDtoToInspection(InspectionOutputDto outputDto, Inspection inspection) {
-        inspection.setCostEstimate(outputDto.getCostEstimate());
-        inspection.setDescription(outputDto.getDescription());
-        inspection.setRepairApproved(outputDto.isRepairApproved());
-        return inspection;
-    }
 }

@@ -1,17 +1,16 @@
 
 
-[]Kijken of transfertolist transers nodig zijn 
-[] Alle request
+
 
 Carpart
 
 ### Inspection 
-- [ ] Alle request nalopen
+- [x] Alle request nalopen
 - [x] models
 - [x] Crud
 
 ### Invoice
-- [ ] Alle request nalopen
+- [x] Alle request nalopen
 - [x] models
 - [x] Crud
 
