@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="inspection")
+@Table(name = "inspection")
 public class Inspection {
 
 
@@ -24,8 +24,7 @@ public class Inspection {
     private Long id;
     private Long costEstimate;
     private String description;
-   private boolean  repairApproved;
-
+    private boolean repairApproved;
 
 
 //    status verschillende onderdelen
