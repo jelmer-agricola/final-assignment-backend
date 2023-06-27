@@ -1,12 +1,11 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 import jakarta.validation.Valid;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.RepairOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.RepairService;
+import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,7 +28,7 @@ public class RepairController {
 @PostMapping("/add")
 public ResponseEntity<Object> createRepair(@Valid @RequestBody RepairInputDto repairInputDto, BindingResult bindingResult) {
     if (bindingResult.hasFieldErrors()) {
-        return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
+        return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
     }
 
     RepairOutputDto repairOutputDto = repairService.createRepair(repairInputDto);
@@ -53,13 +52,5 @@ public ResponseEntity<Object> createRepair(@Valid @RequestBody RepairInputDto re
     }
 
 
-    public String errorToStringHandling(BindingResult bindingResult) {
-        StringBuilder sb = new StringBuilder();
-        for (FieldError fe : bindingResult.getFieldErrors()) {
-            sb.append(fe.getField()).append(": ");
-            sb.append(fe.getDefaultMessage());
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
+
 }

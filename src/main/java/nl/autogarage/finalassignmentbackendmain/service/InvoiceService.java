@@ -1,7 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InvoiceOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;

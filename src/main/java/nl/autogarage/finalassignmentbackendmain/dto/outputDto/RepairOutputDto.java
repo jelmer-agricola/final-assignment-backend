@@ -1,7 +1,6 @@
-package nl.autogarage.finalassignmentbackendmain.dto.OutputDto;
+package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
 
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

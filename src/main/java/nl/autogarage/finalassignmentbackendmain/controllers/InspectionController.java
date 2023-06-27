@@ -1,9 +1,9 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
+import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class InspectionController {
     @PostMapping("/add")
     public ResponseEntity<Object> createInspection(@Valid @RequestBody InspectionInputDto inspectionInputDto, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
+            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
         }
         InspectionOutputDto inspectionOutputDto = inspectionService.createInspection(inspectionInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + inspectionOutputDto.getId()).toUriString());
@@ -66,13 +66,4 @@ public class InspectionController {
         return ResponseEntity.ok(message);
     }
 
-    public String errorToStringHandling(BindingResult bindingResult) {
-        StringBuilder sb = new StringBuilder();
-        for (FieldError fe : bindingResult.getFieldErrors()) {
-            sb.append(fe.getField()).append(": ");
-            sb.append(fe.getDefaultMessage());
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
 }

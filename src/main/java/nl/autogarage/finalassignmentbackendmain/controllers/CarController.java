@@ -1,12 +1,12 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
 import jakarta.validation.Valid;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.CarService;
+import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,7 +27,7 @@ public class CarController {
     @PostMapping("/add")
     public ResponseEntity<Object> addCar(@Valid @RequestBody CarInputDto carInputDto, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
+            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
         }
         CarOutputDto carOutputDto = carService.createCar(carInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + carOutputDto).toUriString());
@@ -63,20 +63,5 @@ public class CarController {
         String message = carService.deleteCar(licenseplate);
         return ResponseEntity.ok(message);
     }
-
-
-
-    public String errorToStringHandling(BindingResult bindingResult) {
-        StringBuilder sb = new StringBuilder();
-        for (FieldError fe : bindingResult.getFieldErrors()) {
-            sb.append(fe.getField() + ": ");
-            sb.append(fe.getDefaultMessage());
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-
-
 
 }

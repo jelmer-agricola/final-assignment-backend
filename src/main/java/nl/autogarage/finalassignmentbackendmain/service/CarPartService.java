@@ -1,7 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarPartOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.CarPart;
@@ -9,10 +9,7 @@ import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service

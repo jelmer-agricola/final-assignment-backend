@@ -1,9 +1,7 @@
-package nl.autogarage.finalassignmentbackendmain.dto.OutputDto;
+package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 
 @Getter

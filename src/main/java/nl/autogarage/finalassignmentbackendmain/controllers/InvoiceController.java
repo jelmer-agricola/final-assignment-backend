@@ -1,12 +1,12 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
 import jakarta.validation.Valid;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InvoiceOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.InvoiceService;
+import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,7 +26,7 @@ public class InvoiceController {
     @PostMapping("/add")
     public ResponseEntity<Object> createInvoice(@Valid @RequestBody InvoiceInputDto invoiceInputDto, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body(errorToStringHandling(bindingResult));
+            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
         }
         InvoiceOutputDto invoiceOutputDto = invoiceService.createInvoice(invoiceInputDto);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + invoiceOutputDto.getId()).toUriString());
@@ -66,13 +66,5 @@ public class InvoiceController {
         return ResponseEntity.ok(message);
     }
 
-    public String errorToStringHandling(BindingResult bindingResult) {
-        StringBuilder sb = new StringBuilder();
-        for (FieldError fe : bindingResult.getFieldErrors()) {
-            sb.append(fe.getField()).append(": ");
-            sb.append(fe.getDefaultMessage());
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
+
 }

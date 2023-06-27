@@ -1,15 +1,9 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.RepairOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
-import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
-import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Repair;
 import nl.autogarage.finalassignmentbackendmain.repositories.RepairRepository;
 import org.springframework.stereotype.Service;
@@ -56,6 +50,9 @@ public class RepairService {
             throw new RecordNotFoundException("Repair not found with ID " + id);
         }
     }
+
+// update
+//    delete
 
 
 

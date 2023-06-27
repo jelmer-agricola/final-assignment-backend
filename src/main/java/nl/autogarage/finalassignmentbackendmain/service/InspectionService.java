@@ -1,10 +1,8 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import org.springframework.stereotype.Service;

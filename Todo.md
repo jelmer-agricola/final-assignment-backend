@@ -2,7 +2,7 @@
 
 
 
-Carpart
+-[ ]  Error to string handling overal weghalen want utils
 
 ### Inspection 
 - [x] Alle request nalopen
@@ -24,6 +24,7 @@ Carpart
 - [ ] Alle request nalopen
 - [ ] models
 - [ ] Crud
+- [ ] update en delete maken voor repair
 
 ### enum Carstatus
 - [ ] Alle request nalopen
