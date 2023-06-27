@@ -16,7 +16,7 @@ import lombok.Setter;
 @Table(name = "carparts")
 public class CarPart {
     @Id
-    @GeneratedValue(generator = "ID_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     //    tenzij dit gekoppeld wordt aan licenseplate
 

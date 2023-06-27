@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 public class RepairInputDto {
 
-    private Long id;
     private String description;
     private Long cost;
     private boolean repairFinished;
