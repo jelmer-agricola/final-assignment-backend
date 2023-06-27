@@ -1,13 +1,38 @@
 
 
 
+
 Carpart
 
-Inspection 
-Invoice
+### Inspection 
+- [x] Alle request nalopen
+- [x] models
+- [x] Crud
 
+### Invoice
+- [x] Alle request nalopen
+- [x] models
+- [x] Crud
 
+### Repair
+- [ ] Alle request nalopen
+- [ ] models
+- [ ] Crud
 
+### enum Carstatus
+- [ ] Alle request nalopen
+- [ ] models
+- [ ] Crud
+
+### Authority
+- [ ] Alle request nalopen
+- [ ] models
+- [ ] Crud
+
+### User
+- [ ] Alle request nalopen
+- [ ] models
+- [ ] Crud
 
 test schrijven voor makkelijke klasse. 
 

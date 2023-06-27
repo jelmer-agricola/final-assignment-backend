@@ -50,7 +50,7 @@ public class InvoiceController {
     @PutMapping("/{id}")
     public ResponseEntity<InvoiceOutputDto> updateInvoice(@PathVariable Long id, @RequestBody InvoiceOutputDto invoiceOutputDto) {
         invoiceOutputDto.setId(id);
-        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoice(invoiceOutputDto);
+        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoice(id, invoiceOutputDto);
         if (updatedInvoice == null) {
             return ResponseEntity.notFound().build();
         }
