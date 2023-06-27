@@ -20,10 +20,11 @@ public class Car {
     //@NotNull
 
     @Id
-    @Column (nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String licenseplate;
     private String brand;
     private Integer mileage;
+    private String owner;
 
 //    Carstatus
 

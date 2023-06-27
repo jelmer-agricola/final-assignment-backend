@@ -7,6 +7,12 @@ Carpart
 ### Inspection 
 - [x] Alle request nalopen
 - [x] models
+- [x] 
+- 
+- ### Car 
+- [ ] owner doorvoeren
+- [x] Alle reques t nalopen
+- [x] models
 - [x] Crud
 
 ### Invoice

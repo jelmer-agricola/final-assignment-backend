@@ -21,6 +21,10 @@ public class Repair {
     @Id
     @GeneratedValue(generator = "ID_GENERATOR")
     private Long id;
+    private String description;
+    private Long cost;
+    private boolean repairFinished;
+
 
 
 }

@@ -80,12 +80,12 @@ public class InspectionService {
     }
 
     private InspectionOutputDto transferInspectionToOutputDto(Inspection inspection) {
-        InspectionOutputDto outputDto = new InspectionOutputDto();
-        outputDto.setId(inspection.getId());
-        outputDto.setCostEstimate(inspection.getCostEstimate());
-        outputDto.setDescription(inspection.getDescription());
-        outputDto.setRepairApproved(inspection.isRepairApproved());
-        return outputDto;
+        InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
+        inspectionOutputDto.setId(inspection.getId());
+        inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
+        inspectionOutputDto.setDescription(inspection.getDescription());
+        inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
+        return inspectionOutputDto;
     }
 
 
