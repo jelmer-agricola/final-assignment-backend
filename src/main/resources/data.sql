@@ -12,3 +12,5 @@ ALTER TABLE carparts ADD COLUMN licenseplate VARCHAR(20);
 
 INSERT INTO carparts (id, in_stock, car_part_enum, licenseplate)
 VALUES (100, 12, 'TIRES', '34-GBD-06' );
+
+-- Todo toevoegen repairs, invocie en inspections

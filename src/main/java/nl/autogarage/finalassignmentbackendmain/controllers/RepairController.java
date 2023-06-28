@@ -1,9 +1,10 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
+import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
+
 import jakarta.validation.Valid;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.RepairService;
-import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -24,21 +25,20 @@ public class RepairController {
     }
 
 
+    @PostMapping("/add")
+    public ResponseEntity<Object> createRepair(@Valid @RequestBody RepairInputDto repairInputDto, BindingResult bindingResult) {
+        if (bindingResult.hasFieldErrors()) {
+            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
+        }
 
-@PostMapping("/add")
-public ResponseEntity<Object> createRepair(@Valid @RequestBody RepairInputDto repairInputDto, BindingResult bindingResult) {
-    if (bindingResult.hasFieldErrors()) {
-        return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
+        RepairOutputDto repairOutputDto = repairService.createRepair(repairInputDto);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + repairOutputDto.getId()).toUriString());
+        return ResponseEntity.created(uri).body(repairOutputDto);
     }
-
-    RepairOutputDto repairOutputDto = repairService.createRepair(repairInputDto);
-    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + repairOutputDto.getId()).toUriString());
-    return ResponseEntity.created(uri).body(repairOutputDto);
-}
 
 
     @GetMapping
-    public ResponseEntity <List<RepairOutputDto>>getAllRepair(){
+    public ResponseEntity<List<RepairOutputDto>> getAllRepair() {
         return ResponseEntity.ok().body(repairService.getAllRepair());
     }
 
@@ -50,7 +50,46 @@ public ResponseEntity<Object> createRepair(@Valid @RequestBody RepairInputDto re
         }
         return ResponseEntity.ok(repairOutputDto);
     }
+// update
 
+    @PutMapping("/{id}")
+    public ResponseEntity<RepairOutputDto> updateRepair(@PathVariable Long id, @RequestBody RepairOutputDto repairOutputDto){
+        repairOutputDto.setId(id);
+        RepairOutputDto updatedRepair = repairService.updateRepair(id, repairOutputDto);
+        if (updatedRepair == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedRepair);
+    }
+
+
+
+
+
+
+
+//    @PutMapping("/{id}")
+//    public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
+//        inspectionOutputDto.setId(id);
+//        InspectionOutputDto updatedInspection = inspectionService.updateInspection(id, inspectionOutputDto);
+//        if (updatedInspection == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedInspection);
+//    }
+
+
+//    delete
+
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<String> deleteInspection(@PathVariable Long id) {
+//        String message = inspectionService.deleteInspection(id);
+//        if (message == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(message);
+//    }
 
 
 }

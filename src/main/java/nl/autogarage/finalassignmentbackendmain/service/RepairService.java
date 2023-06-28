@@ -1,12 +1,18 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Repair;
 import nl.autogarage.finalassignmentbackendmain.repositories.RepairRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +57,25 @@ public class RepairService {
         }
     }
 
-// update
-//    delete
+// Todo update schrijven
+    public RepairOutputDto updateRepair(Long id, RepairOutputDto repairOutputDto){
+        Optional<Repair> optionalRepair = repairRepository.findById(id);
+        if (optionalRepair.isEmpty()){
+            throw new RecordNotFoundException("No repair fount with id " + id);
+        }else {
+            Repair updateRepair = optionalRepair.get();
+            updateRepair.setRepairFinished(repairOutputDto.isRepairFinished());
+            updateRepair.setCost(repairOutputDto.getCost());
+            updateRepair.setDescription(repairOutputDto.getDescription());
+            Repair savedRepair = repairRepository.save(updateRepair);
+            return transferRepairToOutputDto(savedRepair);
+        }
+
+    }
+
+
+
+//  Todo delete schrijven
 
 
 

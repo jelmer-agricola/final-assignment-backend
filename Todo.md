@@ -21,9 +21,9 @@
 - [x] Crud
 
 ### Repair
-- [ ] Alle request nalopen
-- [ ] models
-- [ ] Crud
+- [x] Alle request nalopen
+- [x] models
+- [x] Crud
 - [ ] update en delete maken voor repair
 
 ### enum Carstatus
