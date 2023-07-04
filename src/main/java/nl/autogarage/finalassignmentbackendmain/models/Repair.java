@@ -23,5 +23,4 @@ public class Repair {
     private boolean repairFinished;
 
 
-
 }

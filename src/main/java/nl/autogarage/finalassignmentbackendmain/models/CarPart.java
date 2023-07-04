@@ -18,10 +18,7 @@ public class CarPart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //    tenzij dit gekoppeld wordt aan licenseplate
-
-
-    private Integer inStock;
+   private Integer inStock;
 
     //    lijst met carpatrs
     @Enumerated(EnumType.STRING)
@@ -33,5 +30,11 @@ public class CarPart {
     @ManyToOne
     @JsonIgnore
     private Car car;
+
+
+    public CarPart(CarPartEnum carPartEnum, Integer inStock) {
+        this.carPartEnum = carPartEnum;
+        this.inStock = inStock;
+    }
 
 }

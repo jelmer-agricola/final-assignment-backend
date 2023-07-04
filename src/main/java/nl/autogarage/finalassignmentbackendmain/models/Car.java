@@ -16,18 +16,18 @@ import java.util.List;
 @Entity
 @Table(name = "cars")
 public class Car {
-    // in eindopdracht primary key maken van kenteken
-    //@NotNull
+
 
     @Id
     @Column(nullable = false, unique = true)
     private String licenseplate;
+    @NotNull(message = "The licenseplate is not allowed to be Null ")
     private String brand;
     private Integer mileage;
     private String owner;
 
 //    Carstatus
-
+// Relaties
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarPart> carParts;
 

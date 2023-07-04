@@ -57,7 +57,6 @@ public class RepairService {
         }
     }
 
-// Todo update schrijven
     public RepairOutputDto updateRepair(Long id, RepairOutputDto repairOutputDto){
         Optional<Repair> optionalRepair = repairRepository.findById(id);
         if (optionalRepair.isEmpty()){
@@ -75,7 +74,15 @@ public class RepairService {
 
 
 
-//  Todo delete schrijven
+public String deleteRepair(Long id) {
+    if (repairRepository.existsById(id)) {
+        repairRepository.deleteById(id);
+        return "Repair with ID: " + id + " has been deleted.";
+    }
+    throw new RecordNotFoundException("Repair with ID " + id + " does not exist");
+}
+
+
 
 
 

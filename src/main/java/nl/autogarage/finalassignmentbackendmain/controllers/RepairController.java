@@ -50,7 +50,6 @@ public class RepairController {
         }
         return ResponseEntity.ok(repairOutputDto);
     }
-// update
 
     @PutMapping("/{id}")
     public ResponseEntity<RepairOutputDto> updateRepair(@PathVariable Long id, @RequestBody RepairOutputDto repairOutputDto){
@@ -63,33 +62,17 @@ public class RepairController {
     }
 
 
-
-
-
-
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
-//        inspectionOutputDto.setId(id);
-//        InspectionOutputDto updatedInspection = inspectionService.updateInspection(id, inspectionOutputDto);
-//        if (updatedInspection == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(updatedInspection);
-//    }
-
-
 //    delete
 
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<String> deleteInspection(@PathVariable Long id) {
-//        String message = inspectionService.deleteInspection(id);
-//        if (message == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(message);
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteRepair(@PathVariable Long id) {
+        String message = repairService.deleteRepair(id);
+        if (message == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(message);
+    }
 
 
 }

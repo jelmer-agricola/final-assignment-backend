@@ -1,8 +1,17 @@
 
 
 
+Volgorde:
+1. models
+2. Relaties
+3. Security
+4. file uploaden
 
--[ ]  Error to string handling overal weghalen want utils
+
+
+Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem aangegeven kunnen worden
+-[ ] add owners to sql
+ 
 
 ### Inspection 
 - [x] Alle request nalopen

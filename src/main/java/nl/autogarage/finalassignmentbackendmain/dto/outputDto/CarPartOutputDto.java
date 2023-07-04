@@ -14,8 +14,4 @@ public class CarPartOutputDto {
 //    public boolean checked;
 
 
-    //relations.........................................
-//    @JsonIgnore
-//    private Car car;
-//    @JsonIgnore
 }
