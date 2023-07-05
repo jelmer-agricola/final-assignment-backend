@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
+import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
@@ -12,6 +13,7 @@ import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
+import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,41 +32,34 @@ public class CarService {
 
 
     //Create
-    public CarOutputDto createCar (CarInputDto carInputDto) {
-        Optional <Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
-//        Eeerst een exception schrijven en dan error gooien
-        if (optionalCar.isPresent()){
+//    public CarOutputDto createCar (CarInputDto carInputDto) {
+//        Optional <Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
+////        Eeerst een exception schrijven en dan error gooien
+//        if (optionalCar.isPresent()){
+//            throw new DuplicateErrorException("Car with license plate already exists");
+//        }
+//        Car car = transferInputDtoToCar(carInputDto);
+//        carRepository.save((car));
+//        CarOutputDto carOutputDto = transferCarToOutputDto(car);
+//        return carOutputDto;
+//    }
+
+//Todo create car aanpassen
+
+    public CarOutputDto createCar(CarInputDto carInputDto) {
+        Optional<Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
+
+        if (optionalCar.isPresent()) {
             throw new DuplicateErrorException("Car with license plate already exists");
         }
+
         Car car = transferInputDtoToCar(carInputDto);
-        carRepository.save((car));
+        carRepository.save(car);
+
         CarOutputDto carOutputDto = transferCarToOutputDto(car);
         return carOutputDto;
     }
 
-
-
-//    public CarOutputDto createCar(CarInputDto carInputDto) {
-//        Optional<Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
-//        if (optionalCar.isPresent()) {
-//            throw new DuplicateErrorException("Car with license plate already exists");
-//        }
-//
-//        Car car = transferInputDtoToCar(carInputDto);
-//        carRepository.save(car);
-//
-//        // Add car parts
-//        List<CarPart> carParts = new ArrayList<>();
-//        for (CarPartEnum carPartEnum : carInputDto.getCarparts()) {
-//            CarPart carPart = new CarPart(carPartEnum, 10); // You can set the desired stock value
-//            carPart.setCar(car);
-//            carParts.add(carPart);
-//        }
-//        carPartRepository.saveAll(carParts);
-//
-//        CarOutputDto carOutputDto = transferCarToOutputDto(car);
-//        return carOutputDto;
-//    }
 
 
 
@@ -144,7 +139,52 @@ public class CarService {
         return car;
 
     }
+//
+//
+//    private CarOutputDto transferCarToOutputDto(Car car) {
+//        CarOutputDto carOutputDto = new CarOutputDto();
+//        carOutputDto.setLicenseplate(car.getLicenseplate());
+//        carOutputDto.setBrand(car.getBrand());
+//        carOutputDto.setMileage(car.getMileage());
+//        carOutputDto.setOwner(car.getOwner());
+//
+//        List<CarPartOutputDto> carPartOutputDtos = new ArrayList<>();
+//        if (car.getCarParts() != null) {
+//            for (CarPart carPart : car.getCarParts()) {
+//                CarPartOutputDto carPartOutputDto = new CarPartOutputDto();
+//                carPartOutputDto.setInStock(carPart.getInStock());
+//                carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
+//                carPartOutputDtos.add(carPartOutputDto);
+//            }
+//        }
+//        carOutputDto.setCarParts(carPartOutputDtos);
+//
+//        return carOutputDto;
+//    }
 
+
+
+//    private Car transferInputDtoToCar(CarInputDto carInputDto) {
+//        Car car = new Car();
+//        car.setLicenseplate(carInputDto.getLicenseplate());
+//        car.setBrand(carInputDto.getBrand());
+//        car.setMileage(carInputDto.getMileage());
+//        car.setOwner(carInputDto.getOwner());
+//
+//        List<CarPart> carParts = new ArrayList<>();
+//        if (carInputDto.getCarparts() != null) {
+//            for (CarPartInputDto carPartInputDto : carInputDto.getCarparts()) { // Fix the loop variable type
+//                CarPart carPart = new CarPart();
+//                carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
+//                carPart.setInStock(carPartInputDto.getInStock());
+//                carPart.setCar(car); // Associate the CarPart with the Car
+//                carParts.add(carPart);
+//            }
+//        }
+//        car.setCarParts(carParts);
+//
+//        return car;
+//    }
 
 }
 
