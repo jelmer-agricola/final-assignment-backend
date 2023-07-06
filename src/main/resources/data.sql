@@ -5,13 +5,15 @@ INSERT INTO cars (licenseplate, brand, mileage, owner) VALUES ('34-GBD-06', 'Toy
 INSERT INTO cars (licenseplate, brand, mileage, owner) VALUES ('AB-123-CD', 'Toyota', 105465, 'P.J. Dijxhoorn');
 INSERT INTO cars (licenseplate, brand, mileage, owner) VALUES ('XY-987-ZZ', 'BMW', 11111, 'De boer');
 
+-- met het aanmaken van de auto worden
+
 --Car Parts Car  34-GBD-06
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (100, '34-GBD-06', 'BATTERIES');
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (101, '34-GBD-06', 'BRAKES');
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (102, '34-GBD-06', 'TIRES');
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (103, '34-GBD-06', 'LIGHTS');
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (104, '34-GBD-06', 'WINDSHIELD_WIPERS');
-INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (105, '34-GBD-06', 'SUSPENSION');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status ) VALUES (100, '34-GBD-06', 'BATTERIES', 'needs repair');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (101, '34-GBD-06', 'BRAKES', 'needs replacement');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (102, '34-GBD-06', 'TIRES', 'needs repair');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status ) VALUES (103, '34-GBD-06', 'LIGHTS', 'needs repair');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (104, '34-GBD-06', 'WINDSHIELD_WIPERS', 'needs repair');
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status ) VALUES (105, '34-GBD-06', 'SUSPENSION', 'needs repair');
 
 --Car Parts Car AB-123-CD
 INSERT INTO carparts (id, car_licenseplate, car_part_enum) VALUES (200, 'AB-123-CD', 'BATTERIES');
