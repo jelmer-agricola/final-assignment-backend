@@ -8,8 +8,9 @@ import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 @Getter
 public class CarPartInputDto {
 
-    public Integer inStock;
+
     public CarPartEnum carPartEnum;
+    public String partStatus;
 
 
 //    public String state;

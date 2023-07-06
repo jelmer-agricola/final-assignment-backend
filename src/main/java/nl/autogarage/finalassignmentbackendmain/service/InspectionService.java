@@ -1,10 +1,8 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.InspectionOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import org.springframework.stereotype.Service;
@@ -80,12 +78,12 @@ public class InspectionService {
     }
 
     private InspectionOutputDto transferInspectionToOutputDto(Inspection inspection) {
-        InspectionOutputDto outputDto = new InspectionOutputDto();
-        outputDto.setId(inspection.getId());
-        outputDto.setCostEstimate(inspection.getCostEstimate());
-        outputDto.setDescription(inspection.getDescription());
-        outputDto.setRepairApproved(inspection.isRepairApproved());
-        return outputDto;
+        InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
+        inspectionOutputDto.setId(inspection.getId());
+        inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
+        inspectionOutputDto.setDescription(inspection.getDescription());
+        inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
+        return inspectionOutputDto;
     }
 
 

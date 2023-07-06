@@ -1,50 +1,66 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.OutputDto.CarOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
+import nl.autogarage.finalassignmentbackendmain.models.CarPart;
+import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CarService {
     private final CarRepository carRepository;
+    private final CarPartRepository carPartRepository;
 
-    public CarService(CarRepository carRepository) {
+    public CarService(CarRepository carRepository, CarPartRepository carPartRepository) {
         this.carRepository = carRepository;
+        this.carPartRepository = carPartRepository;
     }
 
-    //Create
-    public CarOutputDto createCar (CarInputDto carInputDto) {
-        Optional <Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
-//        Eeerst een exception schrijven en dan error gooien
-        if (optionalCar.isPresent()){
+
+    public String createCar(CarInputDto carInputDto) {
+        String licenseplate = carInputDto.getLicenseplate();
+        Optional<Car> car = carRepository.findByLicenseplate(licenseplate);
+
+        if (car.isPresent()) {
             throw new DuplicateErrorException("Car with license plate already exists");
         }
-        Car car = transferInputDtoToCar(carInputDto);
-        carRepository.save((car));
-        CarOutputDto carOutputDto = transferCarToOutputDto(car);
-        return carOutputDto;
+
+        Car newcar = transferInputDtoToCar(carInputDto);
+        Car savedcar = carRepository.save(newcar);
+
+        CarPartEnum[] carPartEnums = CarPartEnum.values();
+        for (CarPartEnum carPartEnum : carPartEnums) {
+                CarPart carPart = new CarPart();
+                carPart.setCarPartEnum(carPartEnum);
+                carPart.setCar(savedcar);
+                carPartRepository.save(carPart);
+        }
+        // TODO: 5-7-2023 paul is awesome 
+
+        savedcar = carRepository.save(savedcar);
+        return savedcar.getLicenseplate();
     }
+
+
     //    Get car by id
-    public CarOutputDto getCarByLicenseplate(String licenseplate){
+    public CarOutputDto getCarByLicenseplate(String licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
-        if(optionalCar.isEmpty()){
+        if (optionalCar.isEmpty()) {
             throw new RecordNotFoundException("Car with not found with licenseplate" + licenseplate);
         }
-            Car car = optionalCar.get();
-            CarOutputDto carOUtputDto = transferCarToOutputDto(car);
-            return carOUtputDto;
-        }
+        Car car = optionalCar.get();
+        return transferCarToOutputDto(car);
+    }
 
 
     public List<CarOutputDto> getAllCars() {
@@ -57,23 +73,21 @@ public class CarService {
     }
 
 
-
-
-//    updateCar
-public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
-    Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
-    if (car.isEmpty()) {
-        throw new RecordNotFoundException("Sorry we did not find a car with license plate: " + licensePlate);
-    } else {
-        Car updatedCar = car.get();
-        updatedCar.setBrand(carOutputDto.getBrand());
-        updatedCar.setLicenseplate(carOutputDto.getLicenseplate());
+    //    updateCar
+    public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
+        Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
+        if (car.isEmpty()) {
+            throw new RecordNotFoundException("Sorry we did not find a car with license plate: " + licensePlate);
+        } else {
+            Car updatedCar = car.get();
+            updatedCar.setBrand(carOutputDto.getBrand());
+            updatedCar.setLicenseplate(carOutputDto.getLicenseplate());
 
 //        updatedCar.set(carOutputDto.getCarStatus());
-        carRepository.save(updatedCar);
-        return transferCarToOutputDto(updatedCar);
+            carRepository.save(updatedCar);
+            return transferCarToOutputDto(updatedCar);
+        }
     }
-}
 
 
 // Record not found exception hieronder werkt. echter return werkt niet
@@ -88,28 +102,29 @@ public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
     }
 
 
-
-
-
-
     public CarOutputDto transferCarToOutputDto(Car car) {
         CarOutputDto carOutputDto = new CarOutputDto();
 
-
         carOutputDto.setLicenseplate(car.getLicenseplate());
+        carOutputDto.setOwner(car.getOwner());
         carOutputDto.setBrand(car.getBrand());
         carOutputDto.setMileage(car.getMileage());
+        if (car.getCarParts() != null) {
+            carOutputDto.setCarParts(car.getCarParts());
+        }
 
         return carOutputDto;
-
     }
+
 
     public Car transferInputDtoToCar(CarInputDto carInputDto) {
         Car car = new Car();
-
+        car.setOwner(carInputDto.getOwner());
         car.setLicenseplate(carInputDto.getLicenseplate());
         car.setBrand(carInputDto.getBrand());
         car.setMileage(carInputDto.getMileage());
+        car.setCarParts(carInputDto.getCarParts());
+
 
         return car;
 

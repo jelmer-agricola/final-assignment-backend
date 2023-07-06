@@ -1,25 +1,23 @@
-package nl.autogarage.finalassignmentbackendmain.dto.inputDto;
+package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
 
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 import nl.autogarage.finalassignmentbackendmain.models.CarPart;
-import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 
 import java.util.List;
 
-
 @Getter
 @Setter
-public class CarInputDto {
+public class CarOutputDto {
 
-    @NotNull
+
     private String licenseplate;
     private String brand;
     private Integer mileage;
     private String owner;
-    public List<CarPart> carParts;
-
+    private List<CarPart> carParts;
 
 
 }
+

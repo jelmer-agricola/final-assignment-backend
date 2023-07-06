@@ -1,4 +1,4 @@
-package nl.autogarage.finalassignmentbackendmain.dto.OutputDto;
+package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
 
 import lombok.Getter;
 import lombok.Setter;

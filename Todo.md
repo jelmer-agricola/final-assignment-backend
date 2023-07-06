@@ -1,11 +1,26 @@
 
 
 
+Volgorde:
+1. models
+2. Relaties
+3. Security
+4. file uploaden
 
-Carpart
+instock verplaatsen naar repair of inspection 
+
+Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem aangegeven kunnen worden
+-[ ] add owners to sql
+ 
 
 ### Inspection 
 - [x] Alle request nalopen
+- [x] models
+- [x] 
+- 
+- ### Car 
+- [ ] owner doorvoeren
+- [x] Alle reques t nalopen
 - [x] models
 - [x] Crud
 
@@ -15,9 +30,10 @@ Carpart
 - [x] Crud
 
 ### Repair
-- [ ] Alle request nalopen
-- [ ] models
-- [ ] Crud
+- [x] Alle request nalopen
+- [x] models
+- [x] Crud
+- [ ] update en delete maken voor repair
 
 ### enum Carstatus
 - [ ] Alle request nalopen
