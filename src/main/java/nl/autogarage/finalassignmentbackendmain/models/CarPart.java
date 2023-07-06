@@ -34,8 +34,11 @@ public class CarPart {
     private Car car;
 
 
-    public CarPart(CarPartEnum batteries) {
-    }
+    @OneToMany(mappedBy = "carpart")
+    private List<Inspection> inspections;
+
+//    public CarPart(CarPartEnum batteries) {
+//    }
 
 
 //    speciale setter om aan te geven dat er auto onderedelen worden toegevoegd.

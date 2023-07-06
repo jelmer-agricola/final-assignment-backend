@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class Inspection {
     private String description;
     private boolean repairApproved;
 
+    @ManyToOne
+    @JsonIgnore
+    private CarPart carpart;
 
 //    status verschillende onderdelen
 

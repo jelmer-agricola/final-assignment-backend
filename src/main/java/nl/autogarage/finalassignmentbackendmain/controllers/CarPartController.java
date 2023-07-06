@@ -63,6 +63,11 @@ public class CarPartController {
         return ResponseEntity.ok(updatedCarPart);
     }
 
+    @PutMapping("{licenseplate}/status/{carpart}")
+    public ResponseEntity<CarPartOutputDto> CarPartCheck(@PathVariable String licenseplate, @PathVariable String carpart, @RequestBody CarPartInputDto carPartinputDto) {
+        return ResponseEntity.ok(carPartService.CarPartStatusCheck(licenseplate, carpart, carPartinputDto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCarPart(@PathVariable Long id) {
         String message = carPartService.deleteCarPart(id);

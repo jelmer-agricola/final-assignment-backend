@@ -11,5 +11,6 @@ public class InspectionOutputDto {
     private Long costEstimate;
     private String description;
     private boolean  repairApproved;
+    private String carPartStatus;
 
 }

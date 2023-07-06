@@ -66,4 +66,15 @@ public class InspectionController {
         return ResponseEntity.ok(message);
     }
 
+        // Existing code
+
+//        @PutMapping("carpartstatus/{id}")
+//        public ResponseEntity<InspectionOutputDto> updateCarPartStatus(@PathVariable Long id, @RequestParam String status) {
+//            InspectionOutputDto updatedInspection = inspectionService.updateCarPartStatus(id, status);
+//            if (updatedInspection == null) {
+//                return ResponseEntity.notFound().build();
+//            }
+//            return ResponseEntity.ok(updatedInspection);
+//        }
+
 }

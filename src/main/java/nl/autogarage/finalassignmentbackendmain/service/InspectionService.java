@@ -6,6 +6,7 @@ import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundExcepti
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,18 @@ public class InspectionService {
         inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
         return inspectionOutputDto;
     }
+
+//    @Transactional
+//    public InspectionOutputDto updateCarPartStatus(Long id, String newStatus) {
+//        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
+//        if (optionalInspection.isPresent()) {
+//            Inspection inspection = optionalInspection.get();
+//            inspection.setCarPartStatus(newStatus);
+//            return transferInspectionToOutputDto(inspectionRepository.save(inspection));
+//        } else {
+//            throw new RecordNotFoundException("Inspection not found with ID " + id);
+//        }
+//    }
 
 
 }

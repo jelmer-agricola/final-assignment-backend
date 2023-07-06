@@ -64,7 +64,7 @@ public class RepairService {
         }else {
             Repair updateRepair = optionalRepair.get();
             updateRepair.setRepairFinished(repairOutputDto.isRepairFinished());
-            updateRepair.setCost(repairOutputDto.getCost());
+            updateRepair.setFinalCost(repairOutputDto.getFinalCost());
             updateRepair.setDescription(repairOutputDto.getDescription());
             Repair savedRepair = repairRepository.save(updateRepair);
             return transferRepairToOutputDto(savedRepair);
@@ -90,7 +90,7 @@ public String deleteRepair(Long id) {
 
     private Repair transferInputDtoToRepair (RepairInputDto repairInputDto ){
         Repair repair = new Repair();
-        repair.setCost(repairInputDto.getCost());
+        repair.setFinalCost(repairInputDto.getFinalCost());
         repair.setDescription(repairInputDto.getDescription());
         repair.setRepairFinished(repairInputDto.isRepairFinished());
         return repair;
@@ -100,7 +100,7 @@ public String deleteRepair(Long id) {
         RepairOutputDto repairOutputDto = new RepairOutputDto();
         repairOutputDto.setId(repair.getId());
         repairOutputDto.setRepairFinished(repair.isRepairFinished());
-        repairOutputDto.setCost(repair.getCost());
+        repairOutputDto.setFinalCost(repair.getFinalCost());
         repairOutputDto.setDescription(repair.getDescription());
         return repairOutputDto;
 

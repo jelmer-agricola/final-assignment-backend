@@ -76,7 +76,6 @@ public class CarPartService {
         } else {
             CarPart updatedCarPart = optionalCarPart.get();
             updatedCarPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-//            updatedCarPart.setInStock(carPartInputDto.getInStock());
             CarPart savedCarPart = carPartRepository.save(updatedCarPart);
             return transferCarPartToOutputDto(savedCarPart);
         }
@@ -94,6 +93,30 @@ public class CarPartService {
 
 //      carparts bijzondere methodes hier te zetten
 
+    public CarPartOutputDto CarPartStatusCheck(String licenseplate, String carpart, CarPartInputDto carPartinputDto) {
+        Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
+        if (optionalCar.isEmpty()) {
+            throw new RecordNotFoundException("No car with license plate: " + licenseplate);
+        }
+
+        Car car = optionalCar.get();
+        Optional<CarPart> optionalCarPart = car.getCarParts().stream()
+                .filter(cp -> cp.getCarPartEnum().toString().equals(carpart))
+                .findFirst();
+
+        if (optionalCarPart.isEmpty()) {
+            throw new RecordNotFoundException("This car part does not exist: " + carpart);
+        }
+
+        CarPart carPart = optionalCarPart.get();
+        carPart.setPartStatus(carPartinputDto.getPartStatus());
+        CarPart savedCarPart = carPartRepository.save(carPart);
+
+        return transferCarPartToOutputDto(savedCarPart);
+    }
+
+
+
     private CarPart transferInputDtoToCarPart(CarPartInputDto carPartInputDto) {
         CarPart carPart = new CarPart();
         carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
@@ -106,8 +129,12 @@ public class CarPartService {
         CarPartOutputDto carPartOutputDto = new CarPartOutputDto();
         carPartOutputDto.setPartStatus(carPart.getPartStatus());
         carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
-
         carPartOutputDto.setId(carPart.getId());
+
+        if (carPartOutputDto.getCar() == null) {
+            carPartOutputDto.setCar(carPart.getCar());
+        }
+
 // Licenseplate??
         return carPartOutputDto;
     }

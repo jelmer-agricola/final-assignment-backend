@@ -9,7 +9,7 @@ import lombok.Setter;
 public class RepairInputDto {
 
     private String description;
-    private Long cost;
+    private Long finalCost;
     private boolean repairFinished;
 
 
