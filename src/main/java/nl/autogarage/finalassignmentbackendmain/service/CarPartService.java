@@ -42,6 +42,8 @@ public class CarPartService {
     }
 
 
+
+
     public CarPartOutputDto createCarPart(CarPartInputDto carPartInputDto) {
         CarPart carPart = transferInputDtoToCarPart(carPartInputDto);
         CarPart savedCarPart = carPartRepository.save(carPart);
@@ -74,7 +76,7 @@ public class CarPartService {
         } else {
             CarPart updatedCarPart = optionalCarPart.get();
             updatedCarPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-            updatedCarPart.setInStock(carPartInputDto.getInStock());
+//            updatedCarPart.setInStock(carPartInputDto.getInStock());
             CarPart savedCarPart = carPartRepository.save(updatedCarPart);
             return transferCarPartToOutputDto(savedCarPart);
         }
@@ -89,18 +91,24 @@ public class CarPartService {
         throw new RecordNotFoundException("CarPart with ID " + id + " does not exist");
     }
 
+
+//      carparts bijzondere methodes hier te zetten
+
     private CarPart transferInputDtoToCarPart(CarPartInputDto carPartInputDto) {
         CarPart carPart = new CarPart();
         carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-        carPart.setInStock(carPartInputDto.getInStock());
+        carPart.setPartStatus(carPartInputDto.getPartStatus());
         return carPart;
     }
 
 
     private CarPartOutputDto transferCarPartToOutputDto(CarPart carPart) {
         CarPartOutputDto carPartOutputDto = new CarPartOutputDto();
-        carPartOutputDto.setInStock(carPart.getInStock());
+        carPartOutputDto.setPartStatus(carPart.getPartStatus());
         carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
+
+        carPartOutputDto.setId(carPart.getId());
+// Licenseplate??
         return carPartOutputDto;
     }
 }

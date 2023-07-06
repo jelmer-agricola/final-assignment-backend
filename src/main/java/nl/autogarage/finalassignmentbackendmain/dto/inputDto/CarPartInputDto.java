@@ -10,7 +10,7 @@ public class CarPartInputDto {
 
 
     public CarPartEnum carPartEnum;
-    public Integer inStock;
+    public String partStatus;
 
 
 //    public String state;

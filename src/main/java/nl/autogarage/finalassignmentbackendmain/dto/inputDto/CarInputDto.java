@@ -18,7 +18,7 @@ public class CarInputDto {
     private String brand;
     private Integer mileage;
     private String owner;
-    List<CarPart> carparts;
+    public List<CarPart> carParts;
 
 
 

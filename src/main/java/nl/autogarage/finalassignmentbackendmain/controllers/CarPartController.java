@@ -22,11 +22,13 @@ public class CarPartController {
         this.carPartService = carPartService;
     }
 
-    @GetMapping("/{licenseplate}")
+    @GetMapping("/license/{licenseplate}")
     public ResponseEntity<Iterable<CarPartOutputDto>> getCarPartsByLicensePlate(@PathVariable String licenseplate) {
         Iterable<CarPartOutputDto> carPartOutputDtos = carPartService.getCarPartsByLicensePlate(licenseplate);
         return ResponseEntity.ok(carPartOutputDtos);
     }
+
+
 
     @PostMapping("/add")
     public ResponseEntity<Object> createCarPart(@Valid @RequestBody CarPartInputDto carPartInputDto, BindingResult bindingResult) {

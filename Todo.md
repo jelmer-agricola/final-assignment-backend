@@ -7,7 +7,7 @@ Volgorde:
 3. Security
 4. file uploaden
 
-
+instock verplaatsen naar repair of inspection 
 
 Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem aangegeven kunnen worden
 -[ ] add owners to sql

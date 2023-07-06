@@ -1,10 +1,8 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
@@ -13,12 +11,10 @@ import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CarService {
@@ -31,36 +27,29 @@ public class CarService {
     }
 
 
-    //Create
-//    public CarOutputDto createCar (CarInputDto carInputDto) {
-//        Optional <Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
-////        Eeerst een exception schrijven en dan error gooien
-//        if (optionalCar.isPresent()){
-//            throw new DuplicateErrorException("Car with license plate already exists");
-//        }
-//        Car car = transferInputDtoToCar(carInputDto);
-//        carRepository.save((car));
-//        CarOutputDto carOutputDto = transferCarToOutputDto(car);
-//        return carOutputDto;
-//    }
+    public String createCar(CarInputDto carInputDto) {
+        String licenseplate = carInputDto.getLicenseplate();
+        Optional<Car> car = carRepository.findByLicenseplate(licenseplate);
 
-//Todo create car aanpassen
-
-    public CarOutputDto createCar(CarInputDto carInputDto) {
-        Optional<Car> optionalCar = carRepository.findById(carInputDto.getLicenseplate());
-
-        if (optionalCar.isPresent()) {
+        if (car.isPresent()) {
             throw new DuplicateErrorException("Car with license plate already exists");
         }
 
-        Car car = transferInputDtoToCar(carInputDto);
-        carRepository.save(car);
+        Car newcar = transferInputDtoToCar(carInputDto);
+        Car savedcar = carRepository.save(newcar);
 
-        CarOutputDto carOutputDto = transferCarToOutputDto(car);
-        return carOutputDto;
+        CarPartEnum[] carPartEnums = CarPartEnum.values();
+        for (CarPartEnum carPartEnum : carPartEnums) {
+                CarPart carPart = new CarPart();
+                carPart.setCarPartEnum(carPartEnum);
+                carPart.setCar(savedcar);
+                carPartRepository.save(carPart);
+        }
+        // TODO: 5-7-2023 paul is awesome 
+
+        savedcar = carRepository.save(savedcar);
+        return savedcar.getLicenseplate();
     }
-
-
 
 
     //    Get car by id
@@ -70,8 +59,7 @@ public class CarService {
             throw new RecordNotFoundException("Car with not found with licenseplate" + licenseplate);
         }
         Car car = optionalCar.get();
-        CarOutputDto carOUtputDto = transferCarToOutputDto(car);
-        return carOUtputDto;
+        return transferCarToOutputDto(car);
     }
 
 
@@ -117,15 +105,17 @@ public class CarService {
     public CarOutputDto transferCarToOutputDto(Car car) {
         CarOutputDto carOutputDto = new CarOutputDto();
 
-
         carOutputDto.setLicenseplate(car.getLicenseplate());
         carOutputDto.setOwner(car.getOwner());
         carOutputDto.setBrand(car.getBrand());
         carOutputDto.setMileage(car.getMileage());
+        if (car.getCarParts() != null) {
+            carOutputDto.setCarParts(car.getCarParts());
+        }
 
         return carOutputDto;
-
     }
+
 
     public Car transferInputDtoToCar(CarInputDto carInputDto) {
         Car car = new Car();
@@ -133,58 +123,13 @@ public class CarService {
         car.setLicenseplate(carInputDto.getLicenseplate());
         car.setBrand(carInputDto.getBrand());
         car.setMileage(carInputDto.getMileage());
-        car.setCarParts(carInputDto.getCarparts());
+        car.setCarParts(carInputDto.getCarParts());
 
 
         return car;
 
     }
-//
-//
-//    private CarOutputDto transferCarToOutputDto(Car car) {
-//        CarOutputDto carOutputDto = new CarOutputDto();
-//        carOutputDto.setLicenseplate(car.getLicenseplate());
-//        carOutputDto.setBrand(car.getBrand());
-//        carOutputDto.setMileage(car.getMileage());
-//        carOutputDto.setOwner(car.getOwner());
-//
-//        List<CarPartOutputDto> carPartOutputDtos = new ArrayList<>();
-//        if (car.getCarParts() != null) {
-//            for (CarPart carPart : car.getCarParts()) {
-//                CarPartOutputDto carPartOutputDto = new CarPartOutputDto();
-//                carPartOutputDto.setInStock(carPart.getInStock());
-//                carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
-//                carPartOutputDtos.add(carPartOutputDto);
-//            }
-//        }
-//        carOutputDto.setCarParts(carPartOutputDtos);
-//
-//        return carOutputDto;
-//    }
 
-
-
-//    private Car transferInputDtoToCar(CarInputDto carInputDto) {
-//        Car car = new Car();
-//        car.setLicenseplate(carInputDto.getLicenseplate());
-//        car.setBrand(carInputDto.getBrand());
-//        car.setMileage(carInputDto.getMileage());
-//        car.setOwner(carInputDto.getOwner());
-//
-//        List<CarPart> carParts = new ArrayList<>();
-//        if (carInputDto.getCarparts() != null) {
-//            for (CarPartInputDto carPartInputDto : carInputDto.getCarparts()) { // Fix the loop variable type
-//                CarPart carPart = new CarPart();
-//                carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-//                carPart.setInStock(carPartInputDto.getInStock());
-//                carPart.setCar(car); // Associate the CarPart with the Car
-//                carParts.add(carPart);
-//            }
-//        }
-//        car.setCarParts(carParts);
-//
-//        return car;
-//    }
 
 }
 

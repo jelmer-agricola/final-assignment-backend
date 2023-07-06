@@ -1,5 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 public enum CarPartEnum {
-    BRAKES, BATTERIES, TIRES, LIGHTS, WINDSHIELD_WIPERS, SUSPENSION
+    BRAKES, BATTERIES, TIRES, LIGHTS, WINDSHIELD_WIPERS, SUSPENSION, PAULUS
 }

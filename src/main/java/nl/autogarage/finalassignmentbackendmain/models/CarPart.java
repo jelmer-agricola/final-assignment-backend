@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,11 +21,10 @@ public class CarPart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-   private Integer inStock;
+    private String partStatus;
 
-    //    lijst met carpatrs
     @Enumerated(EnumType.STRING)
-    private CarPartEnum carPartEnum;
+    public CarPartEnum carPartEnum;
 
 
 //     relations
@@ -32,9 +34,11 @@ public class CarPart {
     private Car car;
 
 
-    public CarPart(CarPartEnum carPartEnum, Integer inStock) {
-        this.carPartEnum = carPartEnum;
-        this.inStock = inStock;
+    public CarPart(CarPartEnum batteries) {
     }
+
+
+//    speciale setter om aan te geven dat er auto onderedelen worden toegevoegd.
+
 
 }
