@@ -33,9 +33,10 @@ public class CarPart {
     @JsonIgnore
     private Car car;
 
-
     @OneToMany(mappedBy = "carpart")
-    private List<Inspection> inspections;
+    private List<Repair> repairs;
+
+
 
 //    public CarPart(CarPartEnum batteries) {
 //    }

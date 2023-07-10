@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,12 +23,23 @@ public class Inspection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long costEstimate;
-    private String description;
+    private String inspectionDescription;
     private boolean repairApproved;
+//inspection date
+
+    @OneToMany(mappedBy = "inspection")
+    List<Repair> repairs;
 
     @ManyToOne
     @JsonIgnore
-    private CarPart carpart;
+    private Car car;
+
+    @OneToOne(mappedBy = "inspection")
+    @JsonIgnore
+    private Invoice invoice;
+
+
+
 
 //    status verschillende onderdelen
 

@@ -10,7 +10,7 @@ public class RepairOutputDto {
 
 //    in outputdto kan je id wel meegeven.
     private Long id;
-    private String description;
+    private String repairDescription;
     private Long finalCost;
     private boolean repairFinished;
 

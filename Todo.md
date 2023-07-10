@@ -5,12 +5,14 @@ Volgorde:
 1. models
 2. Relaties
 3. Security
+   //Todo als ik hiermee verder ga security toevoegen en user en role dus daaran tovoegen vanuit tech it easy
+ 
 4. file uploaden
 
 instock verplaatsen naar repair of inspection 
 
 Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem aangegeven kunnen worden
--[ ] add owners to sql
+-[x] add owners to sql
  
 
 ### Inspection 
@@ -19,7 +21,7 @@ Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem a
 - [x] 
 - 
 - ### Car 
-- [ ] owner doorvoeren
+- [x] owner doorvoeren
 - [x] Alle reques t nalopen
 - [x] models
 - [x] Crud
@@ -35,10 +37,7 @@ Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem a
 - [x] Crud
 - [ ] update en delete maken voor repair
 
-### enum Carstatus
-- [ ] Alle request nalopen
-- [ ] models
-- [ ] Crud
+
 
 ### Authority
 - [ ] Alle request nalopen
@@ -54,10 +53,7 @@ test schrijven voor makkelijke klasse.
 
 users niet testen en security ook niet 
 
-Niet eruit gekomen met get van get allcarparts
 
-
-in service evt checker voor eisen van nummerplaat --> licenseplate validator
 
 
 **Finished** 

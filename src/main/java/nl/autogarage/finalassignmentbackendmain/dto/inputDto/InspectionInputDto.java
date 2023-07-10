@@ -10,7 +10,7 @@ public class InspectionInputDto {
 
     private Long id;
     private Long costEstimate;
-    private String description;
+    private String inspectionDescription;
     private boolean repairApproved;
 
 }

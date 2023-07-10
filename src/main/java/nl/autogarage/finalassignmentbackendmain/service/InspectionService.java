@@ -4,9 +4,11 @@ import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDt
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
+import nl.autogarage.finalassignmentbackendmain.repositories.RepairRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,15 @@ import java.util.Optional;
 public class InspectionService {
 
     private final InspectionRepository inspectionRepository;
+    private final CarPartRepository carPartRepository;
+    private final CarRepository carRepository;
+    private final RepairRepository repairRepository;
 
-    public InspectionService(InspectionRepository inspectionRepository) {
+    public InspectionService(InspectionRepository inspectionRepository, CarPartRepository carPartRepository, CarRepository carRepository, RepairRepository repairRepository) {
         this.inspectionRepository = inspectionRepository;
+        this.carPartRepository = carPartRepository;
+        this.carRepository = carRepository;
+        this.repairRepository = repairRepository;
     }
 
     public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
@@ -37,6 +45,9 @@ public class InspectionService {
     }
 
 
+//    Todo methode om van de inspections de carpart statussen op te halen
+
+
     public InspectionOutputDto getInspectionById(Long id) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isPresent()) {
@@ -53,7 +64,7 @@ public class InspectionService {
             throw new RecordNotFoundException("No insepction with id: " + id);
         } else {
             Inspection updateInspection = optionalInspection.get();
-            updateInspection.setDescription(inspectionOutputDto.getDescription());
+            updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
             updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
             updateInspection.setRepairApproved(inspectionOutputDto.isRepairApproved());
             Inspection savedInspection = inspectionRepository.save(updateInspection);
@@ -73,7 +84,7 @@ public class InspectionService {
     private Inspection transferInputDtoToInspection(InspectionInputDto inspectionInputDto) {
         Inspection inspection = new Inspection();
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
-        inspection.setDescription(inspectionInputDto.getDescription());
+        inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
         inspection.setRepairApproved(inspectionInputDto.isRepairApproved());
         return inspection;
     }
@@ -82,22 +93,11 @@ public class InspectionService {
         InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
         inspectionOutputDto.setId(inspection.getId());
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
-        inspectionOutputDto.setDescription(inspection.getDescription());
+        inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
         inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
         return inspectionOutputDto;
     }
 
-//    @Transactional
-//    public InspectionOutputDto updateCarPartStatus(Long id, String newStatus) {
-//        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
-//        if (optionalInspection.isPresent()) {
-//            Inspection inspection = optionalInspection.get();
-//            inspection.setCarPartStatus(newStatus);
-//            return transferInspectionToOutputDto(inspectionRepository.save(inspection));
-//        } else {
-//            throw new RecordNotFoundException("Inspection not found with ID " + id);
-//        }
-//    }
 
 
 }

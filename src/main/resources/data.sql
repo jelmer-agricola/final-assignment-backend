@@ -35,13 +35,17 @@ INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (
 INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (306, 'XY-987-ZZ', 'ENGINE', 'needs replacement');
 
 
-INSERT INTO inspection (id, cost_estimate, description, repair_approved)
+INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved)
 VALUES (1001, 100, 'Inspection 1', true);
-INSERT INTO inspection (id, cost_estimate, description, repair_approved)
+INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved)
 VALUES (1002, 288, 'Inspection 2', true);
 
-INSERT INTO repair (id, description, final_cost, repair_finished)
+
+
+INSERT INTO repair (id, repair_description, final_cost, repair_finished)
 VALUES (1001, 'repair uno', 232, true);
+
+
 
 INSERT INTO invoice (id, repair_cost, invoice, paid)
 VALUES (101, 123, 1, true);

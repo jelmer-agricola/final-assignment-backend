@@ -1,5 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,15 @@ public class Car {
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarPart> carParts;
 
+
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Inspection> inspections;
+
+    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Invoice> invoices;
+
+//    @ManyToOne
+//    @JsonIgnore
+//    private User user;
 
 }

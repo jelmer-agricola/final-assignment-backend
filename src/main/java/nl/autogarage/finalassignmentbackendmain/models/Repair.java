@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +19,17 @@ public class Repair {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String description;
+    private String repairDescription;
     private Long finalCost;
     private boolean repairFinished;
+
+    @ManyToOne
+    @JsonIgnore
+    private CarPart carpart;
+
+    @ManyToOne
+    @JsonIgnore
+    private Inspection inspection;
 
 
 }

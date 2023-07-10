@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,14 +20,16 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long repairCost;
-    private byte invoice ;
+    private byte invoice;
     private boolean paid;
 
-
+    @OneToOne
+    private Inspection inspection;
 //    Carsatus repaired dus car car?
 
-//    user User
-//
-
+    //    user User
+    @ManyToOne
+    @JsonIgnore
+    private Car car;
 
 }

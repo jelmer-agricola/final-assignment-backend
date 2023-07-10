@@ -9,7 +9,7 @@ public class InspectionOutputDto {
 
     private Long id;
     private Long costEstimate;
-    private String description;
+    private String inspectionDescription;
     private boolean  repairApproved;
     private String carPartStatus;
 

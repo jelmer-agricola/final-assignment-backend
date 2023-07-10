@@ -57,6 +57,10 @@ public class RepairService {
         }
     }
 
+
+    //    Todo methode om van de insepections door te geven dat alle carparts weer kloppen.
+// Ik wil dus kunnen weten
+
     public RepairOutputDto updateRepair(Long id, RepairOutputDto repairOutputDto){
         Optional<Repair> optionalRepair = repairRepository.findById(id);
         if (optionalRepair.isEmpty()){
@@ -65,7 +69,7 @@ public class RepairService {
             Repair updateRepair = optionalRepair.get();
             updateRepair.setRepairFinished(repairOutputDto.isRepairFinished());
             updateRepair.setFinalCost(repairOutputDto.getFinalCost());
-            updateRepair.setDescription(repairOutputDto.getDescription());
+            updateRepair.setRepairDescription(repairOutputDto.getRepairDescription());
             Repair savedRepair = repairRepository.save(updateRepair);
             return transferRepairToOutputDto(savedRepair);
         }
@@ -91,7 +95,7 @@ public String deleteRepair(Long id) {
     private Repair transferInputDtoToRepair (RepairInputDto repairInputDto ){
         Repair repair = new Repair();
         repair.setFinalCost(repairInputDto.getFinalCost());
-        repair.setDescription(repairInputDto.getDescription());
+        repair.setRepairDescription(repairInputDto.getRepairDescription());
         repair.setRepairFinished(repairInputDto.isRepairFinished());
         return repair;
     }
@@ -101,7 +105,7 @@ public String deleteRepair(Long id) {
         repairOutputDto.setId(repair.getId());
         repairOutputDto.setRepairFinished(repair.isRepairFinished());
         repairOutputDto.setFinalCost(repair.getFinalCost());
-        repairOutputDto.setDescription(repair.getDescription());
+        repairOutputDto.setRepairDescription(repair.getRepairDescription());
         return repairOutputDto;
 
     }
