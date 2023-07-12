@@ -8,7 +8,7 @@ import nl.autogarage.finalassignmentbackendmain.models.Car;
 public class InvoiceInputDto {
 
 
-    private Long repairCost;
+    private Long finalCost;
     private boolean paid;
 
     // Constructors, getters, and setters

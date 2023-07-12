@@ -26,8 +26,10 @@ public class Car {
     private String brand;
     private Integer mileage;
     private String owner;
-
+//inspectiondate
 //    Carstatus
+
+
 // Relaties
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarPart> carParts;

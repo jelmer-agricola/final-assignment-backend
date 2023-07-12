@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class InvoiceOutputDto {
     private Long id;
-    private Long repairCost;
+    private Long finalCost;
     private byte invoice;
     private boolean paid;
 

@@ -19,7 +19,7 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long repairCost;
+    private Long finalCost;
     private byte invoice;
     private boolean paid;
 

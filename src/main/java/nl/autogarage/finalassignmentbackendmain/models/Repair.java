@@ -20,7 +20,7 @@ public class Repair {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String repairDescription;
-    private Long finalCost;
+    private Long partRepairCost;
     private boolean repairFinished;
 
     @ManyToOne

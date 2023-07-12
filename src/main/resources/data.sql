@@ -35,20 +35,26 @@ INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (
 INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status) VALUES (306, 'XY-987-ZZ', 'ENGINE', 'needs replacement');
 
 
-INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved)
-VALUES (1001, 100, 'Inspection 1', true);
-INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved)
-VALUES (1002, 288, 'Inspection 2', true);
+INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved, car_licenseplate)
+VALUES (101, 100, 'Tires need ONDERHOUD', true, '34-GBD-06');
+
+
+INSERT INTO inspection (id, cost_estimate, inspection_description, repair_approved, car_licenseplate)
+VALUES (102, 288, 'Inspection 2', true, 'AB-123-CD');
 
 
 
-INSERT INTO repair (id, repair_description, final_cost, repair_finished)
-VALUES (1001, 'repair uno', 232, true);
+INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, carpart_id)
+VALUES (1001, 'repair uno', 232, true, 101, 102);
+
+INSERT INTO repair (id, repair_description,  part_repair_cost, repair_finished, inspection_id, carpart_id)
+VALUES (1002, 'repair duo', 232, true, 102, 305);
+INSERT INTO repair (id, repair_description,  part_repair_cost, repair_finished, inspection_id, carpart_id)
+VALUES (1003, 'repair TRES', 232, true, 102, 306);
 
 
-
-INSERT INTO invoice (id, repair_cost, invoice, paid)
-VALUES (101, 123, 1, true);
+INSERT INTO invoice (id, final_cost, invoice, paid, car_licenseplate, inspection_id)
+VALUES (101, 123, 1, true,'34-GBD-06', 101);
 
 
 

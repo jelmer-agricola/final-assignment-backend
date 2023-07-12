@@ -1,10 +1,14 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collection;
 //Todo als ik hiermee verder ga security toevoegen en user vanuit tech it easy
 
+@Getter
+@Setter
     @Entity
     @Table(name="users")
     public class User {
@@ -16,27 +20,5 @@ import java.util.Collection;
         @ManyToMany(fetch = FetchType.EAGER)
         private Collection<Role> roles;
 
-        public String getUsername() {
-            return username;
-        }
 
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public Collection<Role> getRoles() {
-            return roles;
-        }
-
-        public void setRoles(Collection<Role> roles) {
-            this.roles = roles;
-        }
     }

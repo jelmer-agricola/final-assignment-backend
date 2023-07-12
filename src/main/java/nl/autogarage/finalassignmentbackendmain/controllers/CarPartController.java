@@ -2,6 +2,7 @@ package nl.autogarage.finalassignmentbackendmain.controllers;
 import jakarta.validation.Valid;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.service.CarPartService;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.ResponseEntity;
@@ -30,14 +31,16 @@ public class CarPartController {
 
 
 
-    @PostMapping("/add")
-    public ResponseEntity<Object> createCarPart(@Valid @RequestBody CarPartInputDto carPartInputDto, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
-        }
-        CarPartOutputDto carPartOutputDto = carPartService.createCarPart(carPartInputDto);
-        return ResponseEntity.ok(carPartOutputDto);
-    }
+// Todo alle carparts worden al gemaakt in de auto dus deze post methode deze kan weg
+// vraag is dus wil ik deze houden ?
+//    @PostMapping("/add")
+//    public ResponseEntity<Object> createCarPart(@Valid @RequestBody CarPartInputDto carPartInputDto, BindingResult bindingResult) {
+//        if (bindingResult.hasFieldErrors()) {
+//            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
+//        }
+//        CarPartOutputDto carPartOutputDto = carPartService.createCarPart(carPartInputDto);
+//        return ResponseEntity.ok(carPartOutputDto);
+//    }
 
     @GetMapping
     public ResponseEntity<List<CarPartOutputDto>> getAllCarParts() {

@@ -74,7 +74,7 @@ public class InvoiceService {
 
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
-        invoice.setRepairCost(invoiceInputDto.getRepairCost());
+        invoice.setFinalCost(invoiceInputDto.getFinalCost());
 //        invoice.setInvoice(invoiceInputDto.getInvoice());
         invoice.setPaid(invoiceInputDto.isPaid());
         return invoice;
@@ -83,7 +83,7 @@ public class InvoiceService {
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
         InvoiceOutputDto outputDto = new InvoiceOutputDto();
         outputDto.setId(invoice.getId());
-        outputDto.setRepairCost(invoice.getRepairCost());
+        outputDto.setFinalCost(invoice.getFinalCost());
         outputDto.setInvoice(invoice.getInvoice());
         outputDto.setPaid(invoice.isPaid());
         return outputDto;

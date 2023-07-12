@@ -44,11 +44,11 @@ public class CarPartService {
 
 
 
-    public CarPartOutputDto createCarPart(CarPartInputDto carPartInputDto) {
-        CarPart carPart = transferInputDtoToCarPart(carPartInputDto);
-        CarPart savedCarPart = carPartRepository.save(carPart);
-        return transferCarPartToOutputDto(savedCarPart);
-    }
+//    public CarPartOutputDto createCarPart(CarPartInputDto carPartInputDto) {
+//        CarPart carPart = transferInputDtoToCarPart(carPartInputDto);
+//        CarPart savedCarPart = carPartRepository.save(carPart);
+//        return transferCarPartToOutputDto(savedCarPart);
+//    }
 
     public List<CarPartOutputDto> getAllCarParts() {
         List<CarPart> carParts = carPartRepository.findAll();
