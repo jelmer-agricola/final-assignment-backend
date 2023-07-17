@@ -23,6 +23,7 @@ public class Repair {
     private Long partRepairCost;
     private boolean repairFinished;
 
+
     @ManyToOne
     @JsonIgnore
     private CarPart carpart;

@@ -123,6 +123,7 @@ public class InspectionService {
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
         inspectionOutputDto.setInspectionApproved(inspection.isInspectionApproved());
         inspectionOutputDto.setInspected(inspection.isInspected());
+        inspectionOutputDto.setRepairs(inspection.getRepairs());
         return inspectionOutputDto;
     }
 

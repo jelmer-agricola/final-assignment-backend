@@ -43,7 +43,7 @@ public class RepairService {
 //        return transferRepairToOutputDto(repair);
 //    }
 
-    public long createRepair(RepairInputDto repairInputDto, String carPart, long inspection_id) {
+    public long createRepair(RepairInputDto repairInputDto, String carPart,  long inspection_id) {
         Inspection inspection = inspectionRepository.findById(inspection_id)
                 .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
 //repair kan alleen aangemaakt worden als in carpart is aangegeven IsInsepcted.
@@ -64,6 +64,7 @@ public class RepairService {
         Repair savedrepair = repairRepository.save(newrepair);
         return savedrepair.getId();
     }
+
 
 
 
@@ -113,7 +114,7 @@ public class RepairService {
         Repair repair = repairRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
         if (!repair.getInspection().isInspectionApproved()){
-            throw new RecordNotFoundException("The customer has not approved of the Inspection yet");
+            throw new RecordNotFoundException("The customer has not approved of the repairs yet");
         }else{
             repair.setRepairFinished(repairInputDto.isRepairFinished());
             repairRepository.save(repair);
@@ -172,6 +173,7 @@ public String deleteRepair(Long id) {
         repairOutputDto.setRepairDescription(repair.getRepairDescription());
         repairOutputDto.setCarPart(repair.getCarpart());
         repairOutputDto.setInspection(repair.getInspection());
+
         return repairOutputDto;
 
     }

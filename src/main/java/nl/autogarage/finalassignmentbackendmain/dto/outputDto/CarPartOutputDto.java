@@ -17,16 +17,13 @@ public class CarPartOutputDto {
     private boolean partIsInspected;
 
 
-//    waarom stond deze hieronder hier??
-//    private List<CarPart> carParts;
-
     @JsonIgnore
     private Car car;
 
 
     @JsonIgnore
     List<Inspection> inspections;
-//
+
 
 //    public void setCarParts(List<CarPartOutputDto> carParts) {
 //        this.carParts = carParts;

@@ -19,10 +19,15 @@ public class CarPartService {
 
     private final CarRepository carRepository;
     private final CarPartRepository carPartRepository;
+    private final RepairService repairService;
 
-    public CarPartService( CarRepository carRepository, CarPartRepository carPartRepository) {
+
+
+    public CarPartService(CarRepository carRepository, CarPartRepository carPartRepository, RepairService repairService) {
         this.carPartRepository = carPartRepository;
         this.carRepository = carRepository;
+
+        this.repairService = repairService;
     }
 
 //    moet nog aangepast worden.
@@ -138,7 +143,6 @@ public class CarPartService {
             carPartOutputDto.setCar(carPart.getCar());
         }
 
-// Licenseplate??
         return carPartOutputDto;
     }
 }
