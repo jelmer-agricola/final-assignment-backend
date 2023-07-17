@@ -11,6 +11,8 @@ public class CarPartInputDto {
 
     public CarPartEnum carPartEnum;
     public String partStatus;
+    private boolean partIsInspected;
+
 
 
 //    public String state;

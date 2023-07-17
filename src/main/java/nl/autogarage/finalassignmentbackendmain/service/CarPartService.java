@@ -69,6 +69,7 @@ public class CarPartService {
         }
     }
 
+//  Todo   aangeven of carpart isInspected
     public CarPartOutputDto updateCarPart(Long id, CarPartInputDto carPartInputDto) {
         Optional<CarPart> optionalCarPart = carPartRepository.findById(id);
         if (optionalCarPart.isEmpty()) {
@@ -101,7 +102,7 @@ public class CarPartService {
 
         Car car = optionalCar.get();
         Optional<CarPart> optionalCarPart = car.getCarParts().stream()
-                .filter(cp -> cp.getCarPartEnum().toString().equals(carpart))
+                .filter(caPart -> caPart.getCarPartEnum().toString().equals(carpart))
                 .findFirst();
 
         if (optionalCarPart.isEmpty()) {
@@ -110,6 +111,7 @@ public class CarPartService {
 
         CarPart carPart = optionalCarPart.get();
         carPart.setPartStatus(carPartinputDto.getPartStatus());
+        carPart.setPartIsInspected(carPartinputDto.isPartIsInspected());
         CarPart savedCarPart = carPartRepository.save(carPart);
 
         return transferCarPartToOutputDto(savedCarPart);
@@ -130,6 +132,7 @@ public class CarPartService {
         carPartOutputDto.setPartStatus(carPart.getPartStatus());
         carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
         carPartOutputDto.setId(carPart.getId());
+        carPartOutputDto.setPartIsInspected(carPart.isPartIsInspected());
 
         if (carPartOutputDto.getCar() == null) {
             carPartOutputDto.setCar(carPart.getCar());

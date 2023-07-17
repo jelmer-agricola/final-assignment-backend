@@ -11,6 +11,8 @@ public class InspectionInputDto {
     private Long id;
     private Long costEstimate;
     private String inspectionDescription;
-    private boolean repairApproved;
+    private boolean inspectionApproved;
+    private boolean isInspected;
+
 
 }

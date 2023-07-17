@@ -22,11 +22,10 @@ public class CarPart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String partStatus;
-
 // TODO   Zet allle carparts is inspected op false ergens controle dit kan pas doorgezet worden als alle carparts op true staat
 //  Deze check doen moet ik doen voor de invoice
 
-//    private boolean isInspected;
+    private boolean partIsInspected;
 //    in inspection ook een check zetten die staat standaard op false alleen als alle autoonderdleen isINspected true hebben dan kan inspectionFinished kan dan pas op true
 
     @Enumerated(EnumType.STRING)

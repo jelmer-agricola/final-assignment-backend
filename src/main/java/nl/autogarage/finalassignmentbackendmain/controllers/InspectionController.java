@@ -34,8 +34,8 @@ public class InspectionController {
 //    }
 
     @PostMapping("/add/{licenseplate}")
-    public ResponseEntity<InspectionOutputDto>createInspection(@PathVariable String car_licenseplate){
-        return ResponseEntity.ok(inspectionService.createInspection(car_licenseplate));
+    public ResponseEntity<InspectionOutputDto>createInspection(@PathVariable String licenseplate){
+        return ResponseEntity.ok(inspectionService.createInspection(licenseplate));
     }
 
     @GetMapping
@@ -52,7 +52,8 @@ public class InspectionController {
         return ResponseEntity.ok(inspectionOutputDto);
     }
 
-    @PutMapping("/{id}")
+//    PUTMAPPING VOOR MECHANIC DIE KLAAR IS EN VOOR INSPECTIONAPPROVED
+        @PutMapping("/{id}")
     public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
         inspectionOutputDto.setId(id);
         InspectionOutputDto updatedInspection = inspectionService.updateInspection(id, inspectionOutputDto);
@@ -70,6 +71,9 @@ public class InspectionController {
         }
         return ResponseEntity.ok(message);
     }
+
+
+
 
 
 

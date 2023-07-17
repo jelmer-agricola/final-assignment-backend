@@ -36,14 +36,15 @@ public class InspectionService {
 //        return transferInspectionToOutputDto(savedInspection);
 //    }
 
-    public InspectionOutputDto createInspection ( String car_licenseplate){
+    public InspectionOutputDto createInspection(String car_licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(car_licenseplate);
-        if(optionalCar.isEmpty()){
+        if (optionalCar.isEmpty()) {
             throw new RecordNotFoundException("There is no car with license plate " + car_licenseplate);
-            }else{
+        } else {
             Car car = optionalCar.get();
             Inspection newInspection = new Inspection();
             newInspection.setCar(car);
+            newInspection.setInspected(false);
 //            newInspection.setrepairFinished(false);
 //            newInspection.setinspectionApproved(false);
 //            newInspection.setMechanic_done(false);
@@ -90,7 +91,7 @@ public class InspectionService {
             Inspection updateInspection = optionalInspection.get();
             updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
             updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
-            updateInspection.setInspectionApproved(inspectionOutputDto.isRepairApproved());
+            updateInspection.setInspectionApproved(inspectionOutputDto.isInspectionApproved());
             Inspection savedInspection = inspectionRepository.save(updateInspection);
             return transferInspectionToOutputDto(savedInspection);
         }
@@ -105,11 +106,13 @@ public class InspectionService {
         throw new RecordNotFoundException("Inspection with ID " + id + " does not exist");
     }
 
+//    Wordt waarschijnlij kniet gebruikt
     private Inspection transferInputDtoToInspection(InspectionInputDto inspectionInputDto) {
         Inspection inspection = new Inspection();
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
         inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
-        inspection.setInspectionApproved(inspectionInputDto.isRepairApproved());
+        inspection.setInspectionApproved(inspectionInputDto.isInspectionApproved());
+        inspection.setInspected(inspection.isInspected());
         return inspection;
     }
 
@@ -118,7 +121,8 @@ public class InspectionService {
         inspectionOutputDto.setId(inspection.getId());
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
-        inspectionOutputDto.setRepairApproved(inspection.isInspectionApproved());
+        inspectionOutputDto.setInspectionApproved(inspection.isInspectionApproved());
+        inspectionOutputDto.setInspected(inspection.isInspected());
         return inspectionOutputDto;
     }
 

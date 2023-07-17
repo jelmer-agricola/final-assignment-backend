@@ -14,6 +14,8 @@ public class CarPartOutputDto {
 
     public CarPartEnum carPartEnum;
     public String partStatus;
+    private boolean partIsInspected;
+
 
 //    waarom stond deze hieronder hier??
 //    private List<CarPart> carParts;

@@ -26,8 +26,8 @@ ook steeds checken in de dtos; of deze dingen worden doorgevoer.d
 -[x]inspection_id
 
 Inspection
--[]car_licenseplate
-
+-[X]car_licenseplate
+-[ ] IK ZIE NU NIET IN DE INSPECTION DE 
 
 Invoice
 -[]car_licenseplate
