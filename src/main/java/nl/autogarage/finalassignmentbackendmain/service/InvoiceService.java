@@ -28,7 +28,7 @@ public class InvoiceService {
 //     check voor inspectionFinished
 //     check voor carpart isChecked
 
-
+// Todo voor 17-7 aanmaken nieuwe create invoice
 
     public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);

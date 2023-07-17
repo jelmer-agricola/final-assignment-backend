@@ -23,7 +23,7 @@ public class RepairOutputDto {
     @JsonIgnore
     private Inspection inspection;
 
-    @JsonIgnoreProperties (value = {"repairs"})
+    @JsonIgnoreProperties (value = {"repairs", "id", "partStatus"})
     private CarPart carPart;
 
 

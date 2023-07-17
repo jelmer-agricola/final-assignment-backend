@@ -47,6 +47,9 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceOutputDto);
     }
 
+//  Todo getmapping voor user
+
+
     @PutMapping("/{id}")
     public ResponseEntity<InvoiceOutputDto> updateInvoice(@PathVariable Long id, @RequestBody InvoiceOutputDto invoiceOutputDto) {
         invoiceOutputDto.setId(id);
@@ -56,7 +59,9 @@ public class InvoiceController {
         }
         return ResponseEntity.ok(updatedInvoice);
     }
+//    Todo generatepdf of invoice in put
 
+//    Todo put voor invoice paid !!
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInvoice(@PathVariable Long id) {
         String message = invoiceService.deleteInvoice(id);

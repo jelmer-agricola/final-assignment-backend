@@ -27,13 +27,16 @@ ook steeds checken in de dtos; of deze dingen worden doorgevoer.d
 
 Inspection
 -[X]car_licenseplate
--[ ] IK ZIE NU NIET IN DE INSPECTION DE 
+-[ ]
 
 Invoice
 -[]car_licenseplate
 -[]inspection_id
 
 -[] kijken welke crud operations e.d. er weg kunnen.P
+
+User
+
 
 3. Security
    //Todo als ik hiermee verder ga security toevoegen en user en role dus daaran tovoegen vanuit tech it easy
