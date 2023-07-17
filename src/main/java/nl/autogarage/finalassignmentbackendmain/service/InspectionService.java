@@ -3,6 +3,7 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
@@ -29,11 +30,34 @@ public class InspectionService {
         this.repairRepository = repairRepository;
     }
 
-    public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
-        Inspection inspection = transferInputDtoToInspection(inspectionInputDto);
-        Inspection savedInspection = inspectionRepository.save(inspection);
-        return transferInspectionToOutputDto(savedInspection);
+//    public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
+//        Inspection inspection = transferInputDtoToInspection(inspectionInputDto);
+//        Inspection savedInspection = inspectionRepository.save(inspection);
+//        return transferInspectionToOutputDto(savedInspection);
+//    }
+
+    public InspectionOutputDto createInspection ( String car_licenseplate){
+        Optional<Car> optionalCar = carRepository.findByLicenseplate(car_licenseplate);
+        if(optionalCar.isEmpty()){
+            throw new RecordNotFoundException("There is no car with license plate " + car_licenseplate);
+            }else{
+            Car car = optionalCar.get();
+            Inspection newInspection = new Inspection();
+            newInspection.setCar(car);
+//            newInspection.setrepairFinished(false);
+//            newInspection.setinspectionApproved(false);
+//            newInspection.setMechanic_done(false);
+//            newInspection.setCostEstimate(newInspection.getCostEstimate());
+
+            Inspection savedInspection = inspectionRepository.save(newInspection);
+            return transferInspectionToOutputDto(savedInspection);
+
+        }
     }
+
+
+//    /**/
+
 
     public List<InspectionOutputDto> getAllInspections() {
         List<Inspection> inspections = inspectionRepository.findAll();
@@ -66,7 +90,7 @@ public class InspectionService {
             Inspection updateInspection = optionalInspection.get();
             updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
             updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
-            updateInspection.setRepairApproved(inspectionOutputDto.isRepairApproved());
+            updateInspection.setInspectionApproved(inspectionOutputDto.isRepairApproved());
             Inspection savedInspection = inspectionRepository.save(updateInspection);
             return transferInspectionToOutputDto(savedInspection);
         }
@@ -85,7 +109,7 @@ public class InspectionService {
         Inspection inspection = new Inspection();
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
         inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
-        inspection.setRepairApproved(inspectionInputDto.isRepairApproved());
+        inspection.setInspectionApproved(inspectionInputDto.isRepairApproved());
         return inspection;
     }
 
@@ -94,10 +118,9 @@ public class InspectionService {
         inspectionOutputDto.setId(inspection.getId());
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
-        inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
+        inspectionOutputDto.setRepairApproved(inspection.isInspectionApproved());
         return inspectionOutputDto;
     }
-
 
 
 }

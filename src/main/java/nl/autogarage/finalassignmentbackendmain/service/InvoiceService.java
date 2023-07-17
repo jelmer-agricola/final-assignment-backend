@@ -21,6 +21,15 @@ public class InvoiceService {
         this.invoiceRepository = invoiceRepository;
     }
 
+
+//    deze waarden initieel op false
+
+//     check voor repairsFinished
+//     check voor inspectionFinished
+//     check voor carpart isChecked
+
+
+
     public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);
         Invoice savedInvoice = invoiceRepository.save(invoice);

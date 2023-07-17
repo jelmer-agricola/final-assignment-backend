@@ -1,7 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
@@ -46,7 +45,9 @@ public class RepairService {
 
     public long createRepair(RepairInputDto repairInputDto, String carPart, long inspection_id) {
         Inspection inspection = inspectionRepository.findById(inspection_id)
-                .orElseThrow(() -> new RecordNotFoundException("No maintenance found with id: " + inspection_id));
+                .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
+//repair kan alleen aangemaakt worden als in carpart is aangegeven IsInsepcted.
+
         CarPart carPart1 = new CarPart();
         // Next lines are to get the right carpart by name.
         // This is easier for the mechanic then id for every car has the same basic components.
@@ -63,6 +64,7 @@ public class RepairService {
         Repair savedrepair = repairRepository.save(newrepair);
         return savedrepair.getId();
     }
+
 
 
 
@@ -106,18 +108,19 @@ public class RepairService {
             throw new RecordNotFoundException("Repair not found with ID " + id);
         }
     }
+//klopt het met insepctionapproved ??? of gaat het juist om een repair? ?
+    public RepairOutputDto SetPartRepaired (long id, RepairInputDto repairInputDto){
+        Repair repair = repairRepository.findById(id)
+                        .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
+        if (!repair.getInspection().isInspectionApproved()){
+            throw new RecordNotFoundException("The customer has not approved of the Inspection yet");
+        }else{
+            repair.setRepairFinished(repairInputDto.isRepairFinished());
+            repairRepository.save(repair);
+            return transferRepairToOutputDto(repair);
+        }
+    }
 
-//    public RepairOutputDto SetRepaired(long id, RepairInputDto repairInputDto) {
-//        Repair repair = repairRepository.findById(id)
-//                .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
-//        if (!repair.getMaintenance().isRepair_approved()) {
-//            throw new BadRequestException("The customer hasn't approved of the repairs yet");
-//        } else {
-//            repair.setRepair_done(repairInputDto.isRepair_done());
-//            repairRepository.save(repair);
-//            return transferRepairToDto(repair);
-//        }
-//    }
 
 
     //    Todo methode om van de insepections door te geven dat alle carparts weer kloppen.

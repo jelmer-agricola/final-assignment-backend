@@ -17,11 +17,13 @@ of  in repair of in inspection terugzien  wat er gerepareerd is.
 
 Repair
 Zoeken van repairs op licenseplate gelukt!! 
+als je iets toevoegd aan een 
 Krijg bij zoeken van repairs geen carpart mee als je repairs get op licenseplate
 
+
 ook steeds checken in de dtos; of deze dingen worden doorgevoer.d
--[]carpart_id
--[]inspection_id
+-[x]carpart_id --> je hebt de auto en daarin geef je het onderdeel aan. 
+-[x]inspection_id
 
 Inspection
 -[]car_licenseplate

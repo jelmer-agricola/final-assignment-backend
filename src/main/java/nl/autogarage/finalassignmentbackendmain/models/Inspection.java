@@ -24,8 +24,30 @@ public class Inspection {
     private Long id;
     private Long costEstimate;
     private String inspectionDescription;
-    private boolean repairApproved;
+    private boolean inspectionApproved;
+
+
+//    Bij inmaken insepction alle carparts.isInspected op  false
+//    inspectionFinished moet initieel ook op false staan
+
+//    in de put in de service moet je het of true zetten
+
+
+//    i
+
+
+
+
+
 //inspection date
+
+    //    in inspection ook een check zetten die staat standaard op false alleen als alle autoonderdleen isINspected
+    //    true hebben dan kan inspectionFinished kan dan pas op true als alle repairs repairFinished staan
+
+
+//    in  invoice alle dingen checken
+
+
 
     @OneToMany(mappedBy = "inspection")
     List<Repair> repairs;
