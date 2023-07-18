@@ -44,7 +44,7 @@ public class InspectionService {
             Car car = optionalCar.get();
             Inspection newInspection = new Inspection();
             newInspection.setCar(car);
-            newInspection.setInspected(false);
+            newInspection.setInspectionFinished(false);
 //            newInspection.setrepairFinished(false);
 //            newInspection.setinspectionApproved(false);
 //            newInspection.setMechanic_done(false);
@@ -92,6 +92,7 @@ public class InspectionService {
             updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
             updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
             updateInspection.setInspectionApproved(inspectionOutputDto.isInspectionApproved());
+            updateInspection.setInspectionFinished(inspectionOutputDto.isInspectionFinished());
             Inspection savedInspection = inspectionRepository.save(updateInspection);
             return transferInspectionToOutputDto(savedInspection);
         }
@@ -112,7 +113,7 @@ public class InspectionService {
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
         inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
         inspection.setInspectionApproved(inspectionInputDto.isInspectionApproved());
-        inspection.setInspected(inspection.isInspected());
+        inspection.setInspectionFinished(inspection.isInspectionFinished());
         return inspection;
     }
 
@@ -122,7 +123,7 @@ public class InspectionService {
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
         inspectionOutputDto.setInspectionApproved(inspection.isInspectionApproved());
-        inspectionOutputDto.setInspected(inspection.isInspected());
+        inspectionOutputDto.setInspectionFinished(inspection.isInspectionFinished());
         inspectionOutputDto.setRepairs(inspection.getRepairs());
         return inspectionOutputDto;
     }

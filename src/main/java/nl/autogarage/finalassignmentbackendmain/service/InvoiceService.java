@@ -4,7 +4,9 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
+import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,38 +18,67 @@ import java.util.Optional;
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
+    private final InspectionRepository inspectionRepository;
+//    userrepository
 
-    public InvoiceService(InvoiceRepository invoiceRepository) {
+    public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository) {
         this.invoiceRepository = invoiceRepository;
+        this.inspectionRepository = inspectionRepository;
     }
 
 
 //    deze waarden initieel op false
 
 //     check voor repairsFinished
-//     check voor inspectionFinished
+//     check voor inspectionFinished  GEDAAN
 //     check voor carpart isChecked
 
 // Todo voor 17-7 aanmaken nieuwe create invoice
 
-    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
-        Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);
-        Invoice savedInvoice = invoiceRepository.save(invoice);
-        return transferInvoiceToOutputDto(savedInvoice);
+    public Long createInvoice(long inspection_id) {
+        Optional<Inspection> optionalCarInspection = inspectionRepository.findById(inspection_id);
+        if (optionalCarInspection.isEmpty()) {
+            throw new RecordNotFoundException("no Inspection found with id: " + inspection_id);
+//            is inspected dus og
+        } else if (!optionalCarInspection.get().isInspectionFinished()) {
+//            bad request???
+            throw new RecordNotFoundException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
+        } else {
+            Inspection inspection = optionalCarInspection.get();
+            Invoice newInvoice = new Invoice();
+            newInvoice.setPaid(false);
+            newInvoice.setInspection(inspection);
+            newInvoice.setCar(inspection.getCar());
+//            newInvoice.setUser
+
+            newInvoice.setFinalCost(newInvoice.getFinalCost());
+
+            Invoice savedInvoice = invoiceRepository.save(newInvoice);
+
+            return savedInvoice.getId();
+        }
     }
+
+
+//    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
+//        Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);
+//        Invoice savedInvoice = invoiceRepository.save(invoice);
+//        return transferInvoiceToOutputDto(savedInvoice);
+//    }
+//
+
 
     public List<InvoiceOutputDto> getAllInvoices() {
         List<Invoice> invoices = invoiceRepository.findAll();
-        List <InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
-        for (Invoice invoice: invoices){
+        List<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
+        for (Invoice invoice : invoices) {
             invoiceOutputDtos.add(transferInvoiceToOutputDto(invoice));
         }
         return invoiceOutputDtos;
     }
 
 
-
-//     hier heel veel logica toevoegen over de pdf
+    //     hier heel veel logica toevoegen over de pdf
     public InvoiceOutputDto getInvoiceById(Long id) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isPresent()) {
@@ -57,8 +88,6 @@ public class InvoiceService {
             throw new RecordNotFoundException("Invoice not found with ID " + id);
         }
     }
-
-
 
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
@@ -72,6 +101,7 @@ public class InvoiceService {
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
+
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -97,7 +127,6 @@ public class InvoiceService {
         outputDto.setPaid(invoice.isPaid());
         return outputDto;
     }
-
 
 
 }

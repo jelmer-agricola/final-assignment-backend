@@ -27,7 +27,7 @@ public class Inspection {
 //inspection date
 //    approval krijgt de mechanic door
     private boolean inspectionApproved;
-    private boolean isInspected;
+    private boolean inspectionFinished;
 
 
 //    Bij aanmaken insepction alle carparts.isInspected op  false

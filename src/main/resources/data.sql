@@ -79,11 +79,11 @@ INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_
 VALUES (306, 'XY-987-ZZ', 'ENGINE', 'needs replacement', false);
 
 
-INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_approved, is_inspected, car_licenseplate)
+INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_approved, inspection_finished, car_licenseplate)
 VALUES (101, 100, 'Tires need ONDERHOUD', true, false, '34-GBD-06');
 
 
-INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_approved, is_inspected, car_licenseplate)
+INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_approved, inspection_finished, car_licenseplate)
 VALUES (102, 288, 'Inspection 2', true, false, 'AB-123-CD');
 
 

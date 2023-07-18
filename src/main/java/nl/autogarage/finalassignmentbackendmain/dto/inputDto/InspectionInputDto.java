@@ -17,7 +17,7 @@ public class InspectionInputDto {
     private Double costEstimate;
     private String inspectionDescription;
     private boolean inspectionApproved;
-    private boolean isInspected;
+    private boolean inspectionFinished;
 
     List<Repair> repairs;
     private Car car;
