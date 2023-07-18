@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
+import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,11 @@ public class ExceptionController {
     public ResponseEntity<Object> handleDuplicateCarException(DuplicateErrorException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(InvoiceAlreadyExistsException.class)
+    public ResponseEntity<Object> handleInvoiceAlreadyExistsException(InvoiceAlreadyExistsException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+    }
+
 
 }

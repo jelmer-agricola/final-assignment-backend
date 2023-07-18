@@ -3,6 +3,7 @@ package nl.autogarage.finalassignmentbackendmain.service;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
@@ -33,8 +34,7 @@ public class InvoiceService {
 //     check voor inspectionFinished  GEDAAN
 //     check voor carpart isChecked
 
-// Todo voor 17-7 aanmaken nieuwe create invoice
-
+// Todo  invoice koppelt nu aan een inspection_id maar er zijn meerdere die toegebvoegd kunnen worden aan inspection_id
     public Long createInvoice(long inspection_id) {
         Optional<Inspection> optionalCarInspection = inspectionRepository.findById(inspection_id);
         if (optionalCarInspection.isEmpty()) {
@@ -43,11 +43,15 @@ public class InvoiceService {
         } else if (!optionalCarInspection.get().isInspectionFinished()) {
 //            bad request???
             throw new RecordNotFoundException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
+        } else if (invoiceRepository.existsByInspectionId(inspection_id)) {
+            throw new InvoiceAlreadyExistsException("An invoice already exists for this inspection with id " + inspection_id);
         } else {
             Inspection inspection = optionalCarInspection.get();
             Invoice newInvoice = new Invoice();
-            newInvoice.setPaid(false);
+
             newInvoice.setInspection(inspection);
+
+            newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
 //            newInvoice.setUser
 
@@ -58,6 +62,7 @@ public class InvoiceService {
             return savedInvoice.getId();
         }
     }
+
 
 
 //    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
@@ -114,18 +119,21 @@ public class InvoiceService {
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
         invoice.setFinalCost(invoiceInputDto.getFinalCost());
-//        invoice.setInvoice(invoiceInputDto.getInvoice());
+        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
         invoice.setPaid(invoiceInputDto.isPaid());
+        invoice.setInspection(invoiceInputDto.getInspection());
+
         return invoice;
     }
 
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
-        InvoiceOutputDto outputDto = new InvoiceOutputDto();
-        outputDto.setId(invoice.getId());
-        outputDto.setFinalCost(invoice.getFinalCost());
-        outputDto.setInvoicePdf(invoice.getInvoicePdf());
-        outputDto.setPaid(invoice.isPaid());
-        return outputDto;
+        InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
+        invoiceOutputDto.setId(invoice.getId());
+        invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
+        invoiceOutputDto.setPaid(invoice.isPaid());
+        invoiceOutputDto.setInspection(invoice.getInspection());
+        return invoiceOutputDto;
     }
 
 

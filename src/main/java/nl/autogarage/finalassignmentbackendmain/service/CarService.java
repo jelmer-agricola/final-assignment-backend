@@ -45,7 +45,6 @@ public class CarService {
                 carPart.setCar(savedcar);
                 carPartRepository.save(carPart);
         }
-        // TODO: 5-7-2023 paul is awesome 
 
         savedcar = carRepository.save(savedcar);
         return savedcar.getLicenseplate();

@@ -21,9 +21,7 @@ public class Invoice {
     private Long id;
     private Double finalCost;
     public byte invoicePdf;
-
     private boolean paid;
-
 
     public static final double periodicVehicleInspection = 60.00;
 

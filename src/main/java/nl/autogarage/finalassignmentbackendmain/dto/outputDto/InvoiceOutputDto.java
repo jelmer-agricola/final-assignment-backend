@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
@@ -15,10 +16,6 @@ public class InvoiceOutputDto {
     private byte invoicePdf;
     private boolean paid;
 
-
-
-
-    @JsonIgnore
     private Inspection inspection;
     @JsonIgnore
     private Car car;
