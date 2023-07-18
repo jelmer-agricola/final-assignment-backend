@@ -11,7 +11,7 @@ import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 public class RepairInputDto {
 
     private String repairDescription;
-    private Long partRepairCost;
+    private Double partRepairCost;
     private boolean repairFinished;
     private CarPart carPart;
 

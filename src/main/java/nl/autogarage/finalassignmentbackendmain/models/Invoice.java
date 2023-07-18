@@ -19,9 +19,15 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long finalCost;
-    private byte invoice;
+    private Double finalCost;
+    public byte invoicePdf;
+
     private boolean paid;
+
+
+    public static final double periodicVehicleInspection = 60.00;
+
+
 
     @OneToOne
     private Inspection inspection;

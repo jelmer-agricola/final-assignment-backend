@@ -93,7 +93,7 @@ public class InvoiceService {
         InvoiceOutputDto outputDto = new InvoiceOutputDto();
         outputDto.setId(invoice.getId());
         outputDto.setFinalCost(invoice.getFinalCost());
-        outputDto.setInvoice(invoice.getInvoice());
+        outputDto.setInvoicePdf(invoice.getInvoicePdf());
         outputDto.setPaid(invoice.isPaid());
         return outputDto;
     }

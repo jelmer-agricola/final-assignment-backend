@@ -15,7 +15,7 @@ import java.util.List;
 public class InspectionOutputDto {
 
     private Long id;
-    private Long costEstimate;
+    private Double costEstimate;
     private String inspectionDescription;
     private boolean inspectionApproved;
     private boolean isInspected;

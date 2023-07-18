@@ -97,7 +97,7 @@ INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, i
 VALUES (1003, 'repair TRES', 232, true, 102, 201);
 
 
-INSERT INTO invoice (id, final_cost, invoice, paid, car_licenseplate, inspection_id)
+INSERT INTO invoice (id, final_cost, invoice_pdf, paid, car_licenseplate, inspection_id)
 VALUES (101, 123, 1, true, '34-GBD-06', 101);
 
 

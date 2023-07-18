@@ -22,7 +22,7 @@ public class Inspection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long costEstimate;
+    private Double costEstimate;
     private String inspectionDescription;
 //inspection date
 //    approval krijgt de mechanic door
