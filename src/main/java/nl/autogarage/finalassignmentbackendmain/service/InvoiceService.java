@@ -110,7 +110,7 @@ public class InvoiceService {
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
         invoice.setFinalCost(invoiceInputDto.getFinalCost());
-        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
+//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
         invoice.setPaid(invoiceInputDto.isPaid());
         invoice.setInspection(invoiceInputDto.getInspection());
 

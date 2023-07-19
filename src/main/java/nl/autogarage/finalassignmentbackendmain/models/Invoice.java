@@ -22,7 +22,7 @@ public class Invoice {
     private Long id;
     private Double finalCost;
     @Lob
-    @Type(type = "org.hibernate.annotations.Type")
+//    @Type(type = "org.hibernate.annotations.Type")
     public byte[] invoicePdf;
     private boolean paid;
 

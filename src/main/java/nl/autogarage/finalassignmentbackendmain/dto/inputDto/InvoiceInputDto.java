@@ -11,7 +11,7 @@ public class InvoiceInputDto {
 
 
     private Double finalCost;
-    public byte invoicePdf;
+//    public byte invoicePdf;
     private boolean paid;
 
 

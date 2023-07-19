@@ -13,7 +13,7 @@ import nl.autogarage.finalassignmentbackendmain.models.User;
 public class InvoiceOutputDto {
     private Long id;
     private Double finalCost;
-    private byte invoicePdf;
+    private byte[] invoicePdf;
     private boolean paid;
 
     private Inspection inspection;

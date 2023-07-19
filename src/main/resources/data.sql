@@ -91,12 +91,12 @@ VALUES (102, 288, 'Inspection 2', false, 'AB-123-CD', false);
 INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
 VALUES (1001, 'repair uno', 232, true, 101, 101);
 INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
-VALUES (1002, 'repair duo', 232, true, 102, 200);
+VALUES (1002, 'repair duo', 232, true, 102, 201);
 INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
 VALUES (1003, 'repair TRES', 232, true, 102, 201);
 
 
-INSERT INTO invoice (id, final_cost, invoice_pdf, paid, car_licenseplate, inspection_id)
+INSERT INTO invoices (id, final_cost, invoice_pdf, paid, car_licenseplate, inspection_id)
 VALUES (101, 123, 1, true, '34-GBD-06', 101);
 
 
