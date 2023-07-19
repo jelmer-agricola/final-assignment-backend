@@ -3,20 +3,24 @@ Volgorde:
 1. models
 2. Relaties
 
-Part RepairCost lijkt standaard op 100.0 komen te staan dit ergens checken 
+
+[X]carparts en repairs automatisch koppelen 
 
 
-
-
-APPROVAL IN CARPART OF FF NADENKEN WAAR DAT WEL MOET IN INSPECTION SERVICE
-[]approval van klant op andre plek na de carpartcheck en daar ook inschatting maken .
-[] of na de carpartchcek --> klant bellen  of approval geven 
-[]carparts en repairs automatisch koppelen 
 
 UITGECOMMENT IN DATA.SQL de helft van carpartenum
 
-User
+vOOR 20 JUli
+Betaling er doorheen krijgen 
+Carpartcost misschien weg 
+en in Inspection alle costestmitate van de parts bij elkaar optellen
+
+
+
 toevoegen --> van pdf kan al voor security
+
+User
+
 
 
 3. Security

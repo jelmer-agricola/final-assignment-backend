@@ -26,12 +26,13 @@ public class Invoice {
     public static final double periodicVehicleInspection = 60.00;
 
 
-
     @OneToOne
     private Inspection inspection;
-//    Carsatus repaired dus car car?
 
-    //    user User
+    @ManyToOne
+    @JsonIgnore
+    private User user;
+
     @ManyToOne
     @JsonIgnore
     private Car car;

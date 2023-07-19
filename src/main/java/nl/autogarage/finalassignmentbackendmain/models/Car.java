@@ -27,10 +27,12 @@ public class Car {
     private Integer mileage;
     private String owner;
 //inspectiondate
-//    Carstatus
 
+    @ManyToOne
+    @JsonIgnore
+    private User user;
 
-// Relaties
+    // Relaties
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarPart> carParts;
 

@@ -27,14 +27,6 @@ public class InvoiceService {
         this.inspectionRepository = inspectionRepository;
     }
 
-
-//    deze waarden initieel op false
-
-//     check voor repairsFinished
-//     check voor inspectionFinished  GEDAAN
-//     check voor carpart isChecked
-
-// Todo  invoice koppelt nu aan een inspection_id maar er zijn meerdere die toegebvoegd kunnen worden aan inspection_id
     public Long createInvoice(long inspection_id) {
         Optional<Inspection> optionalCarInspection = inspectionRepository.findById(inspection_id);
         if (optionalCarInspection.isEmpty()) {
@@ -64,13 +56,6 @@ public class InvoiceService {
     }
 
 
-
-//    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
-//        Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);
-//        Invoice savedInvoice = invoiceRepository.save(invoice);
-//        return transferInvoiceToOutputDto(savedInvoice);
-//    }
-//
 
 
     public List<InvoiceOutputDto> getAllInvoices() {
@@ -102,6 +87,7 @@ public class InvoiceService {
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
             updatedInvoice.setPaid(invoiceOutputDto.isPaid());
+            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
