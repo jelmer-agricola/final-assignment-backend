@@ -53,7 +53,7 @@ public class InspectionController {
         return ResponseEntity.ok(inspectionOutputDto);
     }
 
-    //     PUTMAPPING VOOR MECHANIC hieronder wordt insepction approved aangegeven
+//    Hieronder kan de mechanic de inspection op inspection is finished zetten
     @PutMapping("/{id}")
     public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
         inspectionOutputDto.setId(id);
@@ -64,6 +64,7 @@ public class InspectionController {
         return ResponseEntity.ok(updatedInspection);
     }
 
+//    Hieronder kan de administratie aangeven dat de client approved
     @PatchMapping("/{id}/client-approval")
     public ResponseEntity<InspectionOutputDto> clientApproval(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto
     ) {

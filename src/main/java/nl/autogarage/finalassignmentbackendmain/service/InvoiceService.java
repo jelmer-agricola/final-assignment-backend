@@ -79,6 +79,11 @@ public class InvoiceService {
         }
     }
 
+//    Todo get allinvoices fromUser
+//    Todo GeneratePdf
+
+
+//  Todo  GetpdfInvoice
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);

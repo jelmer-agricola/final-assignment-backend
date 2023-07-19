@@ -7,20 +7,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "invoice")
+@Table(name = "invoices")
 public class Invoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double finalCost;
-    public byte invoicePdf;
+    @Lob
+    @Type(type = "org.hibernate.annotations.Type")
+    public byte[] invoicePdf;
     private boolean paid;
 
     public static final double periodicVehicleInspection = 60.00;
