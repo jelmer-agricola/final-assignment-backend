@@ -5,7 +5,6 @@ import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.CarService;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +22,6 @@ public class CarController {
     public CarController(CarService carService) {
         this.carService = carService;
     }
-
-
-//    @PostMapping("/add")
-//    public ResponseEntity<Object> addCar(@Valid @RequestBody CarInputDto carInputDto, BindingResult bindingResult) {
-//        if (bindingResult.hasFieldErrors()) {
-//            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
-//        }
-//        CarOutputDto carOutputDto = carService.createCar(carInputDto);
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + carOutputDto).toUriString());
-//        return ResponseEntity.created(uri).body(carOutputDto);
-//    }
 
     @PostMapping("add")
     public ResponseEntity<String> createCar(@Valid @RequestBody CarInputDto carInputDto, BindingResult bindingResult) {
@@ -61,7 +49,7 @@ public class CarController {
 
 
     @GetMapping("/licenseplate")
-    public ResponseEntity<CarOutputDto> getCarById(@RequestParam String licenseplate) {
+    public ResponseEntity<CarOutputDto> getCarByLicenseplate(@RequestParam String licenseplate) {
         CarOutputDto carOutputDto = carService.getCarByLicenseplate(licenseplate);
         return ResponseEntity.ok(carOutputDto);
     }
@@ -75,8 +63,6 @@ public class CarController {
         return ResponseEntity.ok(carService.updateCar(licenseplate, carOutputDto));
     }
 
-
-//    @PutMapping updaten van onderdelen
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteCar(@RequestParam String licenseplate) {

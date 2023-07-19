@@ -41,7 +41,6 @@ public class RepairService {
     public long createRepair(RepairInputDto repairInputDto, String carPart,  long inspection_id) {
         Inspection inspection = inspectionRepository.findById(inspection_id)
                 .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
-//repair kan alleen aangemaakt worden als in carpart is aangegeven IsInsepcted.
 
         CarPart carPart1 = new CarPart();
         // Next lines are to get the right carpart by name.
@@ -50,7 +49,7 @@ public class RepairService {
             String carPartEnum = String.valueOf(carPartx.getCarPartEnum());
             if (Objects.equals(carPartEnum, carPart)) {
                 carPart1 = carPartRepository.findById(carPartx.getId())
-                        .orElseThrow(() -> new RecordNotFoundException("No carpart found to repair"));
+                        .orElseThrow(() -> new RecordNotFoundException("No car part found to repair"));
             }
         }
         Repair newrepair = transferInputDtoToRepair(repairInputDto);
@@ -58,6 +57,31 @@ public class RepairService {
         newrepair.setInspection(inspection);
         Repair savedrepair = repairRepository.save(newrepair);
         return savedrepair.getId();
+    }
+
+    public Map<Long, CarPartEnum> createRepairsForAllCarParts(long inspection_id) {
+        Inspection inspection = inspectionRepository.findById(inspection_id)
+                .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
+
+        Map<Long, CarPartEnum> savedRepairIdsAndCarPartEnums = new HashMap<>();
+
+        for (CarPartEnum carPartEnum : CarPartEnum.values()) {
+            CarPart carPart = inspection.getCar().getCarParts()
+                    .stream()
+                    .filter(part -> part.getCarPartEnum() == carPartEnum)
+                    .findFirst()
+                    .orElseThrow(() -> new RecordNotFoundException("No car part found to repair"));
+
+            Repair newRepair = new Repair();
+            newRepair.setCarPart(carPart);
+            newRepair.setInspection(inspection);
+            // Set other properties for the new repair based on the input or default values
+
+            Repair savedRepair = repairRepository.save(newRepair);
+            savedRepairIdsAndCarPartEnums.put(savedRepair.getId(), carPartEnum);
+        }
+
+        return savedRepairIdsAndCarPartEnums;
     }
 
 
@@ -104,13 +128,11 @@ public class RepairService {
             throw new RecordNotFoundException("Repair not found with ID " + id);
         }
     }
-//klopt het met insepctionapproved ??? of gaat het juist om een repair? ?
+
     public RepairOutputDto SetPartRepaired (long id, RepairInputDto repairInputDto){
         Repair repair = repairRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
-        //        if (!repair.getInspection().isInspectionApproved()){
-//      throw new RecordNotFoundException("The customer has not approved of the repairs yet");
-////        }
+
         if (!repair.getCarPart().isPartIsInspected()) {
 //            Bad requeest
             throw new RecordNotFoundException("The part must be inspected before it can be marked as repaired.");
@@ -164,6 +186,8 @@ public class RepairService {
         repairOutputDto.setRepairDescription(repair.getRepairDescription());
         repairOutputDto.setCarPart(repair.getCarPart());
         repairOutputDto.setInspection(repair.getInspection());
+//        repairOutputDto.setCarPart(repair.getCarPartEnum());
+
 
         return repairOutputDto;
 

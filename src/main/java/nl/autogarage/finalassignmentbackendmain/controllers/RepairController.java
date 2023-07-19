@@ -1,6 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
+import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -42,6 +44,12 @@ public class RepairController {
     }
 
 
+    @PostMapping("/carparts/{inspection_id}")
+    public ResponseEntity<Map<Long, CarPartEnum>> createRepairsForAllCarParts(@PathVariable long inspection_id) {
+        Map<Long, CarPartEnum> repairIdsAndCarPartEnums = repairService.createRepairsForAllCarParts(inspection_id);
+        return ResponseEntity.ok(repairIdsAndCarPartEnums);
+    }
+
     @GetMapping
     public ResponseEntity<List<RepairOutputDto>> getAllRepair() {
         return ResponseEntity.ok().body(repairService.getAllRepair());
@@ -62,7 +70,7 @@ public class RepairController {
         return ResponseEntity.ok(repairOutputDto);
     }
 
-    @PutMapping("part_repaired/{id}")
+    @PatchMapping("part_repaired/{id}")
     public ResponseEntity<RepairOutputDto> SetPartRepaired(@PathVariable long id, @RequestBody RepairInputDto repairInputDto) {
         return ResponseEntity.ok(repairService.SetPartRepaired(id, repairInputDto));
     }

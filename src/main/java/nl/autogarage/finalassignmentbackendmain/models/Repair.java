@@ -22,6 +22,7 @@ public class Repair {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String repairDescription;
+//    ToDo partRepairCost misshcien naar carpart zodat een schatting naar de klant kan
     private Double partRepairCost;
 //    In de post mag dit nu op true komen te staan
     private boolean repairFinished;

@@ -48,14 +48,14 @@ public class CarPartController {
         return ResponseEntity.ok(carPartOutputDto);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CarPartOutputDto> updateCarPart(@PathVariable Long id, @RequestBody CarPartInputDto carPartInputDto) {
-        CarPartOutputDto updatedCarPart = carPartService.updateCarPart(id, carPartInputDto);
-        if (updatedCarPart == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedCarPart);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<CarPartOutputDto> updateCarPart(@PathVariable Long id, @RequestBody CarPartInputDto carPartInputDto) {
+//        CarPartOutputDto updatedCarPart = carPartService.updateCarPart(id, carPartInputDto);
+//        if (updatedCarPart == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedCarPart);
+//    }
 
     @PutMapping("{licenseplate}/status/{carpart}")
     public ResponseEntity<CarPartOutputDto> CarPartCheck(@PathVariable String licenseplate, @PathVariable String carpart, @RequestBody CarPartInputDto carPartinputDto) {
