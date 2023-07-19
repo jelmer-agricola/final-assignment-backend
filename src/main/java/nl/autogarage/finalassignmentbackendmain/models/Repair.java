@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,16 +23,19 @@ public class Repair {
     private Long id;
     private String repairDescription;
     private Double partRepairCost;
+//    In de post mag dit nu op true komen te staan
     private boolean repairFinished;
+
 
 
     @ManyToOne
     @JsonIgnore
-    private CarPart carpart;
+    private CarPart carPart;
 
     @ManyToOne
     @JsonIgnore
     private Inspection inspection;
+
 
 
 }

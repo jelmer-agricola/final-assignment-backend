@@ -4,13 +4,13 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
-import nl.autogarage.finalassignmentbackendmain.models.CarPart;
+import nl.autogarage.finalassignmentbackendmain.models.*;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +22,6 @@ public class CarPartService {
     private final RepairService repairService;
 
 
-
     public CarPartService(CarRepository carRepository, CarPartRepository carPartRepository, RepairService repairService) {
         this.carPartRepository = carPartRepository;
         this.carRepository = carRepository;
@@ -30,7 +29,7 @@ public class CarPartService {
         this.repairService = repairService;
     }
 
-//    moet nog aangepast worden.
+    //    moet nog aangepast worden.
     public Iterable<CarPartOutputDto> getCarPartsByLicensePlate(String licensePlate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licensePlate);
         if (optionalCar.isEmpty()) {
@@ -45,8 +44,6 @@ public class CarPartService {
         }
         return carPartOutputDtos;
     }
-
-
 
 
 //    public CarPartOutputDto createCarPart(CarPartInputDto carPartInputDto) {
@@ -74,7 +71,6 @@ public class CarPartService {
         }
     }
 
-//  Todo   aangeven of carpart isInspected
     public CarPartOutputDto updateCarPart(Long id, CarPartInputDto carPartInputDto) {
         Optional<CarPart> optionalCarPart = carPartRepository.findById(id);
         if (optionalCarPart.isEmpty()) {
@@ -86,6 +82,7 @@ public class CarPartService {
             return transferCarPartToOutputDto(savedCarPart);
         }
     }
+
 
 
     public String deleteCarPart(Long id) {
@@ -123,11 +120,11 @@ public class CarPartService {
     }
 
 
-
     private CarPart transferInputDtoToCarPart(CarPartInputDto carPartInputDto) {
         CarPart carPart = new CarPart();
         carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
         carPart.setPartStatus(carPartInputDto.getPartStatus());
+//        carPart.setClientApproved(carPartInputDto.isClientApproved());
         return carPart;
     }
 
@@ -138,6 +135,7 @@ public class CarPartService {
         carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
         carPartOutputDto.setId(carPart.getId());
         carPartOutputDto.setPartIsInspected(carPart.isPartIsInspected());
+//        carPartOutputDto.setClientApproved(carPart.isClientApproved());
 
         if (carPartOutputDto.getCar() == null) {
             carPartOutputDto.setCar(carPart.getCar());

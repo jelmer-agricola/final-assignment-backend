@@ -4,7 +4,9 @@ import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDt
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
+import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
+import nl.autogarage.finalassignmentbackendmain.models.Repair;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
@@ -70,7 +72,6 @@ public class InspectionService {
     }
 
 
-//    Todo methode om van de inspections de carpart statussen op te halen
 
 
     public InspectionOutputDto getInspectionById(Long id) {
@@ -83,21 +84,56 @@ public class InspectionService {
         }
     }
 
+
+
+    public InspectionOutputDto clientApproval(Long id, InspectionOutputDto inspectionOutputDto) {
+        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
+        if (optionalInspection.isEmpty()) {
+            throw new RecordNotFoundException("No inspection found with id: " + id);
+        }
+
+        Inspection updateApproval = optionalInspection.get();
+        updateApproval.setClientApproved(inspectionOutputDto.isClientApproved());
+
+        boolean allPartsAreInspected = updateApproval.getRepairs().stream()
+                .allMatch(repair -> repair.getCarPart().isPartIsInspected());
+
+        if (allPartsAreInspected) {
+            updateApproval.setClientApproved(true);
+        } else {
+            throw new RecordNotFoundException("Cannot set Client approved to true until all car parts are checked.");
+        }
+
+        Inspection savedInspection = inspectionRepository.save(updateApproval);
+        return transferInspectionToOutputDto(savedInspection);
+    }
+
+
+
     public InspectionOutputDto updateInspection(Long id, InspectionOutputDto inspectionOutputDto) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isEmpty()) {
-            throw new RecordNotFoundException("No insepction with id: " + id);
-        } else {
-            Inspection updateInspection = optionalInspection.get();
-            updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
-            updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
-            updateInspection.setInspectionApproved(inspectionOutputDto.isInspectionApproved());
-            updateInspection.setInspectionFinished(inspectionOutputDto.isInspectionFinished());
-            Inspection savedInspection = inspectionRepository.save(updateInspection);
-            return transferInspectionToOutputDto(savedInspection);
+            throw new RecordNotFoundException("No inspection found with id: " + id);
         }
-    }
 
+        Inspection updateInspection = optionalInspection.get();
+        updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
+        updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
+//        updateInspection.setClientApproved(inspectionOutputDto.isClientApproved());
+
+
+        boolean allRepairsFinished = updateInspection.getRepairs().stream()
+                .allMatch(Repair::isRepairFinished);
+
+        if (allRepairsFinished) {
+            updateInspection.setInspectionFinished(inspectionOutputDto.isInspectionFinished());
+        } else {
+            throw new RecordNotFoundException("Cannot set InspectionFinished to true until all repairs are finished.");
+        }
+
+        Inspection savedInspection = inspectionRepository.save(updateInspection);
+        return transferInspectionToOutputDto(savedInspection);
+    }
 
     public String deleteInspection(Long id) {
         if (inspectionRepository.existsById(id)) {
@@ -112,7 +148,7 @@ public class InspectionService {
         Inspection inspection = new Inspection();
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
         inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
-        inspection.setInspectionApproved(inspectionInputDto.isInspectionApproved());
+        inspection.setClientApproved(inspectionInputDto.isClientApproved());
         inspection.setInspectionFinished(inspection.isInspectionFinished());
         return inspection;
     }
@@ -122,7 +158,7 @@ public class InspectionService {
         inspectionOutputDto.setId(inspection.getId());
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
-        inspectionOutputDto.setInspectionApproved(inspection.isInspectionApproved());
+        inspectionOutputDto.setClientApproved(inspection.isClientApproved());
         inspectionOutputDto.setInspectionFinished(inspection.isInspectionFinished());
         inspectionOutputDto.setRepairs(inspection.getRepairs());
         return inspectionOutputDto;

@@ -1,5 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 
 import jakarta.validation.Valid;
@@ -77,7 +78,6 @@ public class RepairController {
     }
 
 
-//    delete
 
 
     @DeleteMapping("/{id}")

@@ -16,7 +16,6 @@ public class CarPartOutputDto {
     public String partStatus;
     private boolean partIsInspected;
 
-
     @JsonIgnore
     private Car car;
 

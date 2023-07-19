@@ -15,15 +15,13 @@ public class RepairOutputDto {
 //    in outputdto kan je id wel meegeven.
     private Long id;
     private String repairDescription;
-
     private Double partRepairCost;
     private boolean repairFinished;
-
 
     @JsonIgnore
     private Inspection inspection;
 
-    @JsonIgnoreProperties (value = {"repairs", "id", "partStatus"})
+    @JsonIgnoreProperties (value = {"repairs", "partStatus"})
     private CarPart carPart;
 
 

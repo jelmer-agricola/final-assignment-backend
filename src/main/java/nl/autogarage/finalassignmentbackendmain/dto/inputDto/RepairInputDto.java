@@ -14,7 +14,6 @@ public class RepairInputDto {
     private Double partRepairCost;
     private boolean repairFinished;
     private CarPart carPart;
-
     private Inspection inspection;
 
 

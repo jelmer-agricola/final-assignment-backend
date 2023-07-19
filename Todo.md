@@ -3,49 +3,30 @@ Volgorde:
 1. models
 2. Relaties
 
-of  in repair of in inspection terugzien  wat er gerepareerd is.
+Part RepairCost lijkt standaard op 100.0 komen te staan dit ergens checken 
 
 
 
 
--[ ] waar de relaties te zien zijn in pgadmin kijken hoe die gevuld kunnen worden
- Carpparts
--[x] car_licenceplate
-- CarPartStatusCheck --> hier kan de status aangepast worden. Als een car wordt
-- gemaakt dan worden de carparts er automatisch aan toegevoegd.
+APPROVAL IN CARPART OF FF NADENKEN WAAR DAT WEL MOET IN INSPECTION SERVICE
+[]approval van klant op andre plek na de carpartcheck en daar ook inschatting maken .
+[] of na de carpartchcek --> klant bellen  of approval geven 
+[]carparts en repairs automatisch koppelen 
 
-
-Repair
-Zoeken van repairs op licenseplate gelukt!! 
-als je iets toevoegd aan een 
-Krijg bij zoeken van repairs geen carpart mee als je repairs get op licenseplate
-
-
-ook steeds checken in de dtos; of deze dingen worden doorgevoer.d
--[x]carpart_id --> je hebt de auto en daarin geef je het onderdeel aan. 
--[x]inspection_id
-
-Inspection
--[X]car_licenseplate
--[ ]
-
-Invoice
--[]car_licenseplate
--[]inspection_id
-
--[] kijken welke crud operations e.d. er weg kunnen.P
+UITGECOMMENT IN DATA.SQL de helft van carpartenum
 
 User
+toevoegen --> van pdf kan al voor security
 
 
 3. Security
    //Todo als ik hiermee verder ga security toevoegen en user en role dus daaran tovoegen vanuit tech it easy
 
-4. file uploaden
 
-instock verplaatsen naar repair of inspection
+4. Testen
+Kies makkelijke klasses 
 
-Als ik een repair approved of dat soort dingen heb dan moet dat in het systeem aangegeven kunnen worden
+
 
 -[x] add owners to sql
 

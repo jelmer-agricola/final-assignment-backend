@@ -17,7 +17,7 @@ public class InspectionOutputDto {
     private Long id;
     private Double costEstimate;
     private String inspectionDescription;
-    private boolean inspectionApproved;
+    private boolean clientApproved;
     private boolean inspectionFinished;
 
     @JsonIgnoreProperties(value = {"repairDescription"})

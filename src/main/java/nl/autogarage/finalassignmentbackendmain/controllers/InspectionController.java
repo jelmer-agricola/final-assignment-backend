@@ -1,4 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
+
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
@@ -34,7 +35,7 @@ public class InspectionController {
 //    }
 
     @PostMapping("/add/{licenseplate}")
-    public ResponseEntity<InspectionOutputDto>createInspection(@PathVariable String licenseplate){
+    public ResponseEntity<InspectionOutputDto> createInspection(@PathVariable String licenseplate) {
         return ResponseEntity.ok(inspectionService.createInspection(licenseplate));
     }
 
@@ -52,8 +53,8 @@ public class InspectionController {
         return ResponseEntity.ok(inspectionOutputDto);
     }
 
-//    PUTMAPPING VOOR MECHANIC DIE KLAAR IS EN VOOR INSPECTIONAPPROVED
-        @PutMapping("/{id}")
+    //     PUTMAPPING VOOR MECHANIC hieronder wordt insepction approved aangegeven
+    @PutMapping("/{id}")
     public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
         inspectionOutputDto.setId(id);
         InspectionOutputDto updatedInspection = inspectionService.updateInspection(id, inspectionOutputDto);
@@ -63,6 +64,14 @@ public class InspectionController {
         return ResponseEntity.ok(updatedInspection);
     }
 
+    @PatchMapping("/{id}/client-approval")
+    public ResponseEntity<InspectionOutputDto> clientApproval(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto
+    ) {
+        InspectionOutputDto updatedInspection = inspectionService.clientApproval(id, inspectionOutputDto);
+        return ResponseEntity.ok(updatedInspection);
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInspection(@PathVariable Long id) {
         String message = inspectionService.deleteInspection(id);
@@ -71,10 +80,6 @@ public class InspectionController {
         }
         return ResponseEntity.ok(message);
     }
-
-
-
-
 
 
 }

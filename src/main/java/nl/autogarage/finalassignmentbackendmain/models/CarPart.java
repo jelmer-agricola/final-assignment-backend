@@ -25,8 +25,8 @@ public class CarPart {
 // TODO   Zet allle carparts is inspected op false ergens controle dit kan pas doorgezet worden als alle carparts op true staat
 //  Deze check doen moet ik doen voor de invoice
 
-    private boolean partIsInspected;
-//    in inspection ook een check zetten die staat standaard op false alleen als alle autoonderdleen isINspected true hebben dan kan inspectionFinished kan dan pas op true
+    public boolean partIsInspected;
+    //    in inspection ook een check zetten die staat standaard op false alleen als alle autoonderdleen isINspected true hebben dan kan inspectionFinished kan dan pas op true
 
     @Enumerated(EnumType.STRING)
     public CarPartEnum carPartEnum;
@@ -38,7 +38,7 @@ public class CarPart {
     @JsonIgnore
     private Car car;
 
-    @OneToMany(mappedBy = "carpart")
+    @OneToMany(mappedBy = "carPart")
     private List<Repair> repairs;
 
 

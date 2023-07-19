@@ -25,8 +25,8 @@ public class Inspection {
     private Double costEstimate;
     private String inspectionDescription;
 //inspection date
-//    approval krijgt de mechanic door
-    private boolean inspectionApproved;
+    private boolean clientApproved;
+    //    approval geeft de mechanic door
     private boolean inspectionFinished;
 
 
@@ -57,9 +57,6 @@ public class Inspection {
 
 
 
-//    status verschillende onderdelen
-
-//    repairs List Repair
 
 
 }

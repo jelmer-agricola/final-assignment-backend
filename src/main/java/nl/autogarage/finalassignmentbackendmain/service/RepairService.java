@@ -1,23 +1,18 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
+import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
-import nl.autogarage.finalassignmentbackendmain.models.CarPart;
-import nl.autogarage.finalassignmentbackendmain.models.Inspection;
-import nl.autogarage.finalassignmentbackendmain.models.Repair;
+import nl.autogarage.finalassignmentbackendmain.models.*;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.RepairRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class RepairService {
@@ -59,7 +54,7 @@ public class RepairService {
             }
         }
         Repair newrepair = transferInputDtoToRepair(repairInputDto);
-        newrepair.setCarpart(carPart1);
+        newrepair.setCarPart(carPart1);
         newrepair.setInspection(inspection);
         Repair savedrepair = repairRepository.save(newrepair);
         return savedrepair.getId();
@@ -113,8 +108,12 @@ public class RepairService {
     public RepairOutputDto SetPartRepaired (long id, RepairInputDto repairInputDto){
         Repair repair = repairRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
-        if (!repair.getInspection().isInspectionApproved()){
-            throw new RecordNotFoundException("The customer has not approved of the repairs yet");
+        //        if (!repair.getInspection().isInspectionApproved()){
+//      throw new RecordNotFoundException("The customer has not approved of the repairs yet");
+////        }
+        if (!repair.getCarPart().isPartIsInspected()) {
+//            Bad requeest
+            throw new RecordNotFoundException("The part must be inspected before it can be marked as repaired.");
         }else{
             repair.setRepairFinished(repairInputDto.isRepairFinished());
             repairRepository.save(repair);
@@ -122,9 +121,6 @@ public class RepairService {
         }
     }
 
-
-
-    //    Todo methode om van de insepections door te geven dat alle carparts weer kloppen.
 
     public RepairOutputDto updateRepair(Long id, RepairOutputDto repairOutputDto){
         Optional<Repair> optionalRepair = repairRepository.findById(id);
@@ -141,9 +137,7 @@ public class RepairService {
 
     }
 
-
-
-public String deleteRepair(Long id) {
+    public String deleteRepair(Long id) {
     if (repairRepository.existsById(id)) {
         repairRepository.deleteById(id);
         return "Repair with ID: " + id + " has been deleted.";
@@ -152,15 +146,12 @@ public String deleteRepair(Long id) {
 }
 
 
-
-
-
     private Repair transferInputDtoToRepair (RepairInputDto repairInputDto ){
         Repair repair = new Repair();
         repair.setPartRepairCost(repairInputDto.getPartRepairCost());
         repair.setRepairDescription(repairInputDto.getRepairDescription());
         repair.setRepairFinished(repairInputDto.isRepairFinished());
-        repair.setCarpart(repairInputDto.getCarPart());
+        repair.setCarPart(repairInputDto.getCarPart());
         repair.setInspection(repairInputDto.getInspection());
         return repair;
     }
@@ -171,7 +162,7 @@ public String deleteRepair(Long id) {
         repairOutputDto.setRepairFinished(repair.isRepairFinished());
         repairOutputDto.setPartRepairCost(repair.getPartRepairCost());
         repairOutputDto.setRepairDescription(repair.getRepairDescription());
-        repairOutputDto.setCarPart(repair.getCarpart());
+        repairOutputDto.setCarPart(repair.getCarPart());
         repairOutputDto.setInspection(repair.getInspection());
 
         return repairOutputDto;
