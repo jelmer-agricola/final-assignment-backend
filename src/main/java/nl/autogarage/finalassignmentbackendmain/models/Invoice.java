@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,9 +24,10 @@ public class Invoice {
     private Long id;
     private Double finalCost;
     @Lob
-//    @Type(type = "org.hibernate.annotations.Type")
+//    @Type(type = "org.hibernate.type.BinaryType")
     public byte[] invoicePdf;
     private boolean paid;
+    private LocalDate Date;
 
     public static final double periodicVehicleInspection = 60.00;
 

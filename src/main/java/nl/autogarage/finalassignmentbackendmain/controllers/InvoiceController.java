@@ -5,11 +5,13 @@ import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.InvoiceService;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -35,11 +37,10 @@ public class InvoiceController {
 
 
     @PostMapping("/add/{inspection_id}")
-    public ResponseEntity<String> createInvoice(@PathVariable long inspection_id){
+    public ResponseEntity<String> createInvoice(@PathVariable long inspection_id) {
         long createdId = invoiceService.createInvoice(inspection_id);
-        URI uri = URI.create(
-                ServletUriComponentsBuilder.fromCurrentContextPath().path("/invoice/" + createdId).toUriString());
-                return ResponseEntity.created(uri).body("invoice created linked to inspection with id " + inspection_id );
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/invoice/" + createdId).toUriString());
+        return ResponseEntity.created(uri).body("invoice created linked to inspection with id " + inspection_id);
 
     }
 
@@ -57,7 +58,19 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceOutputDto);
     }
 
-//  Todo getmapping voor user
+//  Todo getmapping voor  allinvoices from user
+
+    //     Todo generatePdf
+    @PutMapping("{id}/generateInvoicePdf")
+    public ResponseEntity<String> generateInvoicePdf(@PathVariable long id) throws IOException {
+        return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
+    }
+
+    //    Todo GetpfInovice
+    @GetMapping(value = "/{id}/getpdfinvoice", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable long id) {
+        return invoiceService.getInvoicePdf(id);
+    }
 
 
     @PutMapping("/{id}")
@@ -71,7 +84,7 @@ public class InvoiceController {
     }
 //    Todo generatepdf of invoice in put
 
-//    Todo put voor invoice paid !!
+    //    Todo put voor invoice paid !!
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInvoice(@PathVariable Long id) {
         String message = invoiceService.deleteInvoice(id);

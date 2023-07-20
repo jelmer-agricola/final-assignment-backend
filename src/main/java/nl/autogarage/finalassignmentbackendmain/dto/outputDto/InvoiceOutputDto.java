@@ -8,13 +8,16 @@ import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.User;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class InvoiceOutputDto {
     private Long id;
     private Double finalCost;
-    private byte[] invoicePdf;
+    public byte[] invoicePdf;
     private boolean paid;
+    private LocalDate Date;
 
     private Inspection inspection;
     @JsonIgnore
