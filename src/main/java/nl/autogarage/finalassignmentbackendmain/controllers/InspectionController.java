@@ -1,4 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
+
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
@@ -23,14 +24,19 @@ public class InspectionController {
         this.inspectionService = inspectionService;
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Object> createInspection(@Valid @RequestBody InspectionInputDto inspectionInputDto, BindingResult bindingResult) {
-        if (bindingResult.hasFieldErrors()) {
-            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
-        }
-        InspectionOutputDto inspectionOutputDto = inspectionService.createInspection(inspectionInputDto);
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + inspectionOutputDto.getId()).toUriString());
-        return ResponseEntity.created(uri).body(inspectionOutputDto);
+//    @PostMapping("/add")
+//    public ResponseEntity<Object> createInspection(@Valid @RequestBody InspectionInputDto inspectionInputDto, BindingResult bindingResult) {
+//        if (bindingResult.hasFieldErrors()) {
+//            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
+//        }
+//        InspectionOutputDto inspectionOutputDto = inspectionService.createInspection(inspectionInputDto);
+//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + inspectionOutputDto.getId()).toUriString());
+//        return ResponseEntity.created(uri).body(inspectionOutputDto);
+//    }
+
+    @PostMapping("/add/{licenseplate}")
+    public ResponseEntity<InspectionOutputDto> createInspection(@PathVariable String licenseplate) {
+        return ResponseEntity.ok(inspectionService.createInspection(licenseplate));
     }
 
     @GetMapping
@@ -47,6 +53,7 @@ public class InspectionController {
         return ResponseEntity.ok(inspectionOutputDto);
     }
 
+//    Hieronder kan de mechanic de inspection op inspection is finished zetten
     @PutMapping("/{id}")
     public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
         inspectionOutputDto.setId(id);
@@ -57,6 +64,15 @@ public class InspectionController {
         return ResponseEntity.ok(updatedInspection);
     }
 
+//    Hieronder kan de administratie aangeven dat de client approved
+    @PatchMapping("/{id}/client-approval")
+    public ResponseEntity<InspectionOutputDto> clientApproval(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto
+    ) {
+        InspectionOutputDto updatedInspection = inspectionService.clientApproval(id, inspectionOutputDto);
+        return ResponseEntity.ok(updatedInspection);
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInspection(@PathVariable Long id) {
         String message = inspectionService.deleteInspection(id);
@@ -65,5 +81,6 @@ public class InspectionController {
         }
         return ResponseEntity.ok(message);
     }
+
 
 }

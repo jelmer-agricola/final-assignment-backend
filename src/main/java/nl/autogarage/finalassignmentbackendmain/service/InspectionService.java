@@ -3,8 +3,14 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Car;
+import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
+import nl.autogarage.finalassignmentbackendmain.models.Repair;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
+import nl.autogarage.finalassignmentbackendmain.repositories.RepairRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,16 +21,46 @@ import java.util.Optional;
 public class InspectionService {
 
     private final InspectionRepository inspectionRepository;
+    private final CarPartRepository carPartRepository;
+    private final CarRepository carRepository;
+    private final RepairRepository repairRepository;
 
-    public InspectionService(InspectionRepository inspectionRepository) {
+    public InspectionService(InspectionRepository inspectionRepository, CarPartRepository carPartRepository, CarRepository carRepository, RepairRepository repairRepository) {
         this.inspectionRepository = inspectionRepository;
+        this.carPartRepository = carPartRepository;
+        this.carRepository = carRepository;
+        this.repairRepository = repairRepository;
     }
 
-    public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
-        Inspection inspection = transferInputDtoToInspection(inspectionInputDto);
-        Inspection savedInspection = inspectionRepository.save(inspection);
-        return transferInspectionToOutputDto(savedInspection);
+//    public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
+//        Inspection inspection = transferInputDtoToInspection(inspectionInputDto);
+//        Inspection savedInspection = inspectionRepository.save(inspection);
+//        return transferInspectionToOutputDto(savedInspection);
+//    }
+
+    public InspectionOutputDto createInspection(String car_licenseplate) {
+        Optional<Car> optionalCar = carRepository.findByLicenseplate(car_licenseplate);
+        if (optionalCar.isEmpty()) {
+            throw new RecordNotFoundException("There is no car with license plate " + car_licenseplate);
+        } else {
+            Car car = optionalCar.get();
+            Inspection newInspection = new Inspection();
+            newInspection.setCar(car);
+            newInspection.setInspectionFinished(false);
+//            newInspection.setrepairFinished(false);
+//            newInspection.setinspectionApproved(false);
+//            newInspection.setMechanic_done(false);
+//            newInspection.setCostEstimate(newInspection.getCostEstimate());
+
+            Inspection savedInspection = inspectionRepository.save(newInspection);
+            return transferInspectionToOutputDto(savedInspection);
+
+        }
     }
+
+
+//    /**/
+
 
     public List<InspectionOutputDto> getAllInspections() {
         List<Inspection> inspections = inspectionRepository.findAll();
@@ -34,6 +70,8 @@ public class InspectionService {
         }
         return inspectionOutputDtos;
     }
+
+
 
 
     public InspectionOutputDto getInspectionById(Long id) {
@@ -46,20 +84,56 @@ public class InspectionService {
         }
     }
 
+
+
+    public InspectionOutputDto clientApproval(Long id, InspectionOutputDto inspectionOutputDto) {
+        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
+        if (optionalInspection.isEmpty()) {
+            throw new RecordNotFoundException("No inspection found with id: " + id);
+        }
+
+        Inspection updateApproval = optionalInspection.get();
+        updateApproval.setClientApproved(inspectionOutputDto.isClientApproved());
+
+        boolean allPartsAreInspected = updateApproval.getRepairs().stream()
+                .allMatch(repair -> repair.getCarPart().isPartIsInspected());
+
+        if (allPartsAreInspected) {
+            updateApproval.setClientApproved(true);
+        } else {
+            throw new RecordNotFoundException("Cannot set Client approved to true until all car parts are checked.");
+        }
+
+        Inspection savedInspection = inspectionRepository.save(updateApproval);
+        return transferInspectionToOutputDto(savedInspection);
+    }
+
+
+
     public InspectionOutputDto updateInspection(Long id, InspectionOutputDto inspectionOutputDto) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isEmpty()) {
-            throw new RecordNotFoundException("No insepction with id: " + id);
-        } else {
-            Inspection updateInspection = optionalInspection.get();
-            updateInspection.setDescription(inspectionOutputDto.getDescription());
-            updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
-            updateInspection.setRepairApproved(inspectionOutputDto.isRepairApproved());
-            Inspection savedInspection = inspectionRepository.save(updateInspection);
-            return transferInspectionToOutputDto(savedInspection);
+            throw new RecordNotFoundException("No inspection found with id: " + id);
         }
-    }
 
+        Inspection updateInspection = optionalInspection.get();
+        updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
+        updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
+//        updateInspection.setClientApproved(inspectionOutputDto.isClientApproved());
+
+
+        boolean allRepairsFinished = updateInspection.getRepairs().stream()
+                .allMatch(Repair::isRepairFinished);
+
+        if (allRepairsFinished) {
+            updateInspection.setInspectionFinished(inspectionOutputDto.isInspectionFinished());
+        } else {
+            throw new RecordNotFoundException("Cannot set InspectionFinished to true until all repairs are finished.");
+        }
+
+        Inspection savedInspection = inspectionRepository.save(updateInspection);
+        return transferInspectionToOutputDto(savedInspection);
+    }
 
     public String deleteInspection(Long id) {
         if (inspectionRepository.existsById(id)) {
@@ -69,11 +143,13 @@ public class InspectionService {
         throw new RecordNotFoundException("Inspection with ID " + id + " does not exist");
     }
 
+//    Wordt waarschijnlij kniet gebruikt
     private Inspection transferInputDtoToInspection(InspectionInputDto inspectionInputDto) {
         Inspection inspection = new Inspection();
         inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
-        inspection.setDescription(inspectionInputDto.getDescription());
-        inspection.setRepairApproved(inspectionInputDto.isRepairApproved());
+        inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
+        inspection.setClientApproved(inspectionInputDto.isClientApproved());
+        inspection.setInspectionFinished(inspection.isInspectionFinished());
         return inspection;
     }
 
@@ -81,8 +157,10 @@ public class InspectionService {
         InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
         inspectionOutputDto.setId(inspection.getId());
         inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
-        inspectionOutputDto.setDescription(inspection.getDescription());
-        inspectionOutputDto.setRepairApproved(inspection.isRepairApproved());
+        inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
+        inspectionOutputDto.setClientApproved(inspection.isClientApproved());
+        inspectionOutputDto.setInspectionFinished(inspection.isInspectionFinished());
+        inspectionOutputDto.setRepairs(inspection.getRepairs());
         return inspectionOutputDto;
     }
 

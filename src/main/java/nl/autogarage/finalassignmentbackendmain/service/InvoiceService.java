@@ -3,9 +3,16 @@ package nl.autogarage.finalassignmentbackendmain.service;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
+import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,29 +23,56 @@ import java.util.Optional;
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
+    private final InspectionRepository inspectionRepository;
+//    userrepository
 
-    public InvoiceService(InvoiceRepository invoiceRepository) {
+    public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository) {
         this.invoiceRepository = invoiceRepository;
+        this.inspectionRepository = inspectionRepository;
     }
 
-    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
-        Invoice invoice = transferInputDtoToInvoice(invoiceInputDto);
-        Invoice savedInvoice = invoiceRepository.save(invoice);
-        return transferInvoiceToOutputDto(savedInvoice);
+    public Long createInvoice(long inspection_id) {
+        Optional<Inspection> optionalCarInspection = inspectionRepository.findById(inspection_id);
+        if (optionalCarInspection.isEmpty()) {
+            throw new RecordNotFoundException("no Inspection found with id: " + inspection_id);
+//            is inspected dus og
+        } else if (!optionalCarInspection.get().isInspectionFinished()) {
+//            bad request???
+            throw new RecordNotFoundException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
+        } else if (invoiceRepository.existsByInspectionId(inspection_id)) {
+            throw new InvoiceAlreadyExistsException("An invoice already exists for this inspection with id " + inspection_id);
+        } else {
+            Inspection inspection = optionalCarInspection.get();
+            Invoice newInvoice = new Invoice();
+
+            newInvoice.setInspection(inspection);
+
+            newInvoice.setPaid(false);
+            newInvoice.setCar(inspection.getCar());
+//            newInvoice.setUser
+
+            newInvoice.setFinalCost(newInvoice.getFinalCost());
+
+            Invoice savedInvoice = invoiceRepository.save(newInvoice);
+
+            return savedInvoice.getId();
+        }
     }
+
+
+
 
     public List<InvoiceOutputDto> getAllInvoices() {
         List<Invoice> invoices = invoiceRepository.findAll();
-        List <InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
-        for (Invoice invoice: invoices){
+        List<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
+        for (Invoice invoice : invoices) {
             invoiceOutputDtos.add(transferInvoiceToOutputDto(invoice));
         }
         return invoiceOutputDtos;
     }
 
 
-
-//     hier heel veel logica toevoegen over de pdf
+    //     hier heel veel logica toevoegen over de pdf
     public InvoiceOutputDto getInvoiceById(Long id) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isPresent()) {
@@ -49,8 +83,27 @@ public class InvoiceService {
         }
     }
 
+//    Todo get allinvoices fromUser
 
 
+//    Todo GeneratePdf
+
+
+//  Todo  GetpdfInvoice
+
+//    public ResponseEntity<byte[]> getPdfInvoice(long id) {
+//        Invoice invoice = invoiceRepository.findById(id)
+//                .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
+//        byte[] invoicepdf = invoice.getPdfInvoice();
+//        if (invoicepdf == null){
+//            throw new RecordNotFoundException("no pdf available for this invoice.");
+//        }
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDispositionFormData("attachment", "invoice" + id + ".pdf");
+//        headers.setContentLength(invoicepdf.length);
+//        return new ResponseEntity<>(invoicepdf, headers, HttpStatus.OK);
+//    }
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
@@ -59,10 +112,12 @@ public class InvoiceService {
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
             updatedInvoice.setPaid(invoiceOutputDto.isPaid());
+            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
+
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -74,21 +129,23 @@ public class InvoiceService {
 
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
-        invoice.setRepairCost(invoiceInputDto.getRepairCost());
-//        invoice.setInvoice(invoiceInputDto.getInvoice());
+        invoice.setFinalCost(invoiceInputDto.getFinalCost());
+//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
         invoice.setPaid(invoiceInputDto.isPaid());
+        invoice.setInspection(invoiceInputDto.getInspection());
+
         return invoice;
     }
 
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
-        InvoiceOutputDto outputDto = new InvoiceOutputDto();
-        outputDto.setId(invoice.getId());
-        outputDto.setRepairCost(invoice.getRepairCost());
-        outputDto.setInvoice(invoice.getInvoice());
-        outputDto.setPaid(invoice.isPaid());
-        return outputDto;
+        InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
+        invoiceOutputDto.setId(invoice.getId());
+        invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
+        invoiceOutputDto.setPaid(invoice.isPaid());
+        invoiceOutputDto.setInspection(invoice.getInspection());
+        return invoiceOutputDto;
     }
-
 
 
 }
