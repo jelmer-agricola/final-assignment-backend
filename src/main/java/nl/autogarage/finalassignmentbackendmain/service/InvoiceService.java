@@ -9,6 +9,10 @@ import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -80,10 +84,26 @@ public class InvoiceService {
     }
 
 //    Todo get allinvoices fromUser
+
+
 //    Todo GeneratePdf
 
 
 //  Todo  GetpdfInvoice
+
+//    public ResponseEntity<byte[]> getPdfInvoice(long id) {
+//        Invoice invoice = invoiceRepository.findById(id)
+//                .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
+//        byte[] invoicepdf = invoice.getPdfInvoice();
+//        if (invoicepdf == null){
+//            throw new RecordNotFoundException("no pdf available for this invoice.");
+//        }
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        headers.setContentDispositionFormData("attachment", "invoice" + id + ".pdf");
+//        headers.setContentLength(invoicepdf.length);
+//        return new ResponseEntity<>(invoicepdf, headers, HttpStatus.OK);
+//    }
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
