@@ -60,13 +60,11 @@ public class InvoiceController {
 
 //  Todo getmapping voor  allinvoices from user
 
-    //     Todo generatePdf
     @PutMapping("{id}/generateinvoicepdf")
     public ResponseEntity<String> generateInvoicePdf(@PathVariable long id) throws IOException {
         return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
     }
 
-    //    Todo GetpfInovice
     @GetMapping(value = "/{id}/getpdfinvoice", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getInvoicePdf(@PathVariable long id) {
         return invoiceService.getInvoicePdf(id);

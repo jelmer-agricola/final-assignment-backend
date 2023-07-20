@@ -6,7 +6,7 @@ Volgorde:
 
 [X]carparts en repairs automatisch koppelen 
 
-
+@NOarg constructor overal weghalen?? 
 
 UITGECOMMENT IN DATA.SQL de helft van carpartenum
 
@@ -15,9 +15,10 @@ Betaling er doorheen krijgen
 Carpartcost misschien weg 
 en in Inspection alle costestmitate van de parts bij elkaar optellen
 
+Als je een auto aan inspection toevoegd en de repairs zijn leeg, dan kan je deze mits client approvced
+en inspection finished toevoegen aan een invoices
 
 
-toevoegen --> van pdf kan al voor security
 
 User
 

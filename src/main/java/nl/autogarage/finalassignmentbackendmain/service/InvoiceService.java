@@ -103,76 +103,72 @@ public class InvoiceService {
 public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
 
-    Document document = new Document(PageSize.A4);
+    Document invoicePdf = new Document(PageSize.A4);
     ByteArrayOutputStream pdfOutputStream  = new ByteArrayOutputStream();
-    PdfWriter.getInstance(document, pdfOutputStream );
+    PdfWriter.getInstance(invoicePdf, pdfOutputStream );
 
-    document.open();
+    invoicePdf.open();
     //used font styles
     Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
     fontTitle.setSize(20);
-    Font fontparagraphinfo = FontFactory.getFont(FontFactory.HELVETICA);
-    fontparagraphinfo.setSize(9);
-    Font fontparagraph = FontFactory.getFont(FontFactory.HELVETICA);
-    fontparagraph.setSize(11);
-    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
-    lines.setSize(20);
+    Font fontInfo = FontFactory.getFont(FontFactory.HELVETICA);
+    fontInfo.setSize(9);
+    Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
+    fontSection.setSize(11);
+//    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
+//    lines.setSize(20);
 
     // actual text on the pdf
 
-      // adress info
-    Paragraph paragraph = new Paragraph("GARAGE OkaySjon\n 0906BA Utrecht\n Phone: 030-7654321 \n Email: okaysjon@garage.nl", fontparagraphinfo);
+//    Company info
+    Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\n\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
     paragraph.setAlignment(Element.ALIGN_LEFT);
 
-    //title
-    Paragraph paragraph1 = new Paragraph("INVOICE\n", fontTitle);
-    paragraph1.setAlignment(Paragraph.ALIGN_CENTER);
+    Paragraph paragraph1 = new Paragraph("Factuur\n", fontTitle);
+    paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
 
     //Invoice info
 //    Paragraph paragraph2 = new Paragraph("Customer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
 //            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
 //            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
-//            "License plate: " + invoice.getCar().getLicenseplate(), fontparagraph);
+//            "License plate: " + invoice.getCar().getLicenseplate(), fontSection);
 //    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
 
 
-    Paragraph paragraph3 = new Paragraph("-----------------------------------------------------------------------", lines);
-    paragraph3.setAlignment(Paragraph.ALIGN_TOP);
-
-    Paragraph paragraph4 = new Paragraph(repairItemStringBuilder(invoice), fontparagraph);
-    paragraph4.setAlignment(Element.ALIGN_LEFT);
 
 
-    Paragraph paragraph5 = new Paragraph("-----------------------------------------------------------------------", lines);
-    paragraph5.setAlignment(Paragraph.ALIGN_TOP);
+    Paragraph paragraph3 = new Paragraph(repairItemStringBuilder(invoice), fontSection);
+    paragraph3.setAlignment(Element.ALIGN_LEFT);
 
-    Paragraph paragraph6 = new Paragraph(
+
+
+
+    Paragraph paragraph4 = new Paragraph(
             "Totaal aan reparatie kosten: " + invoice.getFinalCost() +
                     "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
                     "\n" + "Totaal bedrag : " + (invoice.getFinalCost() + Invoice.periodicVehicleInspection),
 //                    +
 //                    "\n" + "Tax: " + Invoice.btw + " %" +
 //                    "\n" + "Total cost after tax: " + invoice.getTotalcost(),
-            fontparagraph);
-    paragraph6.setAlignment(Paragraph.ALIGN_RIGHT);
+            fontSection);
+    paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
 
-    document.add(paragraph);
-    document.add(paragraph1);
+    invoicePdf.add(paragraph);
+    invoicePdf.add(paragraph1);
 //    document.add(paragraph2);
-    document.add(paragraph3);
-    document.add(paragraph4);
-    document.add(paragraph5);
-    document.add(paragraph6);
-    document.close();
+    invoicePdf.add(paragraph3);
+    invoicePdf.add(paragraph4);
+    invoicePdf.close();
 
-    PdfWriter.getInstance(document, pdfOutputStream ).close();
-// Todo User hier nog aan toevoegen
-//    String filename = invoice.getUser().getUsername() + id + "Invoice.pdf";
-    String filename = invoice.getId()+ id + "Invoice.pdf";
+    PdfWriter.getInstance(invoicePdf, pdfOutputStream ).close();
+// Todo User hier nog aan toevoegen regel hieronder is wat er eigenlijk in moet Als de user dus klaar is
+
+//    String filename = invoice.getUser().getUsername() + id + " Invoice.pdf";
+    String filename = invoice.getId()+ id + " Invoice.pdf";
     byte[] pdfinvoice = pdfOutputStream .toByteArray();
     invoice.setInvoicePdf(pdfinvoice);
     invoiceRepository.save(invoice);
-    return filename + " made and stored to the database";
+    return filename + " created and stored to the database";
 }
 
 //  Todo  GetpdfInvoice  Geeft no pdf available for this invoice.
@@ -240,7 +236,7 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     public String repairItemStringBuilder(Invoice invoice) {
         StringBuilder repairitems = new StringBuilder();
         for (Repair repair : invoice.getInspection().getRepairs()) {
-            repairitems.append("Carpart: ").append(repair.getCarPart().getCarPartEnum()).append("\t\t\t").append("Repair-cost: ").append(repair.getPartRepairCost()).append("\t\t\t").append("Repair-done: ").append(repair.isRepairFinished()).append(" \n").append("Notes: ").append(repair.getRepairDescription()).append("\n \n");
+            repairitems.append("Auto onderdeel: ").append(repair.getCarPart().getCarPartEnum()).append("\t\t\t").append("Reparatie kosten: ").append(repair.getPartRepairCost()).append("\t\t\t").append("Reparatie klaar: ").append(repair.isRepairFinished()).append(" \n").append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
         }
         repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();

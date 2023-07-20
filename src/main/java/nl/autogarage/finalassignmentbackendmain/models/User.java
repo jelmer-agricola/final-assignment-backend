@@ -1,7 +1,10 @@
 package nl.autogarage.finalassignmentbackendmain.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
@@ -10,24 +13,38 @@ import java.util.List;
 
 @Getter
 @Setter
-    @Entity
-    @Table(name="users")
-    public class User {
-        @Id
-        private String username;
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "users")
+public class User {
 
-        private String password;
+//    Zoals in hw klas
+    @Id
+    @Column(nullable = false, unique = true)
+    private String username;
+    @NotNull(message = "You should have a password")
+    private String password;
+    @Column
+    private String email;
+    private String firstname;
+    private String lastname;
+    public String apikey;
 
-        private String firstname;
-        private String lastname;
+
+    @Column(nullable = false)
+    private boolean enabled = true;
+
+    @OneToOne
+    private Role role;
 
 
-        @ManyToMany(fetch = FetchType.EAGER)
-        private Collection<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles;
 
     @OneToMany(mappedBy = "user")
     private List<Car> cars;
 
     @OneToMany(mappedBy = "user")
     private List<Invoice> invoices;
-    }
+}
