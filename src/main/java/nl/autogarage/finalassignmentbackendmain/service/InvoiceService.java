@@ -73,14 +73,16 @@ public class InvoiceService {
 
 
 
-    public List<InvoiceOutputDto> getAllInvoices() {
-        List<Invoice> invoices = invoiceRepository.findAll();
-        List<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
-        for (Invoice invoice : invoices) {
-            invoiceOutputDtos.add(transferInvoiceToOutputDto(invoice));
+    public Iterable<InvoiceOutputDto> getAllInvoices() {
+        ArrayList<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
+        Iterable<Invoice> allInvoices = invoiceRepository.findAll();
+        for (Invoice a : allInvoices) {
+            InvoiceOutputDto invoiceDto = transferInvoiceToOutputDto(a);
+            invoiceOutputDtos.add(invoiceDto);
         }
         return invoiceOutputDtos;
     }
+
 
 
     //     hier heel veel logica toevoegen over de pdf
@@ -97,8 +99,8 @@ public class InvoiceService {
 //    Todo get allinvoices fromUser
 
 
-//    Todo GeneratePdf
-public String generateInvoicePdf(long id) throws IOException {
+//    Todo GeneratePdf geeft 500 maakt hem nog niet aan
+public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
 
     Document document = new Document(PageSize.A4);
@@ -107,19 +109,19 @@ public String generateInvoicePdf(long id) throws IOException {
 
     document.open();
     //used font styles
-    Font fontTitle = FontFactory.getFont(FontFactory.TIMES_ROMAN);
-    fontTitle.setSize(22);
-    Font fontparagraphinfo = FontFactory.getFont(FontFactory.TIMES_ROMAN);
-    fontparagraphinfo.setSize(8);
-    Font fontparagraph = FontFactory.getFont(FontFactory.TIMES_ROMAN);
-    fontparagraph.setSize(10);
-    Font lines = FontFactory.getFont(FontFactory.TIMES_ROMAN);
-    lines.setSize(22);
+    Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
+    fontTitle.setSize(20);
+    Font fontparagraphinfo = FontFactory.getFont(FontFactory.HELVETICA);
+    fontparagraphinfo.setSize(9);
+    Font fontparagraph = FontFactory.getFont(FontFactory.HELVETICA);
+    fontparagraph.setSize(11);
+    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
+    lines.setSize(20);
 
     // actual text on the pdf
 
       // adress info
-    Paragraph paragraph = new Paragraph("GARAGE OkaySjon\n  Paleis Noordeinde\n 2500 GK Den Haag\n Phone: 030-12345678 \n Email: SomeFake@Adres.com", fontparagraphinfo);
+    Paragraph paragraph = new Paragraph("GARAGE OkaySjon\n 0906BA Utrecht\n Phone: 030-7654321 \n Email: okaysjon@garage.nl", fontparagraphinfo);
     paragraph.setAlignment(Element.ALIGN_LEFT);
 
     //title
@@ -127,11 +129,11 @@ public String generateInvoicePdf(long id) throws IOException {
     paragraph1.setAlignment(Paragraph.ALIGN_CENTER);
 
     //Invoice info
-    Paragraph paragraph2 = new Paragraph("Costumer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
-            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
-            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
-            "License plate: " + invoice.getCar().getLicenseplate(), fontparagraph);
-    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
+//    Paragraph paragraph2 = new Paragraph("Customer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
+//            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
+//            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
+//            "License plate: " + invoice.getCar().getLicenseplate(), fontparagraph);
+//    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
 
 
     Paragraph paragraph3 = new Paragraph("-----------------------------------------------------------------------", lines);
@@ -144,32 +146,36 @@ public String generateInvoicePdf(long id) throws IOException {
     Paragraph paragraph5 = new Paragraph("-----------------------------------------------------------------------", lines);
     paragraph5.setAlignment(Paragraph.ALIGN_TOP);
 
-//    Paragraph paragraph6 = new Paragraph(
-//            "Total repair cost: " + invoice.getTotalrepaircost() +
-//                    "\n" + "APK: " + Invoice.APKCHECK +
-//                    "\n" + "Total cost without tax: " + (invoice.getTotalrepaircost() + Invoice.APKCHECK) +
+    Paragraph paragraph6 = new Paragraph(
+            "Totaal aan reparatie kosten: " + invoice.getFinalCost() +
+                    "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
+                    "\n" + "Totaal bedrag : " + (invoice.getFinalCost() + Invoice.periodicVehicleInspection),
+//                    +
 //                    "\n" + "Tax: " + Invoice.btw + " %" +
-//                    "\n" + "Total cost after tax: " + invoice.getTotalcost(), fontparagraph);
-//    paragraph6.setAlignment(Paragraph.ALIGN_RIGHT);
+//                    "\n" + "Total cost after tax: " + invoice.getTotalcost(),
+            fontparagraph);
+    paragraph6.setAlignment(Paragraph.ALIGN_RIGHT);
 
     document.add(paragraph);
     document.add(paragraph1);
-    document.add(paragraph2);
+//    document.add(paragraph2);
     document.add(paragraph3);
     document.add(paragraph4);
     document.add(paragraph5);
-//    document.add(paragraph6);
+    document.add(paragraph6);
     document.close();
 
     PdfWriter.getInstance(document, pdfOutputStream ).close();
-    String filename = invoice.getUser().getUsername() + id + "Invoice.pdf";
+// Todo User hier nog aan toevoegen
+//    String filename = invoice.getUser().getUsername() + id + "Invoice.pdf";
+    String filename = invoice.getId()+ id + "Invoice.pdf";
     byte[] pdfinvoice = pdfOutputStream .toByteArray();
     invoice.setInvoicePdf(pdfinvoice);
     invoiceRepository.save(invoice);
     return filename + " made and stored to the database";
 }
 
-//  Todo  GetpdfInvoice TESTEN Geeft op het moent een 500 error
+//  Todo  GetpdfInvoice  Geeft no pdf available for this invoice.
 
     public ResponseEntity<byte[]> getInvoicePdf(long id) {
         Invoice invoice = invoiceRepository.findById(id)
@@ -210,12 +216,10 @@ public String generateInvoicePdf(long id) throws IOException {
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
         invoice.setFinalCost(invoiceInputDto.getFinalCost());
-//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
+        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
         invoice.setPaid(invoiceInputDto.isPaid());
         invoice.setInspection(invoiceInputDto.getInspection());
         invoice.setDate(invoiceInputDto.getDate());
-
-
 
         return invoice;
     }
@@ -238,7 +242,7 @@ public String generateInvoicePdf(long id) throws IOException {
         for (Repair repair : invoice.getInspection().getRepairs()) {
             repairitems.append("Carpart: ").append(repair.getCarPart().getCarPartEnum()).append("\t\t\t").append("Repair-cost: ").append(repair.getPartRepairCost()).append("\t\t\t").append("Repair-done: ").append(repair.isRepairFinished()).append(" \n").append("Notes: ").append(repair.getRepairDescription()).append("\n \n");
         }
-        repairitems.append("APK CHECK \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\tvoldaan");
+        repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();
     }
 }

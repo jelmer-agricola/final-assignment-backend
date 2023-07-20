@@ -44,9 +44,9 @@ public class InvoiceController {
 
     }
 
-    @GetMapping
-    public ResponseEntity<List<InvoiceOutputDto>> getAllInvoices() {
-        return ResponseEntity.ok().body(invoiceService.getAllInvoices());
+    @GetMapping("")
+    public ResponseEntity<Iterable<InvoiceOutputDto>> getAllInvoices() {
+        return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
 
     @GetMapping("/{id}")
@@ -61,7 +61,7 @@ public class InvoiceController {
 //  Todo getmapping voor  allinvoices from user
 
     //     Todo generatePdf
-    @PutMapping("{id}/generateInvoicePdf")
+    @PutMapping("{id}/generateinvoicepdf")
     public ResponseEntity<String> generateInvoicePdf(@PathVariable long id) throws IOException {
         return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
     }
