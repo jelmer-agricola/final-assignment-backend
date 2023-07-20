@@ -103,7 +103,7 @@ public class InvoiceService {
 //        headers.setContentDispositionFormData("attachment", "invoice" + id + ".pdf");
 //        headers.setContentLength(invoicepdf.length);
 //        return new ResponseEntity<>(invoicepdf, headers, HttpStatus.OK);
-//    }
+    }
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
