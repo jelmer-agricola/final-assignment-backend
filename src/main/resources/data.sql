@@ -10,11 +10,11 @@ VALUES ('XY-987-ZZ', 'BMW', 11111, 'De boer');
 
 
 --- Car Parts Car 34-GBD-06
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (100, '34-GBD-06', 'BATTERIES', 'needs repair', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (100, '34-GBD-06', 'BATTERIES', 'needs repair', false, 45);
 
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (101, '34-GBD-06', 'BRAKES', 'needs replacement', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (101, '34-GBD-06', 'BRAKES', 'needs replacement', false, 456);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
 -- VALUES (102, '34-GBD-06', 'TIRES', 'needs maintenance', false);
@@ -32,11 +32,11 @@ VALUES (101, '34-GBD-06', 'BRAKES', 'needs replacement', false);
 -- VALUES (106, '34-GBD-06', 'ENGINE', 'in good condition', false);
 
 -- Car Parts Car AB-123-CD
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (200, 'AB-123-CD', 'BATTERIES', 'in good condition', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (200, 'AB-123-CD', 'BATTERIES', 'in good condition', false, 11);
 
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (201, 'AB-123-CD', 'BRAKES', 'in good condition', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (201, 'AB-123-CD', 'BRAKES', 'in good condition', false, 123);
 
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
 -- VALUES (202, 'AB-123-CD', 'TIRES', 'in good condition', false);
@@ -54,11 +54,11 @@ VALUES (201, 'AB-123-CD', 'BRAKES', 'in good condition', false);
 -- VALUES (206, 'AB-123-CD', 'ENGINE', 'in good condition', false);
 
 -- Car Parts Car XY-987-ZZ
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (300, 'XY-987-ZZ', 'BATTERIES', 'in good condition', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (300, 'XY-987-ZZ', 'BATTERIES', 'in good condition', false, 111);
 
-INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
-VALUES (301, 'XY-987-ZZ', 'BRAKES', 'in good condition', false);
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (301, 'XY-987-ZZ', 'BRAKES', 'in good condition', false, 12);
 
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected)
 -- VALUES (302, 'XY-987-ZZ', 'TIRES', 'in good condition', false);
@@ -77,30 +77,33 @@ VALUES (301, 'XY-987-ZZ', 'BRAKES', 'in good condition', false);
 
 
 
-INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_finished, car_licenseplate,
+
+
+
+INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
                         client_approved)
-VALUES (101, 100, 'Tires need ONDERHOUD', false, '34-GBD-06', false);
+VALUES (101,  'Tires need ONDERHOUD', false, '34-GBD-06', false);
 
 
-INSERT INTO inspection (id, cost_estimate, inspection_description, inspection_finished, car_licenseplate,
+
+INSERT INTO inspection (id,  inspection_description, inspection_finished, car_licenseplate,
                         client_approved)
-VALUES (102, 288, 'Inspection 2', false, 'AB-123-CD', false);
+VALUES (102,  'Inspection 2', false, 'AB-123-CD', false);
 
 
 
-INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
-VALUES (1001, 'repair uno', 232, true, 101, 101);
-INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
-VALUES (1002, 'repair duo', 232, true, 102, 201);
-INSERT INTO repair (id, repair_description, part_repair_cost, repair_finished, inspection_id, car_part_id)
-VALUES (1003, 'repair TRES', 232, true, 102, 201);
+INSERT INTO repair (id, repair_description, repair_finished, inspection_id, car_part_id)
+VALUES (101, 'repair uno', true, 101, 101);
+
+INSERT INTO repair (id, repair_description, repair_finished, inspection_id, car_part_id)
+VALUES (102, 'repair duo', true, 102, 201);
+INSERT INTO repair (id, repair_description, repair_finished, inspection_id, car_part_id)
+VALUES (103, 'repair TRES', true, 102, 201);
 
 -- invoice_pdf moet nog iets mee
-INSERT INTO invoices (id, final_cost,  paid, car_licenseplate, inspection_id)
-VALUES (101, 123,  true, '34-GBD-06', 101);
+-- INSERT INTO invoices (id,   paid, car_licenseplate, inspection_id)
+-- VALUES (1001,  true, 'NEW', 1001);
 
--- INSERT INTO invoices (id, final_cost, invoice_pdf, paid, car_licenseplate, inspection_id, date)
--- VALUES (101, 123, <binary_data>, true, '34-GBD-06', 101, '2023-07-20');
 
 -- ALTER TABLE carparts
 --     ADD COLUMN licenseplate VARCHAR(20);
@@ -108,3 +111,23 @@ VALUES (101, 123,  true, '34-GBD-06', 101);
 -- INSERT INTO carparts (id, in_stock, car_part_enum, licenseplate)
 -- VALUES (101, 12, 'TIRES', '34-GBD-06');
 
+INSERT INTO cars (licenseplate, brand, mileage, owner)
+VALUES ( 'TTBB3', 'Toyota', 50000, 'John Doe');
+
+INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
+                        client_approved)
+VALUES (1001,  'Inspection 2', true, 'TTBB3', true);
+
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (1001, 'TTBB3', 'BATTERIES', 'in good condition', true, 111);
+
+INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+VALUES (1002, 'TTBB3', 'BRAKES', 'in good condition', true, 12);
+
+INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+VALUES (1001, 'repair uno', true, 1001);
+INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+VALUES (1002, 'repair uno', true, 1001);
+
+UPDATE repair SET car_part_id = '1001' WHERE id = 1001;
+UPDATE repair SET car_part_id = '1002' WHERE id = 1002;

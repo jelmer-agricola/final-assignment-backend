@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
-
 import java.time.LocalDate;
 
 @Getter
@@ -22,9 +20,8 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double finalCost;
+
     @Lob
-//    @Type(type = "org.hibernate.type.BinaryType")
     public byte[] invoicePdf;
     private boolean paid;
     private LocalDate Date;
@@ -42,5 +39,36 @@ public class Invoice {
     @ManyToOne
     @JsonIgnore
     private Car car;
+
+
+    private Double totalCostOfRepair;
+
+    private Double finalCost;
+
+
+    public double calculateTotalCost() {
+        double total = 0.0;
+        // The repair price can only be calculated if the customer approved repairs
+        if (inspection.isClientApproved()) {
+//
+
+            for (Repair repair : inspection.getRepairs()) {
+                if (repair.isRepairFinished()) {
+                    CarPart carPart = repair.getCarPart();
+                    if (carPart != null) {
+                        total += carPart.getCarPartCost();
+                    }
+                }
+            }
+        }
+        return total;
+    }
+
+    public double calculateFinalCost() {
+        double total = 0.0;
+        total += periodicVehicleInspection;
+        total += totalCostOfRepair;
+        return total;
+    }
 
 }

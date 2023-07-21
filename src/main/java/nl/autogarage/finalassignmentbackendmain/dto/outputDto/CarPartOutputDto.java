@@ -15,7 +15,8 @@ public class CarPartOutputDto {
     public CarPartEnum carPartEnum;
     public String partStatus;
     private boolean partIsInspected;
-// Todo hier ook een cost estimate toevoegen?
+    private double carPartCost;
+
     @JsonIgnore
     private Car car;
 

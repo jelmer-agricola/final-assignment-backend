@@ -10,7 +10,6 @@ import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,6 +113,7 @@ public class CarPartService {
         CarPart carPart = optionalCarPart.get();
         carPart.setPartStatus(carPartinputDto.getPartStatus());
         carPart.setPartIsInspected(carPartinputDto.isPartIsInspected());
+        carPart.setCarPartCost(carPartinputDto.getCarPartCost());
         CarPart savedCarPart = carPartRepository.save(carPart);
 
         return transferCarPartToOutputDto(savedCarPart);
@@ -124,7 +124,7 @@ public class CarPartService {
         CarPart carPart = new CarPart();
         carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
         carPart.setPartStatus(carPartInputDto.getPartStatus());
-//        carPart.setClientApproved(carPartInputDto.isClientApproved());
+        carPart.setCarPartCost(carPartInputDto.getCarPartCost());
         return carPart;
     }
 
@@ -134,8 +134,8 @@ public class CarPartService {
         carPartOutputDto.setPartStatus(carPart.getPartStatus());
         carPartOutputDto.setCarPartEnum(carPart.getCarPartEnum());
         carPartOutputDto.setId(carPart.getId());
+        carPartOutputDto.setCarPartCost(carPart.getCarPartCost());
         carPartOutputDto.setPartIsInspected(carPart.isPartIsInspected());
-//        carPartOutputDto.setClientApproved(carPart.isClientApproved());
 
         if (carPartOutputDto.getCar() == null) {
             carPartOutputDto.setCar(carPart.getCar());

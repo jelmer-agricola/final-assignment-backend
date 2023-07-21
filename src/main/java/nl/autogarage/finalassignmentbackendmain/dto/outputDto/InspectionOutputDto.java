@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
+import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
 import nl.autogarage.finalassignmentbackendmain.models.Repair;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class InspectionOutputDto {
 
     private Long id;
-    private Double costEstimate;
     private String inspectionDescription;
     private boolean clientApproved;
     private boolean inspectionFinished;
@@ -27,5 +27,21 @@ public class InspectionOutputDto {
     private Car car;
     @JsonIgnore
     private Invoice invoice;
+
+    public double calculateRepairCost() {
+        double total = 0.0;
+        // Totale kosten voor alle repairs
+        if (repairs != null) {
+            for (Repair repair : repairs) {
+                CarPart carPart = repair.getCarPart();
+                if (carPart != null) {
+                    total += carPart.getCarPartCost();
+                }
+            }
+        } else {
+            total = 0.0;
+        }
+        return total;
+    }
 
 }

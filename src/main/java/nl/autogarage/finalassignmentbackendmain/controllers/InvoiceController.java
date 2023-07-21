@@ -61,7 +61,9 @@ public class InvoiceController {
 //  Todo getmapping voor  allinvoices from user
 
     @PutMapping("{id}/generateinvoicepdf")
-    public ResponseEntity<String> generateInvoicePdf(@PathVariable long id) throws IOException {
+    public ResponseEntity<String> generateInvoicePdf(@PathVariable long id)
+            throws IndexOutOfBoundsException
+    {
         return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
     }
 
@@ -80,7 +82,15 @@ public class InvoiceController {
         }
         return ResponseEntity.ok(updatedInvoice);
     }
-//    Todo generatepdf of invoice in put
+
+//    @PutMapping("/{id}/paid")
+//    public ResponseEntity<InvoiceOutputDto> updateInvoicePaidStatus(@PathVariable Long id, @RequestBody boolean isPaid) {
+//        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoicePaidStatus(id, isPaid);
+//        if (updatedInvoice == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(updatedInvoice);
+//    }
 
     //    Todo put voor invoice paid !!
     @DeleteMapping("/{id}")

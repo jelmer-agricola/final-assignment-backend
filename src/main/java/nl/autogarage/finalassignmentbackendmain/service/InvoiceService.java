@@ -2,7 +2,6 @@ package nl.autogarage.finalassignmentbackendmain.service;
 
 
 import com.lowagie.text.Font;
-import com.lowagie.text.Image;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
@@ -22,11 +21,8 @@ import com.lowagie.text.Element;
 import com.lowagie.text.pdf.PdfWriter;
 
 
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -62,7 +58,10 @@ public class InvoiceService {
 //            newInvoice.setUser
             newInvoice.setDate(java.time.LocalDate.now());
 
-            newInvoice.setFinalCost(newInvoice.getFinalCost());
+//
+            newInvoice.setTotalCostOfRepair(newInvoice.calculateTotalCost());
+            newInvoice.setFinalCost(newInvoice.calculateFinalCost());
+
 
             Invoice savedInvoice = invoiceRepository.save(newInvoice);
 
@@ -144,12 +143,9 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
 
 
     Paragraph paragraph4 = new Paragraph(
-            "Totaal aan reparatie kosten: " + invoice.getFinalCost() +
+            "Totaal aan reparatie kosten: " + invoice.getTotalCostOfRepair() +
                     "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
-                    "\n" + "Totaal bedrag : " + (invoice.getFinalCost() + Invoice.periodicVehicleInspection),
-//                    +
-//                    "\n" + "Tax: " + Invoice.btw + " %" +
-//                    "\n" + "Total cost after tax: " + invoice.getTotalcost(),
+                    "\n" + "Totaal bedrag : " + (invoice.getFinalCost()),
             fontSection);
     paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
 
@@ -194,12 +190,26 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
             updatedInvoice.setPaid(invoiceOutputDto.isPaid());
-            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
+//            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
+
+
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
-
+//    public InvoiceOutputDto updateInvoicePaidStatus(long id, boolean isPaid) {
+//        Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
+//        if (optionalInvoice.isEmpty()) {
+//            throw new RecordNotFoundException("No Invoice with id: " + id);
+//        } else {
+//            Invoice updatedInvoice = optionalInvoice.get();
+//            updatedInvoice.setPaid(isPaid);
+//
+//            Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
+//            return transferInvoiceToOutputDto(savedInvoice);
+//
+//        }
+//    }
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -216,6 +226,7 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
         invoice.setPaid(invoiceInputDto.isPaid());
         invoice.setInspection(invoiceInputDto.getInspection());
         invoice.setDate(invoiceInputDto.getDate());
+        invoice.setTotalCostOfRepair(invoiceInputDto.getFinalCost());
 
         return invoice;
     }
@@ -224,9 +235,13 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
         InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
         invoiceOutputDto.setId(invoice.getId());
         invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        if (invoice.getTotalCostOfRepair() != 0.0) {
+            invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        }
         invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
         invoiceOutputDto.setPaid(invoice.isPaid());
         invoiceOutputDto.setInspection(invoice.getInspection());
+
         if (invoice.getDate() != null) {
             invoiceOutputDto.setDate(invoice.getDate());
         }
@@ -236,9 +251,17 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     public String repairItemStringBuilder(Invoice invoice) {
         StringBuilder repairitems = new StringBuilder();
         for (Repair repair : invoice.getInspection().getRepairs()) {
-            repairitems.append("Auto onderdeel: ").append(repair.getCarPart().getCarPartEnum()).append("\t\t\t").append("Reparatie kosten: ").append(repair.getPartRepairCost()).append("\t\t\t").append("Reparatie klaar: ").append(repair.isRepairFinished()).append(" \n").append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
+            boolean repairFinished = repair.isRepairFinished();
+            String repairStatus = repairFinished ? "afgerond" : "niet afgerond";
+            String carPartName = repair.getCarPart().getCarPartEnum().getTranslatedName().toLowerCase();
+
+            repairitems.append("Auto onderdeel: ").append(carPartName).append("\t\t\t")
+                    .append(" Reparatie kosten: €").append(repair.getCarPart().getCarPartCost()).append("\t\t\t")
+                    .append(" Reparatie ").append(repairStatus).append(" \n")
+                    .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
         }
         repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();
     }
+
 }

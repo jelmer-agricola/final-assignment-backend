@@ -1,6 +1,4 @@
 package nl.autogarage.finalassignmentbackendmain.dto.outputDto;
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -15,7 +13,6 @@ public class RepairOutputDto {
 //    in outputdto kan je id wel meegeven.
     private Long id;
     private String repairDescription;
-    private Double partRepairCost;
     private boolean repairFinished;
 
     @JsonIgnore
