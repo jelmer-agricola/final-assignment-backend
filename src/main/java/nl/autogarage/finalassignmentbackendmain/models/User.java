@@ -40,13 +40,13 @@ public class User {
     private String firstname;
     private String lastname;
 
-
-    @OneToOne
-    private Role role;
-
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Collection<Role> roles;
+//
+//    @OneToOne
+//    private Authority authority;
+//
+//
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    private Collection<Role> roles;
 
     @OneToMany(mappedBy = "user")
     private List<Car> cars;

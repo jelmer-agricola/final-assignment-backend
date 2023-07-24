@@ -52,29 +52,46 @@ public class SpringSecurityConfig {
 
     // Authorizatie met jwt
     @Bean
-    protected SecurityFilterChain filter (HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
 
         http
+
                 .csrf().disable()
                 .httpBasic().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                // Wanneer je deze uncomments, staat je hele security open. Je hebt dan alleen nog een jwt nodig.
-//                .requestMatchers("/**").permitAll()
-//                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-//                .requestMatchers(HttpMethod.GET,"/users").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST,"/users/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/cimodules").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/cimodules/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/remotecontrollers").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/remotecontrollers/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/televisions").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/televisions/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.POST, "/wallbrackets").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/wallbrackets/**").hasRole("ADMIN")
-//                // Je mag meerdere paths tegelijk definieren
-                .requestMatchers("/cimodules", "/remotecontrollers", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
+//                 Wanneer je deze regel hieronder   uncomment , staat de hele security open. Je hebt dan alleen nog een jwt nodig.
+                .requestMatchers("/**").permitAll()
+
+
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+
+//                ENDPOINTS CAR
+                .requestMatchers(HttpMethod.POST, "/car").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/car/**").hasRole("ADMIN")
+
+//                ENDPOINTS INVOICE
+                .requestMatchers(HttpMethod.POST, "/invoices").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/invoices/**").hasRole("ADMIN")
+
+//                ENDPOINTS INSPECTION
+//                ENDPOINTS CARPARTS
+//                ENDPOINTS AUTHENTICATION
+
+//                ENDPOINTS REPAIR
+//                ENDPOINTS REPAIR
+
+                .requestMatchers(HttpMethod.POST, "/repair").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/repair/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/televisions").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/televisions/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/wallbrackets").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/wallbrackets/**").hasRole("ADMIN")
+                // Je mag meerdere paths tegelijk definieren
+                .requestMatchers("/invoices", "/repair", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticated").authenticated()
                 .requestMatchers("/authenticate").permitAll()
                 .anyRequest().denyAll()

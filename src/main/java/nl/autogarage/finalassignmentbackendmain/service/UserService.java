@@ -121,8 +121,11 @@ public class UserService {
         var user = new User();
 
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        user.setEnabled(userDto.getEnabled());
+        if (userDto.password != null) {
+            user.setPassword(passwordEncoder.encode(userDto.password));
+        }        user.setEnabled(userDto.getEnabled());
+
+
         user.setApikey(userDto.getApikey());
         user.setEmail(userDto.getEmail());
         user.setInvoices(userDto.getInvoices());
