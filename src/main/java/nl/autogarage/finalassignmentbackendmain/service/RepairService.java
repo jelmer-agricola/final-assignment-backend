@@ -138,6 +138,7 @@ public class RepairService {
             throw new RecordNotFoundException("The part must be inspected before it can be marked as repaired.");
         }else{
             repair.setRepairFinished(repairInputDto.isRepairFinished());
+            repair.setRepairDescription(repairInputDto.getRepairDescription());
             repairRepository.save(repair);
             return transferRepairToOutputDto(repair);
         }
@@ -151,7 +152,6 @@ public class RepairService {
         }else {
             Repair updateRepair = optionalRepair.get();
             updateRepair.setRepairFinished(repairOutputDto.isRepairFinished());
-            updateRepair.setPartRepairCost(repairOutputDto.getPartRepairCost());
             updateRepair.setRepairDescription(repairOutputDto.getRepairDescription());
             Repair savedRepair = repairRepository.save(updateRepair);
             return transferRepairToOutputDto(savedRepair);
@@ -170,7 +170,6 @@ public class RepairService {
 
     private Repair transferInputDtoToRepair (RepairInputDto repairInputDto ){
         Repair repair = new Repair();
-        repair.setPartRepairCost(repairInputDto.getPartRepairCost());
         repair.setRepairDescription(repairInputDto.getRepairDescription());
         repair.setRepairFinished(repairInputDto.isRepairFinished());
         repair.setCarPart(repairInputDto.getCarPart());
@@ -182,11 +181,9 @@ public class RepairService {
         RepairOutputDto repairOutputDto = new RepairOutputDto();
         repairOutputDto.setId(repair.getId());
         repairOutputDto.setRepairFinished(repair.isRepairFinished());
-        repairOutputDto.setPartRepairCost(repair.getPartRepairCost());
         repairOutputDto.setRepairDescription(repair.getRepairDescription());
         repairOutputDto.setCarPart(repair.getCarPart());
         repairOutputDto.setInspection(repair.getInspection());
-//        repairOutputDto.setCarPart(repair.getCarPartEnum());
 
 
         return repairOutputDto;

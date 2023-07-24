@@ -46,11 +46,15 @@ public class InspectionService {
             Car car = optionalCar.get();
             Inspection newInspection = new Inspection();
             newInspection.setCar(car);
+//            newInspection.setTotalCostOfRepair(newInspection.calculateRepairCost());
+
+
             newInspection.setInspectionFinished(false);
+//                     Todo rollen hier ook topeassen
 //            newInspection.setrepairFinished(false);
 //            newInspection.setinspectionApproved(false);
 //            newInspection.setMechanic_done(false);
-//            newInspection.setCostEstimate(newInspection.getCostEstimate());
+
 
             Inspection savedInspection = inspectionRepository.save(newInspection);
             return transferInspectionToOutputDto(savedInspection);
@@ -72,8 +76,6 @@ public class InspectionService {
     }
 
 
-
-
     public InspectionOutputDto getInspectionById(Long id) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isPresent()) {
@@ -83,7 +85,6 @@ public class InspectionService {
             throw new RecordNotFoundException("Inspection not found with ID " + id);
         }
     }
-
 
 
     public InspectionOutputDto clientApproval(Long id, InspectionOutputDto inspectionOutputDto) {
@@ -109,7 +110,6 @@ public class InspectionService {
     }
 
 
-
     public InspectionOutputDto updateInspection(Long id, InspectionOutputDto inspectionOutputDto) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isEmpty()) {
@@ -118,7 +118,7 @@ public class InspectionService {
 
         Inspection updateInspection = optionalInspection.get();
         updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
-        updateInspection.setCostEstimate(inspectionOutputDto.getCostEstimate());
+//        updateInspection.setTotalCostOfRepair(inspectionOutputDto.getTotalCostOfRepair());
 //        updateInspection.setClientApproved(inspectionOutputDto.isClientApproved());
 
 
@@ -143,10 +143,10 @@ public class InspectionService {
         throw new RecordNotFoundException("Inspection with ID " + id + " does not exist");
     }
 
-//    Wordt waarschijnlij kniet gebruikt
+    //    Wordt waarschijnlij kniet gebruikt
     private Inspection transferInputDtoToInspection(InspectionInputDto inspectionInputDto) {
         Inspection inspection = new Inspection();
-        inspection.setCostEstimate(inspectionInputDto.getCostEstimate());
+//        inspection.setTotalCostOfRepair(inspectionInputDto.getTotalCostOfRepair());
         inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
         inspection.setClientApproved(inspectionInputDto.isClientApproved());
         inspection.setInspectionFinished(inspection.isInspectionFinished());
@@ -156,11 +156,13 @@ public class InspectionService {
     private InspectionOutputDto transferInspectionToOutputDto(Inspection inspection) {
         InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
         inspectionOutputDto.setId(inspection.getId());
-        inspectionOutputDto.setCostEstimate(inspection.getCostEstimate());
+//        inspectionOutputDto.setTotalCostOfRepair(inspection.getTotalCostOfRepair());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
         inspectionOutputDto.setClientApproved(inspection.isClientApproved());
         inspectionOutputDto.setInspectionFinished(inspection.isInspectionFinished());
         inspectionOutputDto.setRepairs(inspection.getRepairs());
+//        inspectionOutputDto.setTotalCostOfRepair(inspectionOutputDto.calculateRepairCost());
+
         return inspectionOutputDto;
     }
 

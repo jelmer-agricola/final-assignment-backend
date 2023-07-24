@@ -10,6 +10,7 @@ public class CarPartInputDto {
 
 
     public CarPartEnum carPartEnum;
+    private double carPartCost;
     public String partStatus;
     private boolean partIsInspected;
 

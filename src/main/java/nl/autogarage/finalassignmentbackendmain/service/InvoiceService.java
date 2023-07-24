@@ -1,12 +1,14 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
+import com.lowagie.text.Font;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
+import nl.autogarage.finalassignmentbackendmain.models.Repair;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +16,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.lowagie.text.*;
+import com.lowagie.text.Element;
+import com.lowagie.text.pdf.PdfWriter;
 
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,8 +56,12 @@ public class InvoiceService {
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
 //            newInvoice.setUser
+            newInvoice.setDate(java.time.LocalDate.now());
 
-            newInvoice.setFinalCost(newInvoice.getFinalCost());
+//
+            newInvoice.setTotalCostOfRepair(newInvoice.calculateTotalCost());
+            newInvoice.setFinalCost(newInvoice.calculateFinalCost());
+
 
             Invoice savedInvoice = invoiceRepository.save(newInvoice);
 
@@ -62,14 +72,16 @@ public class InvoiceService {
 
 
 
-    public List<InvoiceOutputDto> getAllInvoices() {
-        List<Invoice> invoices = invoiceRepository.findAll();
-        List<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
-        for (Invoice invoice : invoices) {
-            invoiceOutputDtos.add(transferInvoiceToOutputDto(invoice));
+    public Iterable<InvoiceOutputDto> getAllInvoices() {
+        ArrayList<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
+        Iterable<Invoice> allInvoices = invoiceRepository.findAll();
+        for (Invoice a : allInvoices) {
+            InvoiceOutputDto invoiceDto = transferInvoiceToOutputDto(a);
+            invoiceOutputDtos.add(invoiceDto);
         }
         return invoiceOutputDtos;
     }
+
 
 
     //     hier heel veel logica toevoegen over de pdf
@@ -86,24 +98,90 @@ public class InvoiceService {
 //    Todo get allinvoices fromUser
 
 
-//    Todo GeneratePdf
+//    Todo GeneratePdf geeft 500 maakt hem nog niet aan
+public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
+    Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
+
+    Document invoicePdf = new Document(PageSize.A4);
+    ByteArrayOutputStream pdfOutputStream  = new ByteArrayOutputStream();
+    PdfWriter.getInstance(invoicePdf, pdfOutputStream );
+
+    invoicePdf.open();
+    //used font styles
+    Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
+    fontTitle.setSize(20);
+    Font fontInfo = FontFactory.getFont(FontFactory.HELVETICA);
+    fontInfo.setSize(9);
+    Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
+    fontSection.setSize(11);
+//    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
+//    lines.setSize(20);
+
+    // actual text on the pdf
+
+//    Company info
+    Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\n\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
+    paragraph.setAlignment(Element.ALIGN_LEFT);
+
+    Paragraph paragraph1 = new Paragraph("Factuur\n", fontTitle);
+    paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
+
+    //Invoice info
+//    Paragraph paragraph2 = new Paragraph("Customer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
+//            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
+//            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
+//            "License plate: " + invoice.getCar().getLicenseplate(), fontSection);
+//    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
 
 
-//  Todo  GetpdfInvoice
 
-//    public ResponseEntity<byte[]> getPdfInvoice(long id) {
-//        Invoice invoice = invoiceRepository.findById(id)
-//                .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
-//        byte[] invoicepdf = invoice.getPdfInvoice();
-//        if (invoicepdf == null){
-//            throw new RecordNotFoundException("no pdf available for this invoice.");
-//        }
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_PDF);
-//        headers.setContentDispositionFormData("attachment", "invoice" + id + ".pdf");
-//        headers.setContentLength(invoicepdf.length);
-//        return new ResponseEntity<>(invoicepdf, headers, HttpStatus.OK);
-//    }
+
+    Paragraph paragraph3 = new Paragraph(repairItemStringBuilder(invoice), fontSection);
+    paragraph3.setAlignment(Element.ALIGN_LEFT);
+
+
+
+
+    Paragraph paragraph4 = new Paragraph(
+            "Totaal aan reparatie kosten: " + invoice.getTotalCostOfRepair() +
+                    "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
+                    "\n" + "Totaal bedrag : " + (invoice.getFinalCost()),
+            fontSection);
+    paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
+
+    invoicePdf.add(paragraph);
+    invoicePdf.add(paragraph1);
+//    document.add(paragraph2);
+    invoicePdf.add(paragraph3);
+    invoicePdf.add(paragraph4);
+    invoicePdf.close();
+
+    PdfWriter.getInstance(invoicePdf, pdfOutputStream ).close();
+// Todo User hier nog aan toevoegen regel hieronder is wat er eigenlijk in moet Als de user dus klaar is
+
+//    String filename = invoice.getUser().getUsername() + id + " Invoice.pdf";
+    String filename = invoice.getId()+ id + " Invoice.pdf";
+    byte[] pdfinvoice = pdfOutputStream .toByteArray();
+    invoice.setInvoicePdf(pdfinvoice);
+    invoiceRepository.save(invoice);
+    return filename + " created and stored to the database";
+}
+
+//  Todo  GetpdfInvoice  Geeft no pdf available for this invoice.
+
+    public ResponseEntity<byte[]> getInvoicePdf(long id) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
+        byte[] invoicePdf = invoice.getInvoicePdf();
+        if (invoicePdf == null){
+            throw new RecordNotFoundException("no pdf available for this invoice.");
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "invoice" + id + ".pdf");
+        headers.setContentLength(invoicePdf.length);
+        return new ResponseEntity<>(invoicePdf, headers, HttpStatus.OK);
+    }
 
     public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
@@ -112,12 +190,26 @@ public class InvoiceService {
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
             updatedInvoice.setPaid(invoiceOutputDto.isPaid());
-            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
+//            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
+
+
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
-
+//    public InvoiceOutputDto updateInvoicePaidStatus(long id, boolean isPaid) {
+//        Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
+//        if (optionalInvoice.isEmpty()) {
+//            throw new RecordNotFoundException("No Invoice with id: " + id);
+//        } else {
+//            Invoice updatedInvoice = optionalInvoice.get();
+//            updatedInvoice.setPaid(isPaid);
+//
+//            Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
+//            return transferInvoiceToOutputDto(savedInvoice);
+//
+//        }
+//    }
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -130,9 +222,11 @@ public class InvoiceService {
     private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
         Invoice invoice = new Invoice();
         invoice.setFinalCost(invoiceInputDto.getFinalCost());
-//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
+        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
         invoice.setPaid(invoiceInputDto.isPaid());
         invoice.setInspection(invoiceInputDto.getInspection());
+        invoice.setDate(invoiceInputDto.getDate());
+        invoice.setTotalCostOfRepair(invoiceInputDto.getFinalCost());
 
         return invoice;
     }
@@ -141,11 +235,33 @@ public class InvoiceService {
         InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
         invoiceOutputDto.setId(invoice.getId());
         invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        if (invoice.getTotalCostOfRepair() != 0.0) {
+            invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        }
         invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
         invoiceOutputDto.setPaid(invoice.isPaid());
         invoiceOutputDto.setInspection(invoice.getInspection());
+
+        if (invoice.getDate() != null) {
+            invoiceOutputDto.setDate(invoice.getDate());
+        }
         return invoiceOutputDto;
     }
 
+    public String repairItemStringBuilder(Invoice invoice) {
+        StringBuilder repairitems = new StringBuilder();
+        for (Repair repair : invoice.getInspection().getRepairs()) {
+            boolean repairFinished = repair.isRepairFinished();
+            String repairStatus = repairFinished ? "afgerond" : "niet afgerond";
+            String carPartName = repair.getCarPart().getCarPartEnum().getTranslatedName().toLowerCase();
+
+            repairitems.append("Auto onderdeel: ").append(carPartName).append("\t\t\t")
+                    .append(" Reparatie kosten: €").append(repair.getCarPart().getCarPartCost()).append("\t\t\t")
+                    .append(" Reparatie ").append(repairStatus).append(" \n")
+                    .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
+        }
+        repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
+        return repairitems.toString();
+    }
 
 }

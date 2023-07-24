@@ -1,8 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
-import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
-import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
-import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -22,7 +20,19 @@ public class ExceptionController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+        @ExceptionHandler(value = InvalidPasswordException.class)
+    public ResponseEntity<Object> exception(InvalidPasswordException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
+//    @ExceptionHandler(value = UsernameNotFoundException.class)
+//    public ResponseEntity<Object> exception(UsernameNotFoundException exception) {
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+//    }
+    @ExceptionHandler(value = BadRequestException.class)
+    public ResponseEntity<Object> exception(BadRequestException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
     @ExceptionHandler(DuplicateErrorException.class)
     public ResponseEntity<Object> handleDuplicateCarException(DuplicateErrorException exception) {
