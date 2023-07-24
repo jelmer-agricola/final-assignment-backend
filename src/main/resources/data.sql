@@ -100,17 +100,8 @@ VALUES (102, 'repair duo', true, 102, 201);
 INSERT INTO repair (id, repair_description, repair_finished, inspection_id, car_part_id)
 VALUES (103, 'repair TRES', true, 102, 201);
 
--- invoice_pdf moet nog iets mee
--- INSERT INTO invoices (id,   paid, car_licenseplate, inspection_id)
--- VALUES (1001,  true, 'NEW', 1001);
 
-
--- ALTER TABLE carparts
---     ADD COLUMN licenseplate VARCHAR(20);
---
--- INSERT INTO carparts (id, in_stock, car_part_enum, licenseplate)
--- VALUES (101, 12, 'TIRES', '34-GBD-06');
-
+-- HIER STAAT EEN AUTO KLAAR WAARMEE JE METEEN EEN INVOICE AAN KAN MAKEN.
 INSERT INTO cars (licenseplate, brand, mileage, owner)
 VALUES ( 'TTBB3', 'Toyota', 50000, 'John Doe');
 
@@ -123,6 +114,23 @@ VALUES (1001, 'TTBB3', 'BATTERIES', 'in good condition', true, 111);
 
 INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
 VALUES (1002, 'TTBB3', 'BRAKES', 'in good condition', true, 12);
+
+-- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+-- VALUES (1003, 'TTBB3', 'TIRES', 'in good condition', false, NULL);
+--
+-- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+-- VALUES (1004, 'TTBB3', 'LIGHTS', 'in good condition', false, NULL);
+--
+-- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+-- VALUES (1005, 'TTBB3', 'WINDSHIELD_WIPERS', 'in good condition', false, NULL);
+--
+-- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+-- VALUES (1006, 'TTBB3', 'SUSPENSION', 'in good condition', false, NULL);
+--
+-- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
+-- VALUES (1008, 'TTBB3', 'ENGINE', 'needs replacement', false, NULL);
+
+
 
 INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
 VALUES (1001, 'repair uno', true, 1001);

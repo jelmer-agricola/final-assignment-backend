@@ -25,7 +25,8 @@ public class Invoice {
     public byte[] invoicePdf;
     private boolean paid;
     private LocalDate Date;
-
+    private Double totalCostOfRepair;
+    private Double finalCost;
     public static final double periodicVehicleInspection = 60.00;
 
 
@@ -41,9 +42,7 @@ public class Invoice {
     private Car car;
 
 
-    private Double totalCostOfRepair;
 
-    private Double finalCost;
 
 
     public double calculateTotalCost() {
