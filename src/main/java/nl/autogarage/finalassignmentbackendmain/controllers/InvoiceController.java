@@ -1,19 +1,13 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
-import jakarta.validation.Valid;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.service.InvoiceService;
-import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/invoice")
@@ -73,26 +67,17 @@ public class InvoiceController {
     }
 
 
+//    Hier wordt aangegeven dat invoice betaald word. door de .. administratie
     @PutMapping("/{id}")
-    public ResponseEntity<InvoiceOutputDto> updateInvoice(@PathVariable Long id, @RequestBody InvoiceOutputDto invoiceOutputDto) {
-        invoiceOutputDto.setId(id);
-        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoice(id, invoiceOutputDto);
+    public ResponseEntity<InvoiceOutputDto> updateInvoicePaid(@PathVariable Long id, @RequestBody boolean paid) {
+        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoicePaid(id, paid);
         if (updatedInvoice == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedInvoice);
     }
 
-//    @PutMapping("/{id}/paid")
-//    public ResponseEntity<InvoiceOutputDto> updateInvoicePaidStatus(@PathVariable Long id, @RequestBody boolean isPaid) {
-//        InvoiceOutputDto updatedInvoice = invoiceService.updateInvoicePaidStatus(id, isPaid);
-//        if (updatedInvoice == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(updatedInvoice);
-//    }
 
-    //    Todo put voor invoice paid !!
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInvoice(@PathVariable Long id) {
         String message = invoiceService.deleteInvoice(id);

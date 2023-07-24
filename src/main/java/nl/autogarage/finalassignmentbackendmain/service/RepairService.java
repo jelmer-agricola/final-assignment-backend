@@ -185,7 +185,6 @@ public class RepairService {
         repairOutputDto.setCarPart(repair.getCarPart());
         repairOutputDto.setInspection(repair.getInspection());
 
-
         return repairOutputDto;
 
     }

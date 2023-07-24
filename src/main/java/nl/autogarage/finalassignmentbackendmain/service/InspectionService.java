@@ -50,10 +50,7 @@ public class InspectionService {
 
 
             newInspection.setInspectionFinished(false);
-//                     Todo rollen hier ook topeassen
-//            newInspection.setrepairFinished(false);
-//            newInspection.setinspectionApproved(false);
-//            newInspection.setMechanic_done(false);
+
 
 
             Inspection savedInspection = inspectionRepository.save(newInspection);

@@ -4,6 +4,7 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import com.lowagie.text.Font;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
@@ -43,8 +44,7 @@ public class InvoiceService {
             throw new RecordNotFoundException("no Inspection found with id: " + inspection_id);
 //            is inspected dus og
         } else if (!optionalCarInspection.get().isInspectionFinished()) {
-//            bad request???
-            throw new RecordNotFoundException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
+            throw new BadRequestException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
         } else if (invoiceRepository.existsByInspectionId(inspection_id)) {
             throw new InvoiceAlreadyExistsException("An invoice already exists for this inspection with id " + inspection_id);
         } else {
@@ -84,7 +84,6 @@ public class InvoiceService {
 
 
 
-    //     hier heel veel logica toevoegen over de pdf
     public InvoiceOutputDto getInvoiceById(Long id) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isPresent()) {
@@ -95,10 +94,9 @@ public class InvoiceService {
         }
     }
 
-//    Todo get allinvoices fromUser
+//    Todo get allinvoices fromUser of van licenseplaat?
 
 
-//    Todo GeneratePdf geeft 500 maakt hem nog niet aan
 public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
 
@@ -183,33 +181,20 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
         return new ResponseEntity<>(invoicePdf, headers, HttpStatus.OK);
     }
 
-    public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
+
+    public InvoiceOutputDto updateInvoicePaid(long id, boolean paid) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isEmpty()) {
             throw new RecordNotFoundException("No Invoice with id: " + id);
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
-            updatedInvoice.setPaid(invoiceOutputDto.isPaid());
-//            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
-
+            updatedInvoice.setPaid(paid);
 
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
-//    public InvoiceOutputDto updateInvoicePaidStatus(long id, boolean isPaid) {
-//        Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
-//        if (optionalInvoice.isEmpty()) {
-//            throw new RecordNotFoundException("No Invoice with id: " + id);
-//        } else {
-//            Invoice updatedInvoice = optionalInvoice.get();
-//            updatedInvoice.setPaid(isPaid);
-//
-//            Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
-//            return transferInvoiceToOutputDto(savedInvoice);
-//
-//        }
-//    }
+
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
