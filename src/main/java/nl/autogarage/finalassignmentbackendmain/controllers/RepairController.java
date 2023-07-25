@@ -85,9 +85,6 @@ public class RepairController {
         return ResponseEntity.ok(updatedRepair);
     }
 
-
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRepair(@PathVariable Long id) {
         String message = repairService.deleteRepair(id);

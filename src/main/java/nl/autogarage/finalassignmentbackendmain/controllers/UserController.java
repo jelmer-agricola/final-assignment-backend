@@ -21,23 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "")
-    public ResponseEntity<List<UserDto>> getUsers() {
 
-        List<UserDto> userDtos = userService.getUsers();
-
-        return ResponseEntity.ok().body(userDtos);
-    }
-
-    @GetMapping(value = "/{username}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
-
-        UserDto optionalUser = userService.getUser(username);
-
-
-        return ResponseEntity.ok().body(optionalUser);
-
-    }
 
     @PostMapping(value = "/add/mechanic")
     public ResponseEntity<UserDto> createMechanic(@RequestBody UserDto userDto) {;
@@ -51,7 +35,6 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-
     @PostMapping(value = "/add/office")
     public ResponseEntity<UserDto> createOfficeEmployee(@RequestBody UserDto userDto) {
         String newUsername = userService.createUser(userDto);
@@ -64,13 +47,29 @@ public class UserController {
                 .build(); // Return the UserDto in the response
     }
 
-    @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateKlant(@PathVariable("username") String username, @RequestBody UserDto dto) {
 
-        userService.updateUser(username, dto);
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getUsers() {
 
-        return ResponseEntity.noContent().build();
+        List<UserDto> userDtos = userService.getUsers();
+
+        return ResponseEntity.ok().body(userDtos);
     }
+
+    @GetMapping(value = "/{username}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
+
+        UserDto optionalUser = userService.getUser(username);
+        return ResponseEntity.ok().body(optionalUser);
+
+    }
+
+    @PutMapping(value = "/{username}")
+    public ResponseEntity<String> updateUser(@PathVariable("username") String username, @RequestBody UserDto userDto) {
+        userService.updateUser(username, userDto);
+        return ResponseEntity.ok("User with username " + username + " updated successfully.");
+    }
+
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {

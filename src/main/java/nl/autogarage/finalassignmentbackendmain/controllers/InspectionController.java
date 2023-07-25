@@ -24,16 +24,6 @@ public class InspectionController {
         this.inspectionService = inspectionService;
     }
 
-//    @PostMapping("/add")
-//    public ResponseEntity<Object> createInspection(@Valid @RequestBody InspectionInputDto inspectionInputDto, BindingResult bindingResult) {
-//        if (bindingResult.hasFieldErrors()) {
-//            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
-//        }
-//        InspectionOutputDto inspectionOutputDto = inspectionService.createInspection(inspectionInputDto);
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + inspectionOutputDto.getId()).toUriString());
-//        return ResponseEntity.created(uri).body(inspectionOutputDto);
-//    }
-
     @PostMapping("/add/{licenseplate}")
     public ResponseEntity<InspectionOutputDto> createInspection(@PathVariable String licenseplate) {
         return ResponseEntity.ok(inspectionService.createInspection(licenseplate));

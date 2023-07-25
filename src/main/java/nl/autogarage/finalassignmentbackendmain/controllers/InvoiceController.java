@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/invoice")
@@ -18,7 +19,6 @@ public class InvoiceController {
     public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
-
 //    @PostMapping("/add")
 //    public ResponseEntity<Object> createInvoice(@Valid @RequestBody InvoiceInputDto invoiceInputDto, BindingResult bindingResult) {
 //        if (bindingResult.hasFieldErrors()) {
@@ -29,7 +29,6 @@ public class InvoiceController {
 //        return ResponseEntity.created(uri).body(invoiceOutputDto);
 //    }
 
-
     @PostMapping("/add/{inspection_id}")
     public ResponseEntity<String> createInvoice(@PathVariable long inspection_id) {
         long createdId = invoiceService.createInvoice(inspection_id);
@@ -38,7 +37,7 @@ public class InvoiceController {
 
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<Iterable<InvoiceOutputDto>> getAllInvoices() {
         return ResponseEntity.ok(invoiceService.getAllInvoices());
     }
@@ -52,8 +51,11 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceOutputDto);
     }
 
-//  Todo getmapping voor  allinvoices from owner dus via car?
-
+    @GetMapping("/{licenseplate}/all")
+    public ResponseEntity<List<InvoiceOutputDto>> getAllInvoicesByLicensePlate(@PathVariable String licensePlate) {
+        List<InvoiceOutputDto> invoicesForCar = invoiceService.getAllInvoicesByLicensePlate(licensePlate);
+        return ResponseEntity.ok(invoicesForCar);
+    }
     @PutMapping("{id}/generateinvoicepdf")
     public ResponseEntity<String> generateInvoicePdf(@PathVariable long id)
             throws IndexOutOfBoundsException

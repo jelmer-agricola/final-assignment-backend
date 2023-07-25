@@ -68,7 +68,9 @@ public class UserService {
     }
 
     public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
+        if (!userRepository.existsById(username)) {
+            throw new RecordNotFoundException("User with username " + username + " not found.");
+        }
         User user = userRepository.findById(username).get();
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         user.setEmail(newUser.getEmail());
@@ -76,7 +78,9 @@ public class UserService {
         user.setLastname(newUser.getLastname());
         userRepository.save(user);
     }
+//    Todo eisen voor wachtwoord e.d.
 
+//    Voor admin
     public Set<Authority> getAuthorities(String username) {
         if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
         User user = userRepository.findById(username).get();
@@ -84,13 +88,16 @@ public class UserService {
         return userDto.getAuthorities();
     }
 
-    public void addAuthority(String username, String authority) {
+//    Voor admin
 
+    public void addAuthority(String username, String authority) {
         if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
         User user = userRepository.findById(username).get();
         user.addAuthority(new Authority(username, authority));
         userRepository.save(user);
     }
+
+//    Voor admin
 
     public void removeAuthority(String username, String authority) {
         if (!Objects.equals(authority, "ROLE_OFFICE") & !Objects.equals(authority, "ROLE_ADMIN") & !Objects.equals(authority, "ROLE_MECHANIC")) {
