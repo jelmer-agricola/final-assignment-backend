@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-//Todo als ik hiermee verder ga security toevoegen en user vanuit tech it easy
 
 @Getter
 @Setter
@@ -41,8 +40,7 @@ public class User {
     private String lastname;
 
 //
-//    @OneToOne
-//    private Authority authority;
+
 //
 //
 //    @ManyToMany(fetch = FetchType.EAGER)

@@ -5,6 +5,7 @@ import nl.autogarage.finalassignmentbackendmain.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;
-
     private final JwtRequestFilter jwtRequestFilter;
 
     public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter) {
@@ -53,47 +53,71 @@ public class SpringSecurityConfig {
     // Authorizatie met jwt
     @Bean
     protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
-
         http
-
                 .csrf().disable()
                 .httpBasic().disable()
                 .cors().and()
                 .authorizeHttpRequests()
 //                 Wanneer je deze regel hieronder   uncomment , staat de hele security open. Je hebt dan alleen nog een jwt nodig.
                 .requestMatchers("/**").permitAll()
-
-
+//              ENDPOINTS USERS
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+//                Create users --> voor office en voor mechanic dit kan amdmin doen of kijken naar post van authorities
+                .requestMatchers(HttpMethod.GET, "/users/{username}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.PUT, "/users/{username}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.DELETE, "/users/{username}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.GET, "/users/{username}/authorities").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.POST, "/users/{username}/authorities").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.DELETE, "/users/{username}/authorities/{authority}").hasAnyRole("ADMIN", "OFFICE")
 
 //                ENDPOINTS CAR
-                .requestMatchers(HttpMethod.POST, "/car").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/car/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/car/add").hasRole("MECHANIC")
+
+                .requestMatchers(HttpMethod.GET, "/car").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/car/licenseplate").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PUT, "/car/licenseplate").hasAnyRole("ADMIN", "MECHANIC")
+                .requestMatchers(HttpMethod.DELETE, "/car/delete").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
 
 //                ENDPOINTS INVOICE
-                .requestMatchers(HttpMethod.POST, "/invoices").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/invoices/**").hasRole("ADMIN")
-
+                .requestMatchers(HttpMethod.POST, "/invoices").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.GET, "/invoice/").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.POST, "/invoice/add/{inspection_id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.PUT, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.DELETE, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.PUT, "/invoice/{id}/generateinvoicepdf").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.GET, "/invoice/{id}/getpdfinvoice").hasAnyRole("ADMIN", "OFFICE")
 //                ENDPOINTS INSPECTION
+                .requestMatchers(HttpMethod.POST, "/inspection").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/inspection").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.POST, "/inspection/add/{licenseplate}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/inspection/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PUT, "/inspection/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.DELETE, "/inspection/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PATCH, "/inspection/{id}/client-approval").hasRole("OFFICE")
+//                ENDPOINTS REPAIR
+                .requestMatchers(HttpMethod.POST, "/repair").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/repair").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.POST, "/repair/add/{carpart}/{inspection_id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.POST, "/repair/carparts/{inspection_id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/repair/lp/{licenseplate}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PATCH, "/repair/part_repaired/{id}").hasAnyRole("ADMIN", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/repair/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PUT, "/repair/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.DELETE, "/repair/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
 //                ENDPOINTS CARPARTS
+                .requestMatchers(HttpMethod.GET, "/parts").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/parts/license/{licenseplate}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/parts/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.DELETE, "/parts/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.PUT, "/parts/{licenseplate}/status/{carpart}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
 //                ENDPOINTS AUTHENTICATION
-
-//                ENDPOINTS REPAIR
-//                ENDPOINTS REPAIR
-
-                .requestMatchers(HttpMethod.POST, "/repair").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/repair/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/televisions").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/televisions/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/wallbrackets").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/wallbrackets/**").hasRole("ADMIN")
-                // Je mag meerdere paths tegelijk definieren
-                .requestMatchers("/invoices", "/repair", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/authenticated").authenticated()
-                .requestMatchers("/authenticate").permitAll()
+                .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
+
+                // Je mag meerdere paths tegelijk definieren
+//                .requestMatchers("/invoices", "/repair", "/televisions", "/wallbrackets").hasAnyRole("ADMIN", "USER")
+
                 .anyRequest().denyAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

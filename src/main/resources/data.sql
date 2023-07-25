@@ -76,6 +76,7 @@ VALUES (301, 'XY-987-ZZ', 'BRAKES', 'in good condition', false, 12);
 -- VALUES (306, 'XY-987-ZZ', 'ENGINE', 'needs replacement', false);
 
 
+--  USERS EN AUTHORITIES TOEVEOGEN
 
 
 
@@ -103,7 +104,7 @@ VALUES (103, 'repair TRES', true, 102, 201);
 
 -- HIER STAAT EEN AUTO KLAAR WAARMEE JE METEEN EEN INVOICE AAN KAN MAKEN.
 INSERT INTO cars (licenseplate, brand, mileage, owner)
-VALUES ( 'TTBB3', 'Toyota', 50000, 'John Doe');
+VALUES ( 'TTBB3', 'Toyota', 50000, 'Jan Akkerman');
 
 INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
                         client_approved)

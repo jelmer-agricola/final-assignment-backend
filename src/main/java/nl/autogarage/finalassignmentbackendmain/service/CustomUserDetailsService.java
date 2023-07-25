@@ -1,13 +1,13 @@
 package nl.autogarage.finalassignmentbackendmain.service;
+
 import nl.autogarage.finalassignmentbackendmain.dto.Security.UserDto;
 import nl.autogarage.finalassignmentbackendmain.models.Authority;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
-
 
 
 import java.util.ArrayList;
@@ -20,12 +20,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
 
+
+
     public CustomUserDetailsService(UserService userService) {
         this.userService = userService;
     }
 
-//    @Autowired
-//    private AuthorityService authorityService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {

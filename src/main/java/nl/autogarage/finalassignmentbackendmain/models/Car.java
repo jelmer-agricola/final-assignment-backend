@@ -43,8 +43,6 @@ public class Car {
     @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Invoice> invoices;
 
-//    @ManyToOne
-//    @JsonIgnore
-//    private User user;
+
 
 }

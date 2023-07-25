@@ -31,6 +31,7 @@ public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final InspectionRepository inspectionRepository;
+
 //    userrepository
 
     public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository) {
@@ -55,7 +56,7 @@ public class InvoiceService {
 
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
-//            newInvoice.setUser
+//            newInvoice.setUser(inspection.getCar().getOwner());
             newInvoice.setDate(java.time.LocalDate.now());
 
 //
@@ -95,6 +96,7 @@ public class InvoiceService {
     }
 
 //    Todo get allinvoices fromUser of van licenseplaat?
+//    en in config toevoegen dan
 
 
 public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
@@ -112,31 +114,31 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     fontInfo.setSize(9);
     Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
     fontSection.setSize(11);
-//    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
-//    lines.setSize(20);
+
 
     // actual text on the pdf
 
 //    Company info
-    Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\n\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
+    Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
     paragraph.setAlignment(Element.ALIGN_LEFT);
 
-    Paragraph paragraph1 = new Paragraph("Factuur\n", fontTitle);
+    Paragraph paragraph1 = new Paragraph("Factuur", fontTitle);
     paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
 
-    //Invoice info
-//    Paragraph paragraph2 = new Paragraph("Customer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
-//            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
-//            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
-//            "License plate: " + invoice.getCar().getLicenseplate(), fontSection);
-//    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
+// Invoice info
+    Paragraph paragraph2 = new Paragraph(
+            "Klant: " + invoice.getCar().getOwner() + "\n" +
+                    "Date: " + invoice.getDate() + "\n" +
+                    "Factuurnummer: " + invoice.getId() + "\n" +
+                    "Nummerplaat: " + invoice.getCar().getLicenseplate(), fontSection);
+    paragraph2.setAlignment(Paragraph.ALIGN_LEFT);
 
-
-
+// Add some spacing between paragraphs
+    paragraph1.setSpacingAfter(10);
+    paragraph2.setSpacingAfter(10);
 
     Paragraph paragraph3 = new Paragraph(repairItemStringBuilder(invoice), fontSection);
     paragraph3.setAlignment(Element.ALIGN_LEFT);
-
 
 
 
@@ -149,7 +151,7 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
 
     invoicePdf.add(paragraph);
     invoicePdf.add(paragraph1);
-//    document.add(paragraph2);
+    invoicePdf.add(paragraph2);
     invoicePdf.add(paragraph3);
     invoicePdf.add(paragraph4);
     invoicePdf.close();
@@ -165,7 +167,6 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     return filename + " created and stored to the database";
 }
 
-//  Todo  GetpdfInvoice  Geeft no pdf available for this invoice.
 
     public ResponseEntity<byte[]> getInvoicePdf(long id) {
         Invoice invoice = invoiceRepository.findById(id)

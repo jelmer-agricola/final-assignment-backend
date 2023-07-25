@@ -80,6 +80,8 @@ public class CarService {
         } else {
             Car updatedCar = car.get();
             updatedCar.setBrand(carOutputDto.getBrand());
+            updatedCar.setMileage(carOutputDto.getMileage());
+            updatedCar.setOwner(carOutputDto.getOwner());
             updatedCar.setLicenseplate(carOutputDto.getLicenseplate());
 
 //        updatedCar.set(carOutputDto.getCarStatus());

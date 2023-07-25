@@ -52,7 +52,7 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceOutputDto);
     }
 
-//  Todo getmapping voor  allinvoices from user
+//  Todo getmapping voor  allinvoices from owner dus via car?
 
     @PutMapping("{id}/generateinvoicepdf")
     public ResponseEntity<String> generateInvoicePdf(@PathVariable long id)

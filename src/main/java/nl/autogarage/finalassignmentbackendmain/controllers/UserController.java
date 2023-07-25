@@ -39,16 +39,29 @@ public class UserController {
 
     }
 
-    @PostMapping(value = "")
-    public ResponseEntity<UserDto> createKlant(@RequestBody UserDto dto) {;
+    @PostMapping(value = "/add/mechanic")
+    public ResponseEntity<UserDto> createMechanic(@RequestBody UserDto userDto) {;
 
-        String newUsername = userService.createUser(dto);
-        userService.addAuthority(newUsername, "ROLE_USER");
+        String newUsername = userService.createUser(userDto);
+        userService.addAuthority(newUsername, "ROLE_MECHANIC");
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+
+    @PostMapping(value = "/add/office")
+    public ResponseEntity<UserDto> createOfficeEmployee(@RequestBody UserDto userDto) {
+        String newUsername = userService.createUser(userDto);
+        userService.addAuthority(newUsername, "ROLE_OFFICE");
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
+                .buildAndExpand(newUsername).toUri();
+
+        return ResponseEntity.created(location)
+                .build(); // Return the UserDto in the response
     }
 
     @PutMapping(value = "/{username}")
@@ -60,7 +73,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{username}")
-    public ResponseEntity<Object> deleteKlant(@PathVariable("username") String username) {
+    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
