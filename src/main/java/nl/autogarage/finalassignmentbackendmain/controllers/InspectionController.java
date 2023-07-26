@@ -43,7 +43,7 @@ public class InspectionController {
         return ResponseEntity.ok(inspectionOutputDto);
     }
 
-//    Hieronder kan de mechanic de inspection op inspection is finished zetten
+    //    Hieronder kan de mechanic de inspection op inspection is finished zetten
     @PutMapping("/{id}")
     public ResponseEntity<InspectionOutputDto> updateInspection(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto) {
         inspectionOutputDto.setId(id);
@@ -54,14 +54,12 @@ public class InspectionController {
         return ResponseEntity.ok(updatedInspection);
     }
 
-//    Hieronder kan de administratie aangeven dat de client approved
+    //    Hieronder kan de administratie aangeven dat de client approved
     @PatchMapping("/{id}/client-approval")
-    public ResponseEntity<InspectionOutputDto> clientApproval(@PathVariable Long id, @RequestBody InspectionOutputDto inspectionOutputDto
-    ) {
-        InspectionOutputDto updatedInspection = inspectionService.clientApproval(id, inspectionOutputDto);
+    public ResponseEntity<InspectionOutputDto> clientApproval(@PathVariable Long id, @RequestBody boolean clientApproved) {
+        InspectionOutputDto updatedInspection = inspectionService.clientApproval(id, clientApproved);
         return ResponseEntity.ok(updatedInspection);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInspection(@PathVariable Long id) {

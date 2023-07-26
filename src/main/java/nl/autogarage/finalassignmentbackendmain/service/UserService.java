@@ -128,7 +128,6 @@ public class UserService {
         userDto.setFirstname(user.getFirstname());
         userDto.setLastname(user.getLastname());
         userDto.setCars(user.getCars());
-        userDto.setInvoices(user.getInvoices());
 
         return userDto;
     }
@@ -142,7 +141,6 @@ public class UserService {
         user.setEnabled(userDto.getEnabled());
         user.setApikey(userDto.getApikey());
         user.setEmail(userDto.getEmail());
-        user.setInvoices(userDto.getInvoices());
         user.setCars(userDto.getCars());
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());

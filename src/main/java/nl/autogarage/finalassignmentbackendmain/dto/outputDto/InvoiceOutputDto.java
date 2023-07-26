@@ -14,18 +14,15 @@ import java.time.LocalDate;
 @Setter
 public class InvoiceOutputDto {
     private Long id;
-    private Double finalCost;
+
     public byte[] invoicePdf;
     private boolean paid;
     private LocalDate Date;
-
+    private Double finalCost;
     private Inspection inspection;
     @JsonIgnore
     private Car car;
 
 
-    //    @JsonIgnore
-//    private User user;
-    // Constructors, getters, and setters
 }
 

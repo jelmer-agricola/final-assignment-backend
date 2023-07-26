@@ -4,6 +4,7 @@ package nl.autogarage.finalassignmentbackendmain.service;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.*;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
@@ -30,21 +31,17 @@ public class RepairService {
         this.carRepository = carRepository;
     }
 
-//    public RepairOutputDto createRepair(RepairInputDto repairInputDto) {
-//        Repair repair = transferInputDtoToRepair(repairInputDto);
-//        repairRepository.save(repair);
-//        //    in sommig gevallen moet je new repair is saveby repairrepository
-//
-//        return transferRepairToOutputDto(repair);
-//    }
-
-    public long createRepair(RepairInputDto repairInputDto, String carPart,  long inspection_id) {
+    public long createRepair(RepairInputDto repairInputDto, String carPart, long inspection_id) {
         Inspection inspection = inspectionRepository.findById(inspection_id)
                 .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
 
+        boolean repairExists = inspection.getRepairs().stream()
+                .anyMatch(repair -> repair.getCarPart().getCarPartEnum().toString().equalsIgnoreCase(carPart));
+
+        if (repairExists) {
+            throw new BadRequestException("A repair for the car part '" + carPart + "' already exists in this inspection.");
+        }
         CarPart carPart1 = new CarPart();
-        // Next lines are to get the right carpart by name.
-        // This is easier for the mechanic then id for every car has the same basic components.
         for (CarPart carPartx : inspection.getCar().getCarParts()) {
             String carPartEnum = String.valueOf(carPartx.getCarPartEnum());
             if (Objects.equals(carPartEnum, carPart)) {
@@ -59,26 +56,40 @@ public class RepairService {
         return savedrepair.getId();
     }
 
-    public Map<Long, CarPartEnum> createRepairsForAllCarParts(long inspection_id) {
+    public Map<Long, CarPartEnum> createRepairsForAllCarPartsInInspection(long inspection_id) {
         Inspection inspection = inspectionRepository.findById(inspection_id)
                 .orElseThrow(() -> new RecordNotFoundException("No inspection found with id: " + inspection_id));
 
         Map<Long, CarPartEnum> savedRepairIdsAndCarPartEnums = new HashMap<>();
 
+        boolean repairsExistForAllCarParts = Arrays.stream(CarPartEnum.values())
+                .allMatch(carPartEnum -> inspection.getRepairs().stream()
+                        .anyMatch(repair -> repair.getCarPart().getCarPartEnum() == carPartEnum));
+
+        if (repairsExistForAllCarParts) {
+            throw new BadRequestException("The repairs are already assigned to an inspection");
+        }
+
         for (CarPartEnum carPartEnum : CarPartEnum.values()) {
-            CarPart carPart = inspection.getCar().getCarParts()
-                    .stream()
-                    .filter(part -> part.getCarPartEnum() == carPartEnum)
-                    .findFirst()
-                    .orElseThrow(() -> new RecordNotFoundException("No car part found to repair"));
+            // Check if a repair for the current car part already exists in the inspection
+            boolean repairExists = inspection.getRepairs().stream()
+                    .anyMatch(repair -> repair.getCarPart().getCarPartEnum() == carPartEnum);
 
-            Repair newRepair = new Repair();
-            newRepair.setCarPart(carPart);
-            newRepair.setInspection(inspection);
-            // Set other properties for the new repair based on the input or default values
+            if (!repairExists) {
+                CarPart carPart = inspection.getCar().getCarParts()
+                        .stream()
+                        .filter(part -> part.getCarPartEnum() == carPartEnum)
+                        .findFirst()
+                        .orElseThrow(() -> new RecordNotFoundException("No car part found to repair"));
 
-            Repair savedRepair = repairRepository.save(newRepair);
-            savedRepairIdsAndCarPartEnums.put(savedRepair.getId(), carPartEnum);
+                Repair newRepair = new Repair();
+                newRepair.setCarPart(carPart);
+                newRepair.setInspection(inspection);
+                // Set other properties for the new repair based on the input or default values
+
+                Repair savedRepair = repairRepository.save(newRepair);
+                savedRepairIdsAndCarPartEnums.put(savedRepair.getId(), carPartEnum);
+            }
         }
 
         return savedRepairIdsAndCarPartEnums;

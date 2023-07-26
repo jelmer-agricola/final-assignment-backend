@@ -74,25 +74,24 @@ public class InspectionService {
         }
     }
 
-    public InspectionOutputDto clientApproval(Long id, InspectionOutputDto inspectionOutputDto) {
-        Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
-        if (optionalInspection.isEmpty()) {
-            throw new RecordNotFoundException("No inspection found with id: " + id);
-        }
-        Inspection updateApproval = optionalInspection.get();
-        updateApproval.setClientApproved(inspectionOutputDto.isClientApproved());
-        boolean allPartsAreInspected = updateApproval.getRepairs().stream()
-                .allMatch(repair -> repair.getCarPart().isPartIsInspected());
-
-        if (allPartsAreInspected) {
-            updateApproval.setClientApproved(true);
-        } else {
-            throw new RecordNotFoundException("Cannot set Client approved to true until all car parts are checked.");
-        }
-
-        Inspection savedInspection = inspectionRepository.save(updateApproval);
-        return transferInspectionToOutputDto(savedInspection);
+public InspectionOutputDto clientApproval(Long id, boolean clientApproved) {
+    Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
+    if (optionalInspection.isEmpty()) {
+        throw new RecordNotFoundException("No inspection found with id: " + id);
     }
+    Inspection updateApproval = optionalInspection.get();
+    updateApproval.setClientApproved(clientApproved);
+
+    boolean allPartsAreInspected = updateApproval.getRepairs().stream()
+            .allMatch(repair -> repair.getCarPart().isPartIsInspected());
+
+    if (clientApproved && !allPartsAreInspected) {
+        throw new RecordNotFoundException("Cannot set Client approved to true until all car parts are checked.");
+    }
+
+    Inspection savedInspection = inspectionRepository.save(updateApproval);
+    return transferInspectionToOutputDto(savedInspection);
+}
 
 
     public InspectionOutputDto updateInspection(Long id, InspectionOutputDto inspectionOutputDto) {

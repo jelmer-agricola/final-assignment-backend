@@ -27,15 +27,11 @@ public class Invoice {
     private LocalDate Date;
     private Double totalCostOfRepair;
     private Double finalCost;
-    public static final double periodicVehicleInspection = 60.00;
+    public static final double periodicVehicleInspection = 25.00;
 
 
     @OneToOne
     private Inspection inspection;
-
-    @ManyToOne
-    @JsonIgnore
-    private User user;
 
     @ManyToOne
     @JsonIgnore

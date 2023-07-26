@@ -1,4 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.service;
+
 import com.lowagie.text.Font;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
@@ -58,7 +59,6 @@ public class InvoiceService {
 
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
-//            newInvoice.setUser(inspection.getCar().getOwner());
             newInvoice.setDate(java.time.LocalDate.now());
 
 //
@@ -143,7 +143,7 @@ public class InvoiceService {
                 "Klant: " + invoice.getCar().getOwner() + "\n" +
                         "Date: " + invoice.getDate() + "\n" +
                         "Factuurnummer: " + invoice.getId() + "\n" +
-                        "Nummerplaat: " + invoice.getCar().getLicenseplate(), fontSection);
+                        "Kenteken: " + invoice.getCar().getLicenseplate(), fontSection);
         paragraph2.setAlignment(Paragraph.ALIGN_LEFT);
 
 // Add some spacing between paragraphs
@@ -173,7 +173,7 @@ public class InvoiceService {
         byte[] pdfinvoice = pdfOutputStream.toByteArray();
         invoice.setInvoicePdf(pdfinvoice);
         invoiceRepository.save(invoice);
-        return filename + " created and stored to the database";
+        return filename + " created";
     }
 
     public ResponseEntity<byte[]> getInvoicePdf(long id) {
@@ -202,6 +202,7 @@ public class InvoiceService {
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
+
 
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
@@ -236,7 +237,6 @@ public class InvoiceService {
         invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
         invoiceOutputDto.setPaid(invoice.isPaid());
         invoiceOutputDto.setInspection(invoice.getInspection());
-
         if (invoice.getDate() != null) {
             invoiceOutputDto.setDate(invoice.getDate());
         }
@@ -255,7 +255,7 @@ public class InvoiceService {
                     .append(" Reparatie ").append(repairStatus).append(" \n")
                     .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
         }
-        repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
+        repairitems.append("Algemene Periodieke Keuring €\t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();
     }
 

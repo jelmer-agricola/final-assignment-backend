@@ -1,5 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
+import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.service.InvoiceService;
 import org.springframework.http.MediaType;
@@ -56,10 +57,10 @@ public class InvoiceController {
         List<InvoiceOutputDto> invoicesForCar = invoiceService.getAllInvoicesByLicensePlate(licenseplate);
         return ResponseEntity.ok(invoicesForCar);
     }
+
     @PutMapping("{id}/generateinvoicepdf")
     public ResponseEntity<String> generateInvoicePdf(@PathVariable long id)
-            throws IndexOutOfBoundsException
-    {
+            throws IndexOutOfBoundsException {
         return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
     }
 
@@ -69,8 +70,8 @@ public class InvoiceController {
     }
 
 
-//    Hier wordt aangegeven dat invoice betaald word. door de .. administratie
-    @PutMapping("/{id}")
+    //    Hier wordt aangegeven dat invoice betaald word. door de .. administratie
+    @PatchMapping("/{id}")
     public ResponseEntity<InvoiceOutputDto> updateInvoicePaid(@PathVariable Long id, @RequestBody boolean paid) {
         InvoiceOutputDto updatedInvoice = invoiceService.updateInvoicePaid(id, paid);
         if (updatedInvoice == null) {
@@ -78,7 +79,6 @@ public class InvoiceController {
         }
         return ResponseEntity.ok(updatedInvoice);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInvoice(@PathVariable Long id) {

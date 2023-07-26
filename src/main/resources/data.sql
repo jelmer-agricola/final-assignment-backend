@@ -100,6 +100,7 @@ INSERT INTO repair (id, repair_description, repair_finished, inspection_id, car_
 VALUES (103, 'repair TRES', true, 102, 201);
 
 
+
 -- HIER STAAT EEN AUTO KLAAR WAARMEE JE METEEN EEN INVOICE AAN KAN MAKEN.
 INSERT INTO cars (licenseplate, brand, mileage, owner)
 VALUES ('TTBB3', 'Toyota', 50000, 'Jan Akkerman');
@@ -127,13 +128,23 @@ VALUES (1002, 'TTBB3', 'BRAKES', 'in good condition', true, 12);
 -- VALUES (1006, 'TTBB3', 'SUSPENSION', 'in good condition', false, NULL);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1008, 'TTBB3', 'ENGINE', 'needs replacement', false, NULL);
+-- VALUES (1007, 'TTBB3', 'ENGINE', 'needs replacement', false, NULL);
 
 
 INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
 VALUES (1001, 'repair uno', true, 1001);
 INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
 VALUES (1002, 'repair uno', true, 1001);
+-- INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+-- VALUES (1003, 'repair uno', true, 1001);
+-- INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+-- VALUES (1004, 'repair uno', true, 1001);
+-- INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+-- VALUES (1005, 'repair uno', true, 1001);
+-- INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+-- VALUES (1006, 'repair uno', true, 1001);
+-- INSERT INTO repair (id, repair_description, repair_finished, inspection_id)
+-- VALUES (1007 'repair uno', true, 1001);
 
 UPDATE repair
 SET car_part_id = '1001'
@@ -141,6 +152,23 @@ WHERE id = 1001;
 UPDATE repair
 SET car_part_id = '1002'
 WHERE id = 1002;
+-- UPDATE repair
+-- SET car_part_id = '1003'
+-- WHERE id = 1003;
+-- UPDATE repair
+-- SET car_part_id = '1004'
+-- WHERE id = 1004;
+-- UPDATE repair
+-- SET car_part_id = '1005'
+-- WHERE id = 1005;
+-- UPDATE repair
+-- SET car_part_id = '1006'
+-- WHERE id = 1006;
+-- UPDATE repair
+-- SET car_part_id = '1007'
+-- WHERE id = 1007;
+-- UPDATE repair
+
 
 -- Normale Admin
 INSERT INTO users (username, password, email, enabled, firstname, lastname)

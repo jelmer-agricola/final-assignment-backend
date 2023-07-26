@@ -74,7 +74,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/invoice/{licenseplate}/all").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.PUT, "/invoice/{id}/generateinvoicepdf").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.GET, "/invoice/{id}/getpdfinvoice").hasAnyRole("ADMIN", "OFFICE")
-                .requestMatchers(HttpMethod.PUT, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.PATCH, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.DELETE, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
 
 //                ENDPOINTS INSPECTION
@@ -104,7 +104,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/parts/{id}").hasAnyRole("ADMIN", "MECHANIC")
 
 //                ENDPOINTS AUTHENTICATION
-                .requestMatchers(HttpMethod.GET,"/authenticated").authenticated()
+                .requestMatchers(HttpMethod.GET, "/authenticated").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/authenticate").permitAll()
 
                 .anyRequest().denyAll()
