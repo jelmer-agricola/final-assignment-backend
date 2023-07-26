@@ -43,7 +43,6 @@ public class RepairController {
         }
     }
 
-
     @PostMapping("/carparts/{inspection_id}")
     public ResponseEntity<Map<Long, CarPartEnum>> createRepairsForAllCarParts(@PathVariable long inspection_id) {
         Map<Long, CarPartEnum> repairIdsAndCarPartEnums = repairService.createRepairsForAllCarParts(inspection_id);

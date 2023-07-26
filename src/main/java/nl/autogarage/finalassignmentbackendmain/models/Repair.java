@@ -22,8 +22,6 @@ public class Repair {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String repairDescription;
-
-//    In de post mag dit nu op true komen te staan
     private boolean repairFinished;
 
 

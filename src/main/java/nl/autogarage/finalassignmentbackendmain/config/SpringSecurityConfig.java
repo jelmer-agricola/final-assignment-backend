@@ -74,7 +74,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/invoice/{licenseplate}/all").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.PUT, "/invoice/{id}/generateinvoicepdf").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.GET, "/invoice/{id}/getpdfinvoice").hasAnyRole("ADMIN", "OFFICE")
-                .requestMatchers(HttpMethod.PUT, "/invoice/{id}/generateinvoicepdf").hasAnyRole("ADMIN", "OFFICE")
+                .requestMatchers(HttpMethod.PUT, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
                 .requestMatchers(HttpMethod.DELETE, "/invoice/{id}").hasAnyRole("ADMIN", "OFFICE")
 
 //                ENDPOINTS INSPECTION
@@ -88,8 +88,9 @@ public class SpringSecurityConfig {
 
 //                ENDPOINTS REPAIR
                 .requestMatchers(HttpMethod.POST, "/repair/add/{carpart}/{inspection_id}").hasRole("MECHANIC")
-                .requestMatchers(HttpMethod.POST, "/repair/{inspection_id}").hasAnyRole("MECHANIC")
+                .requestMatchers(HttpMethod.POST, "/repair/carparts/{inspection_id}").hasRole("MECHANIC")
                 .requestMatchers(HttpMethod.GET, "/repair").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/repair{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
                 .requestMatchers(HttpMethod.GET, "/repair/lp/{licenseplate}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
                 .requestMatchers(HttpMethod.PATCH, "/repair/part_repaired/{id}").hasRole("MECHANIC")
                 .requestMatchers(HttpMethod.PUT, "/repair/{id}").hasRole("MECHANIC")

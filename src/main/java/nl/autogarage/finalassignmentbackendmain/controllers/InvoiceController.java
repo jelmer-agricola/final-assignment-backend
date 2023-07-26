@@ -52,8 +52,8 @@ public class InvoiceController {
     }
 
     @GetMapping("/{licenseplate}/all")
-    public ResponseEntity<List<InvoiceOutputDto>> getAllInvoicesByLicensePlate(@PathVariable String licensePlate) {
-        List<InvoiceOutputDto> invoicesForCar = invoiceService.getAllInvoicesByLicensePlate(licensePlate);
+    public ResponseEntity<List<InvoiceOutputDto>> getAllInvoicesByLicenseplate(@PathVariable String licenseplate) {
+        List<InvoiceOutputDto> invoicesForCar = invoiceService.getAllInvoicesByLicensePlate(licenseplate);
         return ResponseEntity.ok(invoicesForCar);
     }
     @PutMapping("{id}/generateinvoicepdf")
