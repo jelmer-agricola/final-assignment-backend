@@ -43,10 +43,9 @@ public class RepairController {
         }
     }
 
-
     @PostMapping("/carparts/{inspection_id}")
-    public ResponseEntity<Map<Long, CarPartEnum>> createRepairsForAllCarParts(@PathVariable long inspection_id) {
-        Map<Long, CarPartEnum> repairIdsAndCarPartEnums = repairService.createRepairsForAllCarParts(inspection_id);
+    public ResponseEntity<Map<Long, CarPartEnum>> createRepairsForAllCarPartsInInspection(@PathVariable long inspection_id) {
+        Map<Long, CarPartEnum> repairIdsAndCarPartEnums = repairService.createRepairsForAllCarPartsInInspection(inspection_id);
         return ResponseEntity.ok(repairIdsAndCarPartEnums);
     }
 
@@ -70,22 +69,10 @@ public class RepairController {
         return ResponseEntity.ok(repairOutputDto);
     }
 
-    @PatchMapping("part_repaired/{id}")
+    @PutMapping("part_repaired/{id}")
     public ResponseEntity<RepairOutputDto> SetPartRepaired(@PathVariable long id, @RequestBody RepairInputDto repairInputDto) {
         return ResponseEntity.ok(repairService.SetPartRepaired(id, repairInputDto));
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<RepairOutputDto> updateRepair(@PathVariable Long id, @RequestBody RepairOutputDto repairOutputDto) {
-        repairOutputDto.setId(id);
-        RepairOutputDto updatedRepair = repairService.updateRepair(id, repairOutputDto);
-        if (updatedRepair == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedRepair);
-    }
-
-
 
 
     @DeleteMapping("/{id}")

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -21,17 +22,13 @@ public class CarPart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String partStatus;
-// TODO   Zet allle carparts is inspected op false ergens controle dit kan pas doorgezet worden als alle carparts op true staat
-//  Deze check doen moet ik doen voor de invoice
     private double carPartCost;
+    @Value("${some.key:false}")
     public boolean partIsInspected;
-    //    in inspection ook een check zetten die staat standaard op false alleen als alle autoonderdleen isINspected true hebben dan kan inspectionFinished kan dan pas op true
 
     @Enumerated(EnumType.STRING)
     public CarPartEnum carPartEnum;
 
-
-//     relations
 
     @ManyToOne
     @JsonIgnore
@@ -40,12 +37,6 @@ public class CarPart {
     @OneToMany(mappedBy = "carPart")
     private List<Repair> repairs;
 
-
-//    public CarPart(CarPartEnum batteries) {
-//    }
-
-
-//    speciale setter om aan te geven dat er auto onderedelen worden toegevoegd.
 
 
 }

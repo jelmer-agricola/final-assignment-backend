@@ -1,14 +1,16 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
-
 import com.lowagie.text.Font;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
+import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
 import nl.autogarage.finalassignmentbackendmain.models.Repair;
+import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InspectionRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
 import org.springframework.http.HttpHeaders;
@@ -24,17 +26,20 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final InspectionRepository inspectionRepository;
-//    userrepository
 
-    public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository) {
+    private final CarRepository carRepository;
+
+    public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository, CarRepository carRepository) {
         this.invoiceRepository = invoiceRepository;
         this.inspectionRepository = inspectionRepository;
+        this.carRepository = carRepository;
     }
 
     public Long createInvoice(long inspection_id) {
@@ -43,8 +48,7 @@ public class InvoiceService {
             throw new RecordNotFoundException("no Inspection found with id: " + inspection_id);
 //            is inspected dus og
         } else if (!optionalCarInspection.get().isInspectionFinished()) {
-//            bad request???
-            throw new RecordNotFoundException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
+            throw new BadRequestException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
         } else if (invoiceRepository.existsByInspectionId(inspection_id)) {
             throw new InvoiceAlreadyExistsException("An invoice already exists for this inspection with id " + inspection_id);
         } else {
@@ -55,7 +59,6 @@ public class InvoiceService {
 
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
-//            newInvoice.setUser
             newInvoice.setDate(java.time.LocalDate.now());
 
 //
@@ -70,8 +73,6 @@ public class InvoiceService {
     }
 
 
-
-
     public Iterable<InvoiceOutputDto> getAllInvoices() {
         ArrayList<InvoiceOutputDto> invoiceOutputDtos = new ArrayList<>();
         Iterable<Invoice> allInvoices = invoiceRepository.findAll();
@@ -83,8 +84,6 @@ public class InvoiceService {
     }
 
 
-
-    //     hier heel veel logica toevoegen over de pdf
     public InvoiceOutputDto getInvoiceById(Long id) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isPresent()) {
@@ -95,85 +94,93 @@ public class InvoiceService {
         }
     }
 
-//    Todo get allinvoices fromUser
+    public List<InvoiceOutputDto> getAllInvoicesByLicensePlate(String licensePlate) {
+        List<InvoiceOutputDto> invoicesForCar = new ArrayList<>();
+        Optional<Car> optionalCar = carRepository.findByLicenseplate(licensePlate);
+
+        if (optionalCar.isPresent()) {
+            Car car = optionalCar.get();
+            for (Invoice invoice : car.getInvoices()) {
+                InvoiceOutputDto invoiceDto = transferInvoiceToOutputDto(invoice);
+                invoicesForCar.add(invoiceDto);
+            }
+        } else {
+            throw new RecordNotFoundException("Car not found with license plate: " + licensePlate);
+        }
+
+        return invoicesForCar;
+    }
 
 
-//    Todo GeneratePdf geeft 500 maakt hem nog niet aan
-public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
-    Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
+    public String uploadInvoicePdf(long id) throws IndexOutOfBoundsException {
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
 
-    Document invoicePdf = new Document(PageSize.A4);
-    ByteArrayOutputStream pdfOutputStream  = new ByteArrayOutputStream();
-    PdfWriter.getInstance(invoicePdf, pdfOutputStream );
+        Document invoicePdf = new Document(PageSize.A4);
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        PdfWriter.getInstance(invoicePdf, pdfOutputStream);
 
-    invoicePdf.open();
-    //used font styles
-    Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
-    fontTitle.setSize(20);
-    Font fontInfo = FontFactory.getFont(FontFactory.HELVETICA);
-    fontInfo.setSize(9);
-    Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
-    fontSection.setSize(11);
-//    Font lines = FontFactory.getFont(FontFactory.HELVETICA);
-//    lines.setSize(20);
+        invoicePdf.open();
+        //used font styles
+        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
+        fontTitle.setSize(20);
+        Font fontInfo = FontFactory.getFont(FontFactory.HELVETICA);
+        fontInfo.setSize(9);
+        Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
+        fontSection.setSize(11);
 
-    // actual text on the pdf
+
+        // actual text on the pdf
 
 //    Company info
-    Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\n\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
-    paragraph.setAlignment(Element.ALIGN_LEFT);
+        Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
+        paragraph.setAlignment(Element.ALIGN_LEFT);
 
-    Paragraph paragraph1 = new Paragraph("Factuur\n", fontTitle);
-    paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
+        Paragraph paragraph1 = new Paragraph("Factuur", fontTitle);
+        paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
 
-    //Invoice info
-//    Paragraph paragraph2 = new Paragraph("Customer: " + invoice.getUser().getUsername() + "\t" + "\t" + "\t" +
-//            "Date: " + invoice.getDate() + "\t" + "\t" + "\t" +
-//            "Invoice ID: " + invoice.getId() + "\t" + "\t" + "\t" +
-//            "License plate: " + invoice.getCar().getLicenseplate(), fontSection);
-//    paragraph2.setAlignment(Paragraph.ALIGN_CENTER);
+// Invoice info
+        Paragraph paragraph2 = new Paragraph(
+                "Klant: " + invoice.getCar().getOwner() + "\n" +
+                        "Date: " + invoice.getDate() + "\n" +
+                        "Factuurnummer: " + invoice.getId() + "\n" +
+                        "Kenteken: " + invoice.getCar().getLicenseplate(), fontSection);
+        paragraph2.setAlignment(Paragraph.ALIGN_LEFT);
+
+// Add some spacing between paragraphs
+        paragraph1.setSpacingAfter(10);
+        paragraph2.setSpacingAfter(10);
+
+        Paragraph paragraph3 = new Paragraph(repairItemStringBuilder(invoice), fontSection);
+        paragraph3.setAlignment(Element.ALIGN_LEFT);
 
 
+        Paragraph paragraph4 = new Paragraph(
+                "Totaal aan reparatie kosten: " + invoice.getTotalCostOfRepair() +
+                        "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
+                        "\n" + "Totaal bedrag : " + (invoice.getFinalCost()),
+                fontSection);
+        paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
 
+        invoicePdf.add(paragraph);
+        invoicePdf.add(paragraph1);
+        invoicePdf.add(paragraph2);
+        invoicePdf.add(paragraph3);
+        invoicePdf.add(paragraph4);
+        invoicePdf.close();
 
-    Paragraph paragraph3 = new Paragraph(repairItemStringBuilder(invoice), fontSection);
-    paragraph3.setAlignment(Element.ALIGN_LEFT);
+        PdfWriter.getInstance(invoicePdf, pdfOutputStream).close();
+        String filename = invoice.getId() + id + " Invoice.pdf";
+        byte[] pdfinvoice = pdfOutputStream.toByteArray();
+        invoice.setInvoicePdf(pdfinvoice);
+        invoiceRepository.save(invoice);
+        return filename + " created";
+    }
 
-
-
-
-    Paragraph paragraph4 = new Paragraph(
-            "Totaal aan reparatie kosten: " + invoice.getTotalCostOfRepair() +
-                    "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
-                    "\n" + "Totaal bedrag : " + (invoice.getFinalCost()),
-            fontSection);
-    paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
-
-    invoicePdf.add(paragraph);
-    invoicePdf.add(paragraph1);
-//    document.add(paragraph2);
-    invoicePdf.add(paragraph3);
-    invoicePdf.add(paragraph4);
-    invoicePdf.close();
-
-    PdfWriter.getInstance(invoicePdf, pdfOutputStream ).close();
-// Todo User hier nog aan toevoegen regel hieronder is wat er eigenlijk in moet Als de user dus klaar is
-
-//    String filename = invoice.getUser().getUsername() + id + " Invoice.pdf";
-    String filename = invoice.getId()+ id + " Invoice.pdf";
-    byte[] pdfinvoice = pdfOutputStream .toByteArray();
-    invoice.setInvoicePdf(pdfinvoice);
-    invoiceRepository.save(invoice);
-    return filename + " created and stored to the database";
-}
-
-//  Todo  GetpdfInvoice  Geeft no pdf available for this invoice.
-
-    public ResponseEntity<byte[]> getInvoicePdf(long id) {
+    public ResponseEntity<byte[]> downloadInvoicePdf(long id) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
         byte[] invoicePdf = invoice.getInvoicePdf();
-        if (invoicePdf == null){
+        if (invoicePdf == null) {
             throw new RecordNotFoundException("no pdf available for this invoice.");
         }
         HttpHeaders headers = new HttpHeaders();
@@ -183,33 +190,20 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
         return new ResponseEntity<>(invoicePdf, headers, HttpStatus.OK);
     }
 
-    public InvoiceOutputDto updateInvoice(long id, InvoiceOutputDto invoiceOutputDto) {
+    public InvoiceOutputDto updateInvoicePaid(long id, boolean paid) {
         Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
         if (optionalInvoice.isEmpty()) {
             throw new RecordNotFoundException("No Invoice with id: " + id);
         } else {
             Invoice updatedInvoice = optionalInvoice.get();
-            updatedInvoice.setPaid(invoiceOutputDto.isPaid());
-//            updatedInvoice.setFinalCost(invoiceOutputDto.getFinalCost());
-
+            updatedInvoice.setPaid(paid);
 
             Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
             return transferInvoiceToOutputDto(savedInvoice);
         }
     }
-//    public InvoiceOutputDto updateInvoicePaidStatus(long id, boolean isPaid) {
-//        Optional<Invoice> optionalInvoice = invoiceRepository.findById(id);
-//        if (optionalInvoice.isEmpty()) {
-//            throw new RecordNotFoundException("No Invoice with id: " + id);
-//        } else {
-//            Invoice updatedInvoice = optionalInvoice.get();
-//            updatedInvoice.setPaid(isPaid);
-//
-//            Invoice savedInvoice = invoiceRepository.save(updatedInvoice);
-//            return transferInvoiceToOutputDto(savedInvoice);
-//
-//        }
-//    }
+
+
     public String deleteInvoice(Long id) {
         if (invoiceRepository.existsById(id)) {
             invoiceRepository.deleteById(id);
@@ -219,29 +213,30 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
     }
 
 
-    private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
-        Invoice invoice = new Invoice();
-        invoice.setFinalCost(invoiceInputDto.getFinalCost());
-        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
-        invoice.setPaid(invoiceInputDto.isPaid());
-        invoice.setInspection(invoiceInputDto.getInspection());
-        invoice.setDate(invoiceInputDto.getDate());
-        invoice.setTotalCostOfRepair(invoiceInputDto.getFinalCost());
-
-        return invoice;
-    }
+//    private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
+//        Invoice invoice = new Invoice();
+//        invoice.setFinalCost(invoiceInputDto.getFinalCost());
+//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
+//        invoice.setPaid(invoiceInputDto.isPaid());
+//        invoice.setInspection(invoiceInputDto.getInspection());
+//        invoice.setDate(invoiceInputDto.getDate());
+//        invoice.setTotalCostOfRepair(invoiceInputDto.getFinalCost());
+//        invoice.setCar(invoiceInputDto.getCar());
+//
+//        return invoice;
+//    }
 
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
         InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
         invoiceOutputDto.setId(invoice.getId());
         invoiceOutputDto.setFinalCost(invoice.getFinalCost());
+        invoiceOutputDto.setCar(invoice.getCar());
         if (invoice.getTotalCostOfRepair() != 0.0) {
             invoiceOutputDto.setFinalCost(invoice.getFinalCost());
         }
         invoiceOutputDto.setInvoicePdf(invoice.getInvoicePdf());
         invoiceOutputDto.setPaid(invoice.isPaid());
         invoiceOutputDto.setInspection(invoice.getInspection());
-
         if (invoice.getDate() != null) {
             invoiceOutputDto.setDate(invoice.getDate());
         }
@@ -260,7 +255,7 @@ public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
                     .append(" Reparatie ").append(repairStatus).append(" \n")
                     .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
         }
-        repairitems.append("Algemene Periodieke Keuring \t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
+        repairitems.append("Algemene Periodieke Keuring €\t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();
     }
 

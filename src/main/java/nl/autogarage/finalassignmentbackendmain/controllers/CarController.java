@@ -55,9 +55,6 @@ public class CarController {
     }
 
 
-
-//@GetMapping  find owner
-
     @PutMapping("/licenseplate")
     public ResponseEntity<CarOutputDto> updateCar(@RequestParam String licenseplate, @RequestBody CarOutputDto carOutputDto) {
         return ResponseEntity.ok(carService.updateCar(licenseplate, carOutputDto));

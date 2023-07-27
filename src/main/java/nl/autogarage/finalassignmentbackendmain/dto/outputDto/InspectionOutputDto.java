@@ -21,7 +21,6 @@ public class InspectionOutputDto {
     private boolean inspectionFinished;
 
     @JsonIgnoreProperties(value = {"repairDescription"})
-//    @JsonIgnoreProperties(value = {"repairDescription", "partRepairCost"})
     List<Repair> repairs;
     @JsonIgnore
     private Car car;

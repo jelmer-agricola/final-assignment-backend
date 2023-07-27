@@ -2,6 +2,8 @@ package nl.autogarage.finalassignmentbackendmain.service;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
+import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.CarPart;
@@ -32,38 +34,24 @@ public class InspectionService {
         this.repairRepository = repairRepository;
     }
 
-//    public InspectionOutputDto createInspection(InspectionInputDto inspectionInputDto) {
-//        Inspection inspection = transferInputDtoToInspection(inspectionInputDto);
-//        Inspection savedInspection = inspectionRepository.save(inspection);
-//        return transferInspectionToOutputDto(savedInspection);
-//    }
 
     public InspectionOutputDto createInspection(String car_licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(car_licenseplate);
         if (optionalCar.isEmpty()) {
             throw new RecordNotFoundException("There is no car with license plate " + car_licenseplate);
-        } else {
-            Car car = optionalCar.get();
-            Inspection newInspection = new Inspection();
-            newInspection.setCar(car);
-//            newInspection.setTotalCostOfRepair(newInspection.calculateRepairCost());
-
-
-            newInspection.setInspectionFinished(false);
-//                     Todo rollen hier ook topeassen
-//            newInspection.setrepairFinished(false);
-//            newInspection.setinspectionApproved(false);
-//            newInspection.setMechanic_done(false);
-
-
-            Inspection savedInspection = inspectionRepository.save(newInspection);
-            return transferInspectionToOutputDto(savedInspection);
-
         }
+        Car car = optionalCar.get();
+        boolean isOngoingInspection = inspectionRepository.existsByCarAndInspectionFinished(car, false);
+        if (isOngoingInspection) {
+            throw new DuplicateErrorException("Cannot create a new inspection. There is an ongoing inspection for the car.");
+        }
+        Inspection newInspection = new Inspection();
+        newInspection.setCar(car);
+        newInspection.setInspectionFinished(false);
+
+        Inspection savedInspection = inspectionRepository.save(newInspection);
+        return transferInspectionToOutputDto(savedInspection);
     }
-
-
-//    /**/
 
 
     public List<InspectionOutputDto> getAllInspections() {
@@ -75,7 +63,6 @@ public class InspectionService {
         return inspectionOutputDtos;
     }
 
-
     public InspectionOutputDto getInspectionById(Long id) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isPresent()) {
@@ -86,22 +73,18 @@ public class InspectionService {
         }
     }
 
-
-    public InspectionOutputDto clientApproval(Long id, InspectionOutputDto inspectionOutputDto) {
+    public InspectionOutputDto clientApproval(Long id, boolean clientApproved) {
         Optional<Inspection> optionalInspection = inspectionRepository.findById(id);
         if (optionalInspection.isEmpty()) {
             throw new RecordNotFoundException("No inspection found with id: " + id);
         }
-
         Inspection updateApproval = optionalInspection.get();
-        updateApproval.setClientApproved(inspectionOutputDto.isClientApproved());
+        updateApproval.setClientApproved(clientApproved);
 
         boolean allPartsAreInspected = updateApproval.getRepairs().stream()
                 .allMatch(repair -> repair.getCarPart().isPartIsInspected());
 
-        if (allPartsAreInspected) {
-            updateApproval.setClientApproved(true);
-        } else {
+        if (clientApproved && !allPartsAreInspected) {
             throw new RecordNotFoundException("Cannot set Client approved to true until all car parts are checked.");
         }
 
