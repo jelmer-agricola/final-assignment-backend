@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+//Todo toevoegen endpoint
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;
@@ -90,10 +93,9 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/repair/add/{carpart}/{inspection_id}").hasRole("MECHANIC")
                 .requestMatchers(HttpMethod.POST, "/repair/carparts/{inspection_id}").hasRole("MECHANIC")
                 .requestMatchers(HttpMethod.GET, "/repair").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
-                .requestMatchers(HttpMethod.GET, "/repair{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
+                .requestMatchers(HttpMethod.GET, "/repair/{id}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
                 .requestMatchers(HttpMethod.GET, "/repair/lp/{licenseplate}").hasAnyRole("ADMIN", "OFFICE", "MECHANIC")
-                .requestMatchers(HttpMethod.PATCH, "/repair/part_repaired/{id}").hasRole("MECHANIC")
-                .requestMatchers(HttpMethod.PUT, "/repair/{id}").hasRole("MECHANIC")
+                .requestMatchers(HttpMethod.PUT, "/repair/part_repaired/{id}").hasRole("MECHANIC")
                 .requestMatchers(HttpMethod.DELETE, "/repair/{id}").hasAnyRole("OFFICE", "MECHANIC")
 
 //                ENDPOINTS CARPARTS

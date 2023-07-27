@@ -156,20 +156,6 @@ public class RepairService {
     }
 
 
-    public RepairOutputDto updateRepair(Long id, RepairOutputDto repairOutputDto){
-        Optional<Repair> optionalRepair = repairRepository.findById(id);
-        if (optionalRepair.isEmpty()){
-            throw new RecordNotFoundException("No repair fount with id " + id);
-        }else {
-            Repair updateRepair = optionalRepair.get();
-            updateRepair.setRepairFinished(repairOutputDto.isRepairFinished());
-            updateRepair.setRepairDescription(repairOutputDto.getRepairDescription());
-            Repair savedRepair = repairRepository.save(updateRepair);
-            return transferRepairToOutputDto(savedRepair);
-        }
-
-    }
-
     public String deleteRepair(Long id) {
     if (repairRepository.existsById(id)) {
         repairRepository.deleteById(id);

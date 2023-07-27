@@ -69,20 +69,11 @@ public class RepairController {
         return ResponseEntity.ok(repairOutputDto);
     }
 
-    @PatchMapping("part_repaired/{id}")
+    @PutMapping("part_repaired/{id}")
     public ResponseEntity<RepairOutputDto> SetPartRepaired(@PathVariable long id, @RequestBody RepairInputDto repairInputDto) {
         return ResponseEntity.ok(repairService.SetPartRepaired(id, repairInputDto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RepairOutputDto> updateRepair(@PathVariable Long id, @RequestBody RepairOutputDto repairOutputDto) {
-        repairOutputDto.setId(id);
-        RepairOutputDto updatedRepair = repairService.updateRepair(id, repairOutputDto);
-        if (updatedRepair == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedRepair);
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRepair(@PathVariable Long id) {
