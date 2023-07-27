@@ -18,7 +18,6 @@ import java.util.List;
 @Table(name = "cars")
 public class Car {
 
-
     @Id
     @Column(nullable = false, unique = true)
     private String licenseplate;
@@ -26,16 +25,9 @@ public class Car {
     private String brand;
     private Integer mileage;
     private String owner;
-//inspectiondate
 
-    @ManyToOne
-    @JsonIgnore
-    private User user;
-
-    // Relaties
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarPart> carParts;
-
 
     @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Inspection> inspections;

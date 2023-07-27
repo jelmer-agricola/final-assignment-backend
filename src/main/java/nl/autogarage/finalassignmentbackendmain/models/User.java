@@ -32,9 +32,6 @@ public class User {
     private String lastname;
 
 
-    @OneToMany(mappedBy = "user")
-    private List<Car> cars;
-
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "username",

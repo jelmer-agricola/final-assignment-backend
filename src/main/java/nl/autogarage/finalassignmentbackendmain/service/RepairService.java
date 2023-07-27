@@ -95,11 +95,6 @@ public class RepairService {
         return savedRepairIdsAndCarPartEnums;
     }
 
-
-
-
-
-
     public List <RepairOutputDto> getAllRepair(){
         List<Repair> repairs = repairRepository.findAll();
         List<RepairOutputDto> repairOutputDos = new ArrayList<>();
