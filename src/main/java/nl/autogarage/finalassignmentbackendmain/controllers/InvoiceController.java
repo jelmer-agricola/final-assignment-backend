@@ -58,15 +58,15 @@ public class InvoiceController {
         return ResponseEntity.ok(invoicesForCar);
     }
 
-    @PutMapping("{id}/generateinvoicepdf")
-    public ResponseEntity<String> generateInvoicePdf(@PathVariable long id)
+    @PutMapping("/{id}/uploadinvoicepdf")
+    public ResponseEntity<String> uploadInvoicePdf(@PathVariable long id)
             throws IndexOutOfBoundsException {
-        return ResponseEntity.ok(invoiceService.generateInvoicePdf(id));
+        return ResponseEntity.ok(invoiceService.uploadInvoicePdf(id));
     }
 
-    @GetMapping(value = "/{id}/getpdfinvoice", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable long id) {
-        return invoiceService.getInvoicePdf(id);
+    @GetMapping(value = "/{id}/download-pdfinvoice", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable long id) {
+        return invoiceService.downloadInvoicePdf(id);
     }
 
 

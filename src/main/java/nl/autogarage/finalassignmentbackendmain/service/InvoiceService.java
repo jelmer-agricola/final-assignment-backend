@@ -112,7 +112,7 @@ public class InvoiceService {
     }
 
 
-    public String generateInvoicePdf(long id) throws IndexOutOfBoundsException {
+    public String uploadInvoicePdf(long id) throws IndexOutOfBoundsException {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("no invoice found with id " + id));
 
         Document invoicePdf = new Document(PageSize.A4);
@@ -176,7 +176,7 @@ public class InvoiceService {
         return filename + " created";
     }
 
-    public ResponseEntity<byte[]> getInvoicePdf(long id) {
+    public ResponseEntity<byte[]> downloadInvoicePdf(long id) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("No car invoice found with id: " + id));
         byte[] invoicePdf = invoice.getInvoicePdf();

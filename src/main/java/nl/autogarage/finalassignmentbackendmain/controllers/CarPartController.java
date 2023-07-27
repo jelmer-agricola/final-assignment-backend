@@ -44,15 +44,6 @@ public class CarPartController {
         return ResponseEntity.ok(carPartService.CarPartStatusCheck(licenseplate, carpart, carPartinputDto));
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCarPart(@PathVariable Long id) {
-        String message = carPartService.deleteCarPart(id);
-        if (message == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(message);
-    }
 }
 
 
