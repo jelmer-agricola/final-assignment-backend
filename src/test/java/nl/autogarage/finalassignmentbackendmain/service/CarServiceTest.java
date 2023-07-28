@@ -1,16 +1,12 @@
 package nl.autogarage.finalassignmentbackendmain.service;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
@@ -21,15 +17,13 @@ import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Invoice;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
-import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.mockito.quality.Strictness;
 
@@ -38,25 +32,18 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CarServiceTest {
 
-    @MockBean
-    private InvoiceRepository invoiceRepository;
     @Mock
     private CarRepository carRepository;
     @Mock
     private CarPartRepository carPartRepository;
     @Captor
     private ArgumentCaptor<Car> carCaptor;
-    @Captor
-    private ArgumentCaptor<CarPart> carPartCaptor;
     @InjectMocks
     private CarService carService;
     private Car car1;
     CarInputDto carInputDto;
     CarOutputDto carOutputDto;
-    Car car;
-    private CarPart tires;
-    private CarPart brakes;
-    private CarPartInputDto carPartInputDto1;
+
 
     @BeforeEach
     void setUp() {
@@ -167,7 +154,6 @@ class CarServiceTest {
         verify(carRepository).findAll();
     }
 
-
     @Test
     void testUpdateCar() {
         // Arrange
@@ -243,7 +229,6 @@ class CarServiceTest {
         // Act & Assert
         assertThrows(BadRequestException.class, () -> carService.deleteCar(licensePlate));
     }
-
     @Test
     void testDeleteCar_UnpaidInvoice() {
         // Arrange
@@ -278,8 +263,41 @@ class CarServiceTest {
         assertEquals("Car with license plate " + licensePlate + " successfully deleted", message);
     }
 
+    @Test
+    void testTransferInputDtoToCar() {
+        // Arrange
+        carInputDto.setBrand("TOYOTA");
+        carInputDto.setCarParts(new ArrayList<>());
+        carInputDto.setLicenseplate("33-AAB-3");
+        carInputDto.setMileage(2500);
+        carInputDto.setOwner("Henk de Tank");
 
+        // Act
+        Car actualTransferInputDtoToCarResult = carService.transferInputDtoToCar(carInputDto);
 
+        // Assert
+        assertEquals("TOYOTA", actualTransferInputDtoToCarResult.getBrand());
+        assertEquals("Henk de Tank", actualTransferInputDtoToCarResult.getOwner());
+        assertEquals(2500, actualTransferInputDtoToCarResult.getMileage().intValue());
+        assertEquals("33-AAB-3", actualTransferInputDtoToCarResult.getLicenseplate());
+        assertTrue(actualTransferInputDtoToCarResult.getCarParts().isEmpty());
+    }
 
+    @Test
+    void testTransferCarToOutputDto() {
+        // Arrange
+        ArrayList<CarPart> carParts = new ArrayList<>();
+        car1.setCarParts(carParts);
+
+        // Act
+        CarOutputDto actualTransferCarToOutputDtoResult = carService.transferCarToOutputDto(car1);
+
+        // Assert
+        assertEquals("TOYOTA", actualTransferCarToOutputDtoResult.getBrand());
+        assertEquals("Henk de Tank", actualTransferCarToOutputDtoResult.getOwner());
+        assertEquals(2500, actualTransferCarToOutputDtoResult.getMileage().intValue());
+        assertEquals("33-AAB-3", actualTransferCarToOutputDtoResult.getLicenseplate());
+        assertEquals(carParts, actualTransferCarToOutputDtoResult.getCarParts());
+    }
 }
 
