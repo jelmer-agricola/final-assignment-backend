@@ -35,7 +35,6 @@ public class CarController {
                             .fromCurrentContextPath()
                             .path("/car/" + createLicensePlate)
                             .toUriString());
-
             return ResponseEntity.created(uri).body("Car created. License plate: " + createLicensePlate);
         }
     }

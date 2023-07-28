@@ -103,32 +103,32 @@ VALUES (103, 'repair TRES', true, 102, 201);
 
 -- HIER STAAT EEN AUTO KLAAR WAARMEE JE METEEN EEN INVOICE AAN KAN MAKEN.
 INSERT INTO cars (licenseplate, brand, mileage, owner)
-VALUES ('TTBB3', 'Toyota', 50000, 'Jan Akkerman');
+VALUES ('AA-BB-3', 'Toyota', 50000, 'Jan Akkerman');
 
 INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
                         client_approved)
-VALUES (1001, 'Inspection 2', true, 'TTBB3', true);
+VALUES (1001, 'Inspection 2', true, 'AA-BB-3', true);
 
 INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
-VALUES (1001, 'TTBB3', 'BATTERIES', 'in good condition', true, 111);
+VALUES (1001, 'AA-BB-3', 'BATTERIES', 'in good condition', true, 111);
 
 INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
-VALUES (1002, 'TTBB3', 'BRAKES', 'in good condition', true, 12);
+VALUES (1002, 'AA-BB-3', 'BRAKES', 'in good condition', true, 12);
 
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1003, 'TTBB3', 'TIRES', 'in good condition', false, NULL);
+-- VALUES (1003, 'AA-BB-3', 'TIRES', 'in good condition', false, NULL);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1004, 'TTBB3', 'LIGHTS', 'in good condition', false, NULL);
+-- VALUES (1004, 'AA-BB-3', 'LIGHTS', 'in good condition', false, NULL);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1005, 'TTBB3', 'WINDSHIELD_WIPERS', 'in good condition', false, NULL);
+-- VALUES (1005, 'AA-BB-3', 'WINDSHIELD_WIPERS', 'in good condition', false, NULL);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1006, 'TTBB3', 'SUSPENSION', 'in good condition', false, NULL);
+-- VALUES (1006, 'AA-BB-3', 'SUSPENSION', 'in good condition', false, NULL);
 --
 -- INSERT INTO carparts (id, car_licenseplate, car_part_enum, part_status, part_is_inspected, car_part_cost)
--- VALUES (1007, 'TTBB3', 'ENGINE', 'needs replacement', false, NULL);
+-- VALUES (1007, 'AA-BB-3', 'ENGINE', 'needs replacement', false, NULL);
 
 
 INSERT INTO repair (id, repair_description, repair_finished, inspection_id)

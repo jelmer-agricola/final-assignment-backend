@@ -1,4 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.service;
+
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
@@ -38,12 +39,12 @@ public class CarService {
 
         CarPartEnum[] carPartEnums = CarPartEnum.values();
         for (CarPartEnum carPartEnum : carPartEnums) {
-                CarPart carPart = new CarPart();
-                carPart.setCarPartEnum(carPartEnum);
-                carPart.setCar(savedcar);
-                carPartRepository.save(carPart);
+            CarPart carPart = new CarPart();
+            carPart.setCarPartEnum(carPartEnum);
+            carPart.setCar(savedcar);
+            carPartRepository.save(carPart);
         }
-        savedcar = carRepository.save(savedcar);
+
         return savedcar.getLicenseplate();
     }
 
@@ -55,6 +56,7 @@ public class CarService {
         Car car = optionalCar.get();
         return transferCarToOutputDto(car);
     }
+
     public List<CarOutputDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
         List<CarOutputDto> carOutputDtos = new ArrayList<>();
@@ -93,35 +95,37 @@ public class CarService {
 
         List<Invoice> invoices = car.getInvoices();
         boolean isPaid = invoices != null && invoices.stream().anyMatch(Invoice::isPaid);
-
-        if (hasUnfinishedInspection || !isPaid) {
-            throw new BadRequestException("Cannot delete car with license plate " + licensePlate + ". Either there is an unfinished inspection or the corresponding invoice is not paid.");
+        if (hasUnfinishedInspection) {
+            throw new BadRequestException("Cannot delete car with license plate " + licensePlate + ". There is an unfinished inspection.");
+        }
+        if (!isPaid) {
+            throw new BadRequestException("Cannot delete car with license plate " + licensePlate + ". The corresponding invoice is not paid.");
         }
         carRepository.delete(car);
         return "Car with license plate " + licensePlate + " successfully deleted";
     }
 
-    public CarOutputDto transferCarToOutputDto(Car car) {
-        CarOutputDto carOutputDto = new CarOutputDto();
-        carOutputDto.setLicenseplate(car.getLicenseplate());
-        carOutputDto.setOwner(car.getOwner());
-        carOutputDto.setBrand(car.getBrand());
-        carOutputDto.setMileage(car.getMileage());
-        if (car.getCarParts() != null) {
-            carOutputDto.setCarParts(car.getCarParts());
+        public CarOutputDto transferCarToOutputDto (Car car){
+            CarOutputDto carOutputDto = new CarOutputDto();
+            carOutputDto.setLicenseplate(car.getLicenseplate());
+            carOutputDto.setOwner(car.getOwner());
+            carOutputDto.setBrand(car.getBrand());
+            carOutputDto.setMileage(car.getMileage());
+            if (car.getCarParts() != null) {
+                carOutputDto.setCarParts(car.getCarParts());
+            }
+
+            return carOutputDto;
         }
+        public Car transferInputDtoToCar (CarInputDto carInputDto){
+            Car car = new Car();
+            car.setOwner(carInputDto.getOwner());
+            car.setLicenseplate(carInputDto.getLicenseplate());
+            car.setBrand(carInputDto.getBrand());
+            car.setMileage(carInputDto.getMileage());
+            car.setCarParts(carInputDto.getCarParts());
 
-        return carOutputDto;
+            return car;
+        }
     }
-    public Car transferInputDtoToCar(CarInputDto carInputDto) {
-        Car car = new Car();
-        car.setOwner(carInputDto.getOwner());
-        car.setLicenseplate(carInputDto.getLicenseplate());
-        car.setBrand(carInputDto.getBrand());
-        car.setMileage(carInputDto.getMileage());
-        car.setCarParts(carInputDto.getCarParts());
-
-        return car;
-    }
-}
 
