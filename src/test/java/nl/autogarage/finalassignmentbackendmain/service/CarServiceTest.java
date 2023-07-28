@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundExcepti
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
+import nl.autogarage.finalassignmentbackendmain.models.Invoice;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
@@ -36,20 +38,16 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class CarServiceTest {
 
-
     @MockBean
     private InvoiceRepository invoiceRepository;
-
     @Mock
     private CarRepository carRepository;
     @Mock
     private CarPartRepository carPartRepository;
-
     @Captor
     private ArgumentCaptor<Car> carCaptor;
     @Captor
     private ArgumentCaptor<CarPart> carPartCaptor;
-
     @InjectMocks
     private CarService carService;
     private Car car1;
@@ -57,20 +55,16 @@ class CarServiceTest {
     CarOutputDto carOutputDto;
     Car car;
     private CarPart tires;
-
     private CarPart brakes;
     private CarPartInputDto carPartInputDto1;
-
 
     @BeforeEach
     void setUp() {
         carInputDto = new CarInputDto();
         carOutputDto = new CarOutputDto();
         car1 = new Car("33-AAB-3", "TOYOTA", 2500, "Henk de Tank", null, null, null);
-//        carRepository.save(car1);
         when(carRepository.save(any(Car.class))).thenReturn(car1);
     }
-
     @Test
     void testCreateCar() {
         // Arrange
@@ -114,11 +108,10 @@ class CarServiceTest {
         car2.setMileage(2500);
         car2.setOwner("Henk de Tank");
 
-        //        Act & Assert (Paul zegt dat deze hier samen mogen)
+ //        Act & Assert (Paul zegt dat deze hier samen mogen)
         assertThrows(DuplicateErrorException.class, () -> carService.createCar(car2));
         verify(carRepository).findByLicenseplate(licenseplate);
     }
-
 
     @Test
     void testGetCarByLicenseplate() {
@@ -138,5 +131,155 @@ class CarServiceTest {
         verify(carRepository).findByLicenseplate("33-AAB-3");
     }
 
+    @Test
+    void testGetCarByLicenseplateWhenNotFound() {
+        // Arrange
+        String licensePlate = "non-existent license plate";
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecordNotFoundException.class, () -> carService.getCarByLicenseplate(licensePlate));
+        verify(carRepository).findByLicenseplate(licensePlate);
+    }
+
+    @Test
+    void testGetAllCars() {
+        // Arrange
+        ArrayList<Car> carList = new ArrayList<>();
+        ArrayList<CarPart> carParts = new ArrayList<>();
+        ArrayList<Inspection> inspectionList = new ArrayList<>();
+        Car car = new Car("Licenseplate", "Brand", 1, "Owner", carParts, inspectionList, new ArrayList<>());
+        carList.add(car);
+
+        when(carRepository.findAll()).thenReturn(carList);
+
+        // Act
+        List<CarOutputDto> actualAllCars = carService.getAllCars();
+
+        // Assert
+        assertEquals(1, actualAllCars.size());
+        CarOutputDto getResult = actualAllCars.get(0);
+        assertEquals(car.getBrand(), getResult.getBrand());
+        assertEquals(car.getOwner(), getResult.getOwner());
+        assertEquals(car.getMileage().intValue(), getResult.getMileage().intValue());
+        assertEquals(car.getLicenseplate(), getResult.getLicenseplate());
+        assertEquals(car.getCarParts(), getResult.getCarParts());
+        verify(carRepository).findAll();
+    }
+
+
+    @Test
+    void testUpdateCar() {
+        // Arrange
+        String licensePlate = "33-AAB-3";
+        Car existingCar = new Car(licensePlate, "TOYOTA", 2500, "Henk de Tank", null, null, null);
+
+        CarOutputDto newCarData = new CarOutputDto();
+        newCarData.setBrand("new TOYOTA");
+        newCarData.setCarParts(new ArrayList<>());
+        newCarData.setLicenseplate(licensePlate);
+        newCarData.setMileage(3000);
+        newCarData.setOwner("New owner");
+
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(existingCar));
+        when(carRepository.save(any(Car.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        CarOutputDto updatedCar = carService.updateCar(licensePlate, newCarData);
+
+        // Assert
+        assertEquals(newCarData.getBrand(), updatedCar.getBrand());
+        assertEquals(newCarData.getOwner(), updatedCar.getOwner());
+        assertEquals(newCarData.getMileage().intValue(), updatedCar.getMileage().intValue());
+        assertEquals(newCarData.getLicenseplate(), updatedCar.getLicenseplate());
+
+        verify(carRepository).findByLicenseplate(licensePlate);
+        verify(carRepository).save(carCaptor.capture());
+
+        Car savedCar = carCaptor.getValue();
+        assertEquals(newCarData.getBrand(), savedCar.getBrand());
+        assertEquals(newCarData.getOwner(), savedCar.getOwner());
+        assertEquals(newCarData.getMileage().intValue(), savedCar.getMileage());
+    }
+
+    @Test
+    void testUpdateNonExistingCar() {
+        String licensePlate = "AA-BB-12";
+
+        // No car with the provided license plate exists in the repository
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.empty());
+
+        CarOutputDto carOutputDto = new CarOutputDto();
+        carOutputDto.setBrand("Toyota");
+        carOutputDto.setCarParts(new ArrayList<>());
+        carOutputDto.setLicenseplate(licensePlate);
+        carOutputDto.setMileage(1);
+        carOutputDto.setOwner("Jelmer");
+
+        // An attempt to update a non-existing car should result in a RecordNotFoundException
+        assertThrows(RecordNotFoundException.class, () -> carService.updateCar(licensePlate, carOutputDto));
+
+        verify(carRepository).findByLicenseplate(licensePlate);
+    }
+
+    @Test
+    void testDeleteCar_NotFound() {
+        // Arrange
+        String licensePlate = "AA-BB-12";
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecordNotFoundException.class, () -> carService.deleteCar(licensePlate));
+    }
+
+    @Test
+    void testDeleteCar_UnfinishedInspection() {
+        // Arrange
+        String licensePlate = "AA-BB-12";
+        Car car = new Car();
+        car.setInspections(Arrays.asList(new Inspection()));
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(car));
+
+        // Act & Assert
+        assertThrows(BadRequestException.class, () -> carService.deleteCar(licensePlate));
+    }
+
+    @Test
+    void testDeleteCar_UnpaidInvoice() {
+        // Arrange
+        String licensePlate = "AA-BB-12";
+        Car car = new Car();
+        car.setInspections(new ArrayList<>());
+        Invoice unpaidInvoice = new Invoice();
+        unpaidInvoice.setPaid(false);
+        car.setInvoices(Arrays.asList(unpaidInvoice));
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(car));
+
+        // Act & Assert
+        assertThrows(BadRequestException.class, () -> carService.deleteCar(licensePlate));
+    }
+
+    @Test
+    void testDeleteCar_Success() {
+        // Arrange
+        String licensePlate = "Licenseplate";
+        Car car = new Car();
+        car.setInspections(new ArrayList<>());
+        Invoice paidInvoice = new Invoice();
+        paidInvoice.setPaid(true);
+        car.setInvoices(Arrays.asList(paidInvoice));
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(car));
+
+        // Act
+        String message = carService.deleteCar(licensePlate);
+
+        // Assert
+        verify(carRepository).delete(car);
+        assertEquals("Car with license plate " + licensePlate + " successfully deleted", message);
+    }
+
+
+
 
 }
+
