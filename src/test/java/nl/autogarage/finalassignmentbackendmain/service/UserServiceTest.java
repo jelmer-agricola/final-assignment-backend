@@ -1,12 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
 
@@ -22,9 +17,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,19 +28,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ContextConfiguration(classes = {UserService.class})
+@ExtendWith(SpringExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class UserServiceTest {
-
-    @InjectMocks
-    UserService userService;
-
-    @Mock
-    private UserRepository userRepository;
-
     @MockBean
     private PasswordEncoder passwordEncoder;
 
+    @MockBean
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
     User user1;
     User user2;
     User user3;
@@ -56,14 +54,14 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         user1 = new User("user1", "user", true, "testapikey", "testuser@email.com", "Bart", "Test", null);
         user2 = new User("user2", "user2", true, "testapikey", "testuser2@email.com", "Bart2", "Test2", null);
 
 
         userDto1 = new UserDto("user1", "user", "testuser@email.com", true, "Bart", "Test", "testapikey", null, null, null);
         userDto2 = new UserDto("user2", "user2", "testuse2r@email.com", true, "Bart2", "Test2", "testapikey", null, null, null);
-
-
     }
 
 
@@ -110,4 +108,52 @@ class UserServiceTest {
         // Act & Assert
         assertThrows(UsernameNotFoundException.class, () -> userService.getUser(username));
     }
+
+    @Test
+    void testUserExists() {
+        when(userRepository.existsById((String) any())).thenReturn(true);
+        assertTrue(userService.userExists("janedoe"));
+        verify(userRepository).existsById((String) any());
+    }
+
+
+    @Test
+    void testDeleteUser() {
+        // Arrange
+        String username = "user1";
+        doNothing().when(userRepository).deleteById(username);
+        when(userRepository.existsById(username)).thenReturn(true);
+
+        // Act
+        userService.deleteUser(username);
+
+        // Assert
+        verify(userRepository, times(1)).deleteById(username);
+    }
+
+
+    @Test
+    void testCreateUser() {
+        // Arrange
+        User user = mock(User.class);
+        when(user.getUsername()).thenReturn("janedoe");
+
+        UserDto userDto = new UserDto();
+        userDto.setEnabled(true);
+        userDto.setPassword("testPassword");  // add this line
+
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("secret");
+
+        // Act
+        String createdUsername = userService.createUser(userDto);
+
+        // Assert
+        assertEquals("janedoe", createdUsername, "Created username should be 'janedoe'");
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(passwordEncoder, times(1)).encode(any(CharSequence.class));
+        assertEquals("secret", userDto.getPassword(), "UserDto password should be equal to 'secret'");
+    }
+
 }
+
