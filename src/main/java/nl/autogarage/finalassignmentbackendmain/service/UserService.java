@@ -77,9 +77,7 @@ public class UserService {
         user.setLastname(newUser.getLastname());
         userRepository.save(user);
     }
-//    Todo eisen voor wachtwoord e.d.
 
-//    Voor admin
     public Set<Authority> getAuthorities(String username) {
         if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
         User user = userRepository.findById(username).get();
@@ -87,7 +85,6 @@ public class UserService {
         return userDto.getAuthorities();
     }
 
-//    Voor admin
 
     public void addAuthority(String username, String authority) {
         if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
@@ -96,7 +93,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-//    Voor admin
 
     public void removeAuthority(String username, String authority) {
         if (!Objects.equals(authority, "ROLE_OFFICE") & !Objects.equals(authority, "ROLE_ADMIN") & !Objects.equals(authority, "ROLE_MECHANIC")) {

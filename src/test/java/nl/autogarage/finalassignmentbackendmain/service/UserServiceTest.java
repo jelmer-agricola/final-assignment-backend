@@ -64,7 +64,6 @@ class UserServiceTest {
         userDto2 = new UserDto("user2", "user2", "testuse2r@email.com", true, "Bart2", "Test2", "testapikey", null, null, null);
     }
 
-
     @Test
     void testGetUsers() {
         // Arrange
@@ -155,5 +154,213 @@ class UserServiceTest {
         assertEquals("secret", userDto.getPassword(), "UserDto password should be equal to 'secret'");
     }
 
-}
+    @Test
+    void testUpdateUser() {
+        // Arrange
+        when(userRepository.existsById(user1.getUsername())).thenReturn(true);
+        when(userRepository.findById(user1.getUsername())).thenReturn(Optional.of(user1));
+        when(passwordEncoder.encode(userDto1.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArguments()[0]);
 
+        // Act
+        userService.updateUser(user1.getUsername(), userDto1);
+
+        // Assert
+        verify(userRepository).save(userCaptor.capture());
+        User savedUser = userCaptor.getValue();
+        assertEquals(userDto1.getUsername(), savedUser.getUsername());
+        assertEquals(userDto1.getEmail(), savedUser.getEmail());
+        verify(userRepository, times(1)).existsById(user1.getUsername());
+        verify(userRepository, times(1)).findById(user1.getUsername());
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(passwordEncoder, times(1)).encode(userDto1.getPassword());
+    }
+
+    @Test
+    void testUpdateUser_UserDoesNotExist_ThrowsException() {
+        // Arrange
+        when(userRepository.existsById(user2.getUsername())).thenReturn(false);
+
+        // Act and Assert
+        assertThrows(RecordNotFoundException.class, () -> userService.updateUser(user2.getUsername(), userDto2));
+        verify(userRepository, times(1)).existsById(user2.getUsername());
+    }
+
+    @Test
+    void testGetAuthorities() {
+        // Arrange
+        String username = "janedoe";
+        User user = mock(User.class);
+        Set<Authority> authoritySet = new HashSet<>();
+        when(user.getAuthorities()).thenReturn(authoritySet);
+        when(userRepository.existsById(username)).thenReturn(true);
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+
+        // Act
+        Set<Authority> actualAuthorities = userService.getAuthorities(username);
+
+        // Assert
+        assertSame(authoritySet, actualAuthorities);
+        assertTrue(actualAuthorities.isEmpty());
+        verify(userRepository).existsById(username);
+        verify(userRepository).findById(username);
+    }
+
+
+    @Test
+    void testSGetAuthoritiesThrowExceptionWhenUserDoesNotExist() {
+        // Arrange
+        String username = "janedoe";
+        when(userRepository.existsById(username)).thenReturn(false);
+
+        // Act and Assert
+        assertThrows(UsernameNotFoundException.class, () -> userService.getAuthorities(username));
+        verify(userRepository).existsById(username);
+    }
+
+    @Test
+    void testAddAuthority() {
+        // Arrange
+        when(userRepository.save((User) any())).thenReturn(new User());
+        when(userRepository.findById((String) any())).thenReturn(Optional.of(new User()));
+        when(userRepository.existsById((String) any())).thenReturn(true);
+
+        // Act
+        userService.addAuthority("janedoe", "ROLE_MECHANIC");
+        userService.addAuthority("janedoe", "ROLE_OFFICE");
+        userService.addAuthority("janedoe", "ROLE_ADMIN");
+
+        // Assert
+        verify(userRepository, times(3)).existsById((String) any());
+        verify(userRepository, times(3)).save((User) any());
+        verify(userRepository, times(3)).findById((String) any());
+    }
+
+    @Test
+    void testAddAuthority_whenSaveThrowsUsernameNotFound() {
+        // Arrange
+        when(userRepository.save((User) any())).thenThrow(new UsernameNotFoundException("janedoe"));
+        when(userRepository.findById((String) any())).thenReturn(Optional.of(new User()));
+        when(userRepository.existsById((String) any())).thenReturn(true);
+
+        // Act and Assert
+        assertThrows(UsernameNotFoundException.class, () -> userService.addAuthority("janedoe", "ROLE_MECHANIC"));
+        assertThrows(UsernameNotFoundException.class, () -> userService.addAuthority("janedoe", "ROLE_OFFICE"));
+        assertThrows(UsernameNotFoundException.class, () -> userService.addAuthority("janedoe", "ROLE_ADMIN"));
+        verify(userRepository, times(3)).existsById((String) any());
+        verify(userRepository, times(3)).save((User) any());
+        verify(userRepository, times(3)).findById((String) any());
+    }
+
+    @Test
+    void testRemoveAuthority() {
+        // Arrange
+        String username = "janedoe";
+        String authority = "ROLE_OFFICE";
+        User user = mock(User.class);
+        Authority authorityToRemove = new Authority(username, authority);
+        HashSet<Authority> authorities = new HashSet<>();
+        authorities.add(authorityToRemove);
+        when(user.getAuthorities()).thenReturn(authorities);
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(userRepository.existsById(username)).thenReturn(true);
+
+        // Act
+        userService.removeAuthority(username, authority);
+
+        // Assert
+        verify(userRepository).existsById(username);
+        verify(user).removeAuthority(authorityToRemove);
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void testRemoveAuthInvalidRole() {
+        // Arrange
+        String username = "janedoe";
+        String authority = "INVALID_ROLE";
+
+        // Act & Assert
+        assertThrows(RecordNotFoundException.class, () -> userService.removeAuthority(username, authority));
+    }
+
+    @Test
+    void testRemoveAuthUserDoesNotExist() {
+        // Arrange
+        String username = "janedoe";
+        String authority = "ROLE_OFFICE";
+        when(userRepository.existsById(username)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(org.springframework.security.core.userdetails.UsernameNotFoundException.class,
+                () -> userService.removeAuthority(username, authority));
+    }
+
+    @Test
+    void testRemoveAuthUserDoesNotHaveAuthority() {
+        // Arrange
+        String username = "janedoe";
+        String authority = "ROLE_OFFICE";
+        User user = mock(User.class);
+        when(user.getAuthorities()).thenReturn(new HashSet<>());
+        when(userRepository.findById(username)).thenReturn(Optional.of(user));
+        when(userRepository.existsById(username)).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(RecordNotFoundException.class, () -> userService.removeAuthority(username, authority));
+    }
+
+    @Test
+    void testFromUserToDto() {
+        // Arrange
+        User user = new User();
+        user.setUsername("janedoe");
+        user.setPassword("password");
+        user.setEnabled(true);
+        user.setApikey("apikey");
+        user.setEmail("janedoe@example.com");
+        user.setFirstname("Jane");
+        user.setLastname("Doe");
+
+        // Act
+        UserDto userDto = UserService.fromUserToDto(user);
+
+        // Assert
+        assertEquals(user.getUsername(), userDto.getUsername());
+        assertEquals(user.getPassword(), userDto.getPassword());
+        assertEquals(user.isEnabled(), userDto.getEnabled());
+        assertEquals(user.getApikey(), userDto.getApikey());
+        assertEquals(user.getEmail(), userDto.getEmail());
+        assertEquals(user.getFirstname(), userDto.getFirstname());
+        assertEquals(user.getLastname(), userDto.getLastname());
+    }
+
+    @Test
+    void testFromDtoToUser() {
+        // Arrange
+        UserDto userDto = new UserDto();
+        userDto.setUsername("janedoe");
+        userDto.setPassword("password");
+        userDto.setEnabled(true);
+        userDto.setApikey("apikey");
+        userDto.setEmail("janedoe@example.com");
+        userDto.setFirstname("Jane");
+        userDto.setLastname("Doe");
+
+        // Act
+        User user = userService.fromDtoToUser(userDto);
+
+        // Assert
+        assertEquals(userDto.getUsername(), user.getUsername());
+        assertEquals(userDto.getPassword(), user.getPassword());
+        assertEquals(userDto.getEnabled(), user.isEnabled());
+        assertEquals(userDto.getApikey(), user.getApikey());
+        assertEquals(userDto.getEmail(), user.getEmail());
+        assertEquals(userDto.getFirstname(), user.getFirstname());
+        assertEquals(userDto.getLastname(), user.getLastname());
+    }
+
+
+
+
+}
