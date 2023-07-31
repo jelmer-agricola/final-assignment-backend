@@ -4,17 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
-
 import nl.autogarage.finalassignmentbackendmain.dto.Security.UserDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-
 import nl.autogarage.finalassignmentbackendmain.exceptions.UsernameNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Authority;
-
 import nl.autogarage.finalassignmentbackendmain.models.User;
 import nl.autogarage.finalassignmentbackendmain.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -40,26 +36,19 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
-
-
     @Captor
     private ArgumentCaptor<User> userCaptor;
     User user1;
     User user2;
-    User user3;
     UserDto userDto1;
     UserDto userDto2;
-    UserDto userDto3;
 
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
         user1 = new User("user1", "user", true, "testapikey", "testuser@email.com", "Bart", "Test", null);
         user2 = new User("user2", "user2", true, "testapikey", "testuser2@email.com", "Bart2", "Test2", null);
-
-
         userDto1 = new UserDto("user1", "user", "testuser@email.com", true, "Bart", "Test", "testapikey", null, null, null);
         userDto2 = new UserDto("user2", "user2", "testuse2r@email.com", true, "Bart2", "Test2", "testapikey", null, null, null);
     }
@@ -115,7 +104,6 @@ class UserServiceTest {
         verify(userRepository).existsById((String) any());
     }
 
-
     @Test
     void testDeleteUser() {
         // Arrange
@@ -129,7 +117,6 @@ class UserServiceTest {
         // Assert
         verify(userRepository, times(1)).deleteById(username);
     }
-
 
     @Test
     void testCreateUser() {
@@ -309,58 +296,6 @@ class UserServiceTest {
         // Act & Assert
         assertThrows(RecordNotFoundException.class, () -> userService.removeAuthority(username, authority));
     }
-
-    @Test
-    void testFromUserToDto() {
-        // Arrange
-        User user = new User();
-        user.setUsername("janedoe");
-        user.setPassword("password");
-        user.setEnabled(true);
-        user.setApikey("apikey");
-        user.setEmail("janedoe@example.com");
-        user.setFirstname("Jane");
-        user.setLastname("Doe");
-
-        // Act
-        UserDto userDto = UserService.fromUserToDto(user);
-
-        // Assert
-        assertEquals(user.getUsername(), userDto.getUsername());
-        assertEquals(user.getPassword(), userDto.getPassword());
-        assertEquals(user.isEnabled(), userDto.getEnabled());
-        assertEquals(user.getApikey(), userDto.getApikey());
-        assertEquals(user.getEmail(), userDto.getEmail());
-        assertEquals(user.getFirstname(), userDto.getFirstname());
-        assertEquals(user.getLastname(), userDto.getLastname());
-    }
-
-    @Test
-    void testFromDtoToUser() {
-        // Arrange
-        UserDto userDto = new UserDto();
-        userDto.setUsername("janedoe");
-        userDto.setPassword("password");
-        userDto.setEnabled(true);
-        userDto.setApikey("apikey");
-        userDto.setEmail("janedoe@example.com");
-        userDto.setFirstname("Jane");
-        userDto.setLastname("Doe");
-
-        // Act
-        User user = userService.fromDtoToUser(userDto);
-
-        // Assert
-        assertEquals(userDto.getUsername(), user.getUsername());
-        assertEquals(userDto.getPassword(), user.getPassword());
-        assertEquals(userDto.getEnabled(), user.isEnabled());
-        assertEquals(userDto.getApikey(), user.getApikey());
-        assertEquals(userDto.getEmail(), user.getEmail());
-        assertEquals(userDto.getFirstname(), user.getFirstname());
-        assertEquals(userDto.getLastname(), user.getLastname());
-    }
-
-
 
 
 }

@@ -25,7 +25,6 @@ public class CarPartService {
         this.carRepository = carRepository;
     }
 
-    //    moet nog aangepast worden.
     public Iterable<CarPartOutputDto> getCarPartsByLicensePlate(String licensePlate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licensePlate);
         if (optionalCar.isEmpty()) {

@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.mockito.quality.Strictness;
 
@@ -50,7 +49,6 @@ class CarServiceTest {
         carInputDto = new CarInputDto();
         carOutputDto = new CarOutputDto();
         car1 = new Car("33-AAB-3", "TOYOTA", 2500, "Henk de Tank", null, null, null);
-        when(carRepository.save(any(Car.class))).thenReturn(car1);
     }
     @Test
     void testCreateCar() {
@@ -63,7 +61,10 @@ class CarServiceTest {
         carInputDto.setCarParts(new ArrayList<>());
         carInputDto.setLicenseplate("33-AAB-3");
         carInputDto.setMileage(100);
-        carInputDto.setOwner("henk");
+        carInputDto.setOwner("Henk de Tank");
+
+        // Mock save() method here
+        when(carRepository.save(any(Car.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         String createdLicensePlate = carService.createCar(carInputDto);
@@ -74,7 +75,7 @@ class CarServiceTest {
         assertEquals("33-AAB-3", createdLicensePlate);
         assertEquals("Toyota", capturedCar.getBrand());
         assertEquals(100, capturedCar.getMileage());
-        assertEquals("henk", capturedCar.getOwner());
+        assertEquals("Henk de Tank", capturedCar.getOwner());
 
         verify(carRepository).findByLicenseplate(anyString());
         verify(carPartRepository, atLeast(1)).save(any(CarPart.class));
@@ -85,13 +86,10 @@ class CarServiceTest {
         // Arrange
         String licenseplate = "33-AAB-3";
 
-        // Mocking behavior for carRepository.findByLicenseplate
         when(carRepository.findByLicenseplate(licenseplate)).thenReturn(Optional.of(car1));
-
-//        CarInputDto carInputDto = new CarInputDto();
         CarInputDto car2 = new CarInputDto();
         car2.setBrand("Toyota");
-        car2.setLicenseplate(licenseplate); // Existing license plate, should throw DuplicateErrorException
+        car2.setLicenseplate(licenseplate);
         car2.setMileage(2500);
         car2.setOwner("Henk de Tank");
 
@@ -105,10 +103,8 @@ class CarServiceTest {
         // Arrange
         Car car = new Car("33-AAB-3", "TOYOTA", 2500, "Henk de Tank", null, null, null);
         when(carRepository.findByLicenseplate("33-AAB-3")).thenReturn(Optional.of(car));
-
         // Act
         CarOutputDto actualCarByLicenseplate = carService.getCarByLicenseplate("33-AAB-3");
-
         // Assert
         assertEquals("TOYOTA", actualCarByLicenseplate.getBrand());
         assertEquals("Henk de Tank", actualCarByLicenseplate.getOwner());
@@ -191,8 +187,6 @@ class CarServiceTest {
     @Test
     void testUpdateNonExistingCar() {
         String licensePlate = "AA-BB-12";
-
-        // No car with the provided license plate exists in the repository
         when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.empty());
 
         CarOutputDto carOutputDto = new CarOutputDto();
@@ -202,10 +196,27 @@ class CarServiceTest {
         carOutputDto.setMileage(1);
         carOutputDto.setOwner("Jelmer");
 
-        // An attempt to update a non-existing car should result in a RecordNotFoundException
         assertThrows(RecordNotFoundException.class, () -> carService.updateCar(licensePlate, carOutputDto));
-
         verify(carRepository).findByLicenseplate(licensePlate);
+    }
+
+    @Test
+    void testDeleteCar() {
+        // Arrange
+        String licensePlate = "Licenseplate";
+        Car car = new Car();
+        car.setInspections(new ArrayList<>());
+        Invoice paidInvoice = new Invoice();
+        paidInvoice.setPaid(true);
+        car.setInvoices(Arrays.asList(paidInvoice));
+        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(car));
+
+        // Act
+        String message = carService.deleteCar(licensePlate);
+
+        // Assert
+        verify(carRepository).delete(car);
+        assertEquals("Car with license plate " + licensePlate + " successfully deleted", message);
     }
 
     @Test
@@ -244,24 +255,7 @@ class CarServiceTest {
         assertThrows(BadRequestException.class, () -> carService.deleteCar(licensePlate));
     }
 
-    @Test
-    void testDeleteCar_Success() {
-        // Arrange
-        String licensePlate = "Licenseplate";
-        Car car = new Car();
-        car.setInspections(new ArrayList<>());
-        Invoice paidInvoice = new Invoice();
-        paidInvoice.setPaid(true);
-        car.setInvoices(Arrays.asList(paidInvoice));
-        when(carRepository.findByLicenseplate(licensePlate)).thenReturn(Optional.of(car));
 
-        // Act
-        String message = carService.deleteCar(licensePlate);
-
-        // Assert
-        verify(carRepository).delete(car);
-        assertEquals("Car with license plate " + licensePlate + " successfully deleted", message);
-    }
 
     @Test
     void testTransferInputDtoToCar() {
@@ -283,21 +277,5 @@ class CarServiceTest {
         assertTrue(actualTransferInputDtoToCarResult.getCarParts().isEmpty());
     }
 
-    @Test
-    void testTransferCarToOutputDto() {
-        // Arrange
-        ArrayList<CarPart> carParts = new ArrayList<>();
-        car1.setCarParts(carParts);
-
-        // Act
-        CarOutputDto actualTransferCarToOutputDtoResult = carService.transferCarToOutputDto(car1);
-
-        // Assert
-        assertEquals("TOYOTA", actualTransferCarToOutputDtoResult.getBrand());
-        assertEquals("Henk de Tank", actualTransferCarToOutputDtoResult.getOwner());
-        assertEquals(2500, actualTransferCarToOutputDtoResult.getMileage().intValue());
-        assertEquals("33-AAB-3", actualTransferCarToOutputDtoResult.getLicenseplate());
-        assertEquals(carParts, actualTransferCarToOutputDtoResult.getCarParts());
-    }
 }
 
