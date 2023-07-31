@@ -39,8 +39,6 @@ public class CarController {
         }
     }
 
-
-
     @GetMapping
     public ResponseEntity<List<CarOutputDto>> getAllCars() {
         return ResponseEntity.ok().body(carService.getAllCars());

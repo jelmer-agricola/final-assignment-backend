@@ -20,15 +20,6 @@ public class InvoiceController {
     public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
-//    @PostMapping("/add")
-//    public ResponseEntity<Object> createInvoice(@Valid @RequestBody InvoiceInputDto invoiceInputDto, BindingResult bindingResult) {
-//        if (bindingResult.hasFieldErrors()) {
-//            return ResponseEntity.badRequest().body(ErrorUtils.errorToStringHandling(bindingResult));
-//        }
-//        InvoiceOutputDto invoiceOutputDto = invoiceService.createInvoice(invoiceInputDto);
-//        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentRequest().path("/" + invoiceOutputDto.getId()).toUriString());
-//        return ResponseEntity.created(uri).body(invoiceOutputDto);
-//    }
 
     @PostMapping("/add/{inspection_id}")
     public ResponseEntity<String> createInvoice(@PathVariable long inspection_id) {
