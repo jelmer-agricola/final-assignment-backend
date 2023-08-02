@@ -82,14 +82,6 @@ public class CarPartService {
     }
 
 
-//    private CarPart transferInputDtoToCarPart(CarPartInputDto carPartInputDto) {
-//        CarPart carPart = new CarPart();
-//        carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-//        carPart.setPartStatus(carPartInputDto.getPartStatus());
-//        carPart.setCarPartCost(carPartInputDto.getCarPartCost());
-//        return carPart;
-//    }
-
 
     private CarPartOutputDto transferCarPartToOutputDto(CarPart carPart) {
         CarPartOutputDto carPartOutputDto = new CarPartOutputDto();

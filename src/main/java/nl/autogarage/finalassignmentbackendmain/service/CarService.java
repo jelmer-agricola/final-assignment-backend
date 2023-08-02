@@ -51,7 +51,7 @@ public class CarService {
     public CarOutputDto getCarByLicenseplate(String licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
         if (optionalCar.isEmpty()) {
-            throw new RecordNotFoundException("Car with not found with licenseplate" + licenseplate);
+            throw new RecordNotFoundException("Car with license  plate " + licenseplate + " not found");
         }
         Car car = optionalCar.get();
         return transferCarToOutputDto(car);

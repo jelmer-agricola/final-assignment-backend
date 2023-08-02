@@ -18,8 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-//Todo toevoegen endpoint
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;

@@ -114,7 +114,12 @@ public class InspectionService {
     }
 
     public String deleteInspection(Long id) {
-        if (inspectionRepository.existsById(id)) {
+        Inspection inspection = inspectionRepository.findById(id).orElse(null);
+        if (inspection != null) {
+            if (!inspection.getRepairs().isEmpty()) {
+                throw new BadRequestException("Repairs must be deleted before deleting the inspection");
+            }
+
             inspectionRepository.deleteById(id);
             return "Inspection with ID: " + id + " has been deleted.";
         }

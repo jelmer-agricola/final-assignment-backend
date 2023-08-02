@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
 import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
@@ -19,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 
@@ -29,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-class CarPartControllerIntegrationTest {
+class CarPartIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
