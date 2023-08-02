@@ -240,7 +240,7 @@ public class InvoiceService {
             String carPartName = repair.getCarPart().getCarPartEnum().getTranslatedName().toLowerCase();
             double carPartCost = repair.getCarPart().getCarPartCost();
 
-            if (carPartCost > 0) { // Alleen toevoegen als de kosten groter zijn dan 0
+            if (carPartCost > 0) {
                 repairitems.append("Auto onderdeel: ").append(carPartName).append("\t\t\t")
                         .append(" Reparatie kosten: €").append(carPartCost).append("\t\t\t")
                         .append(" Reparatie ").append(repairStatus).append(" \n")
