@@ -46,7 +46,6 @@ public class InvoiceService {
         Optional<Inspection> optionalCarInspection = inspectionRepository.findById(inspection_id);
         if (optionalCarInspection.isEmpty()) {
             throw new RecordNotFoundException("no Inspection found with id: " + inspection_id);
-//            is inspected dus og
         } else if (!optionalCarInspection.get().isInspectionFinished()) {
             throw new BadRequestException("The inspection is not yet finished it still needs to be finished. No invoice can be created.");
         } else if (invoiceRepository.existsByInspectionId(inspection_id)) {
@@ -60,8 +59,6 @@ public class InvoiceService {
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
             newInvoice.setDate(java.time.LocalDate.now());
-
-//
             newInvoice.setTotalCostOfRepair(newInvoice.calculateTotalCost());
             newInvoice.setFinalCost(newInvoice.calculateFinalCost());
 
@@ -155,9 +152,9 @@ public class InvoiceService {
 
 
         Paragraph paragraph4 = new Paragraph(
-                "Totaal aan reparatie kosten: " + invoice.getTotalCostOfRepair() +
-                        "\n" + "Algemene Periodieke Keuring: " + Invoice.periodicVehicleInspection +
-                        "\n" + "Totaal bedrag : " + (invoice.getFinalCost()),
+                "Totaal aan reparatie kosten: €" + invoice.getTotalCostOfRepair() +
+                        "\n" + "Algemene Periodieke Keuring: €" + Invoice.periodicVehicleInspection +
+                        "\n" + "Totaal bedrag : €" + (invoice.getFinalCost()),
                 fontSection);
         paragraph4.setAlignment(Paragraph.ALIGN_RIGHT);
 
@@ -205,26 +202,18 @@ public class InvoiceService {
 
 
     public String deleteInvoice(Long id) {
-        if (invoiceRepository.existsById(id)) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Invoice with ID " + id + " does not exist"));
+
+        if (invoice.isPaid()) {
             invoiceRepository.deleteById(id);
             return "Invoice with ID: " + id + " has been deleted.";
+        } else {
+            throw new BadRequestException("Invoice with ID " + id + " has not been paid and cannot be deleted.");
         }
-        throw new RecordNotFoundException("Invoice with ID " + id + " does not exist");
     }
 
 
-//    private Invoice transferInputDtoToInvoice(InvoiceInputDto invoiceInputDto) {
-//        Invoice invoice = new Invoice();
-//        invoice.setFinalCost(invoiceInputDto.getFinalCost());
-//        invoice.setInvoicePdf(invoiceInputDto.getInvoicePdf());
-//        invoice.setPaid(invoiceInputDto.isPaid());
-//        invoice.setInspection(invoiceInputDto.getInspection());
-//        invoice.setDate(invoiceInputDto.getDate());
-//        invoice.setTotalCostOfRepair(invoiceInputDto.getFinalCost());
-//        invoice.setCar(invoiceInputDto.getCar());
-//
-//        return invoice;
-//    }
 
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
         InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
@@ -249,11 +238,14 @@ public class InvoiceService {
             boolean repairFinished = repair.isRepairFinished();
             String repairStatus = repairFinished ? "afgerond" : "niet afgerond";
             String carPartName = repair.getCarPart().getCarPartEnum().getTranslatedName().toLowerCase();
+            double carPartCost = repair.getCarPart().getCarPartCost();
 
-            repairitems.append("Auto onderdeel: ").append(carPartName).append("\t\t\t")
-                    .append(" Reparatie kosten: €").append(repair.getCarPart().getCarPartCost()).append("\t\t\t")
-                    .append(" Reparatie ").append(repairStatus).append(" \n")
-                    .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
+            if (carPartCost > 0) { // Alleen toevoegen als de kosten groter zijn dan 0
+                repairitems.append("Auto onderdeel: ").append(carPartName).append("\t\t\t")
+                        .append(" Reparatie kosten: €").append(carPartCost).append("\t\t\t")
+                        .append(" Reparatie ").append(repairStatus).append(" \n")
+                        .append("Beschrijving: ").append(repair.getRepairDescription()).append("\n \n");
+            }
         }
         repairitems.append("Algemene Periodieke Keuring €\t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();

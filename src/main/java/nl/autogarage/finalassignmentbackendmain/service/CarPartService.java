@@ -18,17 +18,13 @@ public class CarPartService {
 
     private final CarRepository carRepository;
     private final CarPartRepository carPartRepository;
-    private final RepairService repairService;
 
 
-    public CarPartService(CarRepository carRepository, CarPartRepository carPartRepository, RepairService repairService) {
+    public CarPartService(CarRepository carRepository, CarPartRepository carPartRepository) {
         this.carPartRepository = carPartRepository;
         this.carRepository = carRepository;
-
-        this.repairService = repairService;
     }
 
-    //    moet nog aangepast worden.
     public Iterable<CarPartOutputDto> getCarPartsByLicensePlate(String licensePlate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licensePlate);
         if (optionalCar.isEmpty()) {
@@ -43,14 +39,6 @@ public class CarPartService {
         }
         return carPartOutputDtos;
     }
-
-
-//    public CarPartOutputDto createCarPart(CarPartInputDto carPartInputDto) {
-//        CarPart carPart = transferInputDtoToCarPart(carPartInputDto);
-//        CarPart savedCarPart = carPartRepository.save(carPart);
-//        return transferCarPartToOutputDto(savedCarPart);
-//    }
-
     public List<CarPartOutputDto> getAllCarParts() {
         List<CarPart> carParts = carPartRepository.findAll();
         List<CarPartOutputDto> carPartOutputDtos = new ArrayList<>();
@@ -59,7 +47,6 @@ public class CarPartService {
         }
         return carPartOutputDtos;
     }
-
     public CarPartOutputDto getCarPartById(Long id) {
         Optional<CarPart> optionalCarPart = carPartRepository.findById(id);
         if (optionalCarPart.isPresent()) {
@@ -69,31 +56,6 @@ public class CarPartService {
             throw new RecordNotFoundException("CarPart not found with ID " + id);
         }
     }
-
-    public CarPartOutputDto updateCarPart(Long id, CarPartInputDto carPartInputDto) {
-        Optional<CarPart> optionalCarPart = carPartRepository.findById(id);
-        if (optionalCarPart.isEmpty()) {
-            throw new RecordNotFoundException("No CarPart with id: " + id);
-        } else {
-            CarPart updatedCarPart = optionalCarPart.get();
-            updatedCarPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-            CarPart savedCarPart = carPartRepository.save(updatedCarPart);
-            return transferCarPartToOutputDto(savedCarPart);
-        }
-    }
-
-
-
-    public String deleteCarPart(Long id) {
-        if (carPartRepository.existsById(id)) {
-            carPartRepository.deleteById(id);
-            return "CarPart with ID: " + id + " has been deleted.";
-        }
-        throw new RecordNotFoundException("CarPart with ID " + id + " does not exist");
-    }
-
-
-//      carparts bijzondere methodes hier te zetten
 
     public CarPartOutputDto CarPartStatusCheck(String licenseplate, String carpart, CarPartInputDto carPartinputDto) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
@@ -119,14 +81,6 @@ public class CarPartService {
         return transferCarPartToOutputDto(savedCarPart);
     }
 
-
-    private CarPart transferInputDtoToCarPart(CarPartInputDto carPartInputDto) {
-        CarPart carPart = new CarPart();
-        carPart.setCarPartEnum(carPartInputDto.getCarPartEnum());
-        carPart.setPartStatus(carPartInputDto.getPartStatus());
-        carPart.setCarPartCost(carPartInputDto.getCarPartCost());
-        return carPart;
-    }
 
 
     private CarPartOutputDto transferCarPartToOutputDto(CarPart carPart) {

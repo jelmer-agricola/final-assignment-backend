@@ -71,7 +71,6 @@ public class RepairService {
         }
 
         for (CarPartEnum carPartEnum : CarPartEnum.values()) {
-            // Check if a repair for the current car part already exists in the inspection
             boolean repairExists = inspection.getRepairs().stream()
                     .anyMatch(repair -> repair.getCarPart().getCarPartEnum() == carPartEnum);
 
@@ -85,7 +84,6 @@ public class RepairService {
                 Repair newRepair = new Repair();
                 newRepair.setCarPart(carPart);
                 newRepair.setInspection(inspection);
-                // Set other properties for the new repair based on the input or default values
 
                 Repair savedRepair = repairRepository.save(newRepair);
                 savedRepairIdsAndCarPartEnums.put(savedRepair.getId(), carPartEnum);
@@ -94,11 +92,6 @@ public class RepairService {
 
         return savedRepairIdsAndCarPartEnums;
     }
-
-
-
-
-
 
     public List <RepairOutputDto> getAllRepair(){
         List<Repair> repairs = repairRepository.findAll();
@@ -143,9 +136,7 @@ public class RepairService {
     public RepairOutputDto SetPartRepaired (long id, RepairInputDto repairInputDto){
         Repair repair = repairRepository.findById(id)
                         .orElseThrow(() -> new RecordNotFoundException("No Repair found with id: " + id));
-
         if (!repair.getCarPart().isPartIsInspected()) {
-//            Bad requeest
             throw new RecordNotFoundException("The part must be inspected before it can be marked as repaired.");
         }else{
             repair.setRepairFinished(repairInputDto.isRepairFinished());

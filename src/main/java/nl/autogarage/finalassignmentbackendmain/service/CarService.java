@@ -1,15 +1,14 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
-
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarInputDto;
+import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
-import nl.autogarage.finalassignmentbackendmain.models.Car;
-import nl.autogarage.finalassignmentbackendmain.models.CarPart;
-import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
+import nl.autogarage.finalassignmentbackendmain.models.*;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarRepository;
+import nl.autogarage.finalassignmentbackendmain.repositories.InvoiceRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,12 +19,13 @@ import java.util.Optional;
 public class CarService {
     private final CarRepository carRepository;
     private final CarPartRepository carPartRepository;
+    private final InvoiceRepository invoiceRepository;
 
-    public CarService(CarRepository carRepository, CarPartRepository carPartRepository) {
+    public CarService(CarRepository carRepository, CarPartRepository carPartRepository, InvoiceRepository invoiceRepository) {
         this.carRepository = carRepository;
         this.carPartRepository = carPartRepository;
+        this.invoiceRepository = invoiceRepository;
     }
-
 
     public String createCar(CarInputDto carInputDto) {
         String licenseplate = carInputDto.getLicenseplate();
@@ -34,33 +34,28 @@ public class CarService {
         if (car.isPresent()) {
             throw new DuplicateErrorException("Car with license plate already exists");
         }
-
         Car newcar = transferInputDtoToCar(carInputDto);
         Car savedcar = carRepository.save(newcar);
 
         CarPartEnum[] carPartEnums = CarPartEnum.values();
         for (CarPartEnum carPartEnum : carPartEnums) {
-                CarPart carPart = new CarPart();
-                carPart.setCarPartEnum(carPartEnum);
-                carPart.setCar(savedcar);
-                carPartRepository.save(carPart);
+            CarPart carPart = new CarPart();
+            carPart.setCarPartEnum(carPartEnum);
+            carPart.setCar(savedcar);
+            carPartRepository.save(carPart);
         }
 
-        savedcar = carRepository.save(savedcar);
         return savedcar.getLicenseplate();
     }
 
-
-    //    Get car by id
     public CarOutputDto getCarByLicenseplate(String licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(licenseplate);
         if (optionalCar.isEmpty()) {
-            throw new RecordNotFoundException("Car with not found with licenseplate" + licenseplate);
+            throw new RecordNotFoundException("Car with license  plate " + licenseplate + " not found");
         }
         Car car = optionalCar.get();
         return transferCarToOutputDto(car);
     }
-
 
     public List<CarOutputDto> getAllCars() {
         List<Car> cars = carRepository.findAll();
@@ -71,8 +66,6 @@ public class CarService {
         return carOutputDtos;
     }
 
-
-    //    updateCar
     public CarOutputDto updateCar(String licensePlate, CarOutputDto carOutputDto) {
         Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
         if (car.isEmpty()) {
@@ -90,47 +83,49 @@ public class CarService {
         }
     }
 
-
-// Record not found exception hieronder werkt. echter return werkt niet
-
     public String deleteCar(String licensePlate) {
-        Optional<Car> car = carRepository.findByLicenseplate(licensePlate);
-        if (car.isEmpty()) {
+        Optional<Car> carOptional = carRepository.findByLicenseplate(licensePlate);
+        if (carOptional.isEmpty()) {
             throw new RecordNotFoundException("Car not found with license plate: " + licensePlate);
         }
-        carRepository.delete(car.get());
+        Car car = carOptional.get();
+
+        List<Inspection> inspections = car.getInspections();
+        boolean hasUnfinishedInspection = inspections.stream().anyMatch(inspection -> !inspection.isInspectionFinished());
+
+        List<Invoice> invoices = car.getInvoices();
+        boolean isPaid = invoices != null && invoices.stream().anyMatch(Invoice::isPaid);
+        if (hasUnfinishedInspection) {
+            throw new BadRequestException("Cannot delete car with license plate " + licensePlate + ". There is an unfinished inspection.");
+        }
+        if (!isPaid) {
+            throw new BadRequestException("Cannot delete car with license plate " + licensePlate + ". The corresponding invoice is not paid.");
+        }
+        carRepository.delete(car);
         return "Car with license plate " + licensePlate + " successfully deleted";
     }
 
+        public CarOutputDto transferCarToOutputDto (Car car){
+            CarOutputDto carOutputDto = new CarOutputDto();
+            carOutputDto.setLicenseplate(car.getLicenseplate());
+            carOutputDto.setOwner(car.getOwner());
+            carOutputDto.setBrand(car.getBrand());
+            carOutputDto.setMileage(car.getMileage());
+            if (car.getCarParts() != null) {
+                carOutputDto.setCarParts(car.getCarParts());
+            }
 
-    public CarOutputDto transferCarToOutputDto(Car car) {
-        CarOutputDto carOutputDto = new CarOutputDto();
-
-        carOutputDto.setLicenseplate(car.getLicenseplate());
-        carOutputDto.setOwner(car.getOwner());
-        carOutputDto.setBrand(car.getBrand());
-        carOutputDto.setMileage(car.getMileage());
-        if (car.getCarParts() != null) {
-            carOutputDto.setCarParts(car.getCarParts());
+            return carOutputDto;
         }
+        public Car transferInputDtoToCar (CarInputDto carInputDto){
+            Car car = new Car();
+            car.setOwner(carInputDto.getOwner());
+            car.setLicenseplate(carInputDto.getLicenseplate());
+            car.setBrand(carInputDto.getBrand());
+            car.setMileage(carInputDto.getMileage());
+            car.setCarParts(carInputDto.getCarParts());
 
-        return carOutputDto;
+            return car;
+        }
     }
-
-
-    public Car transferInputDtoToCar(CarInputDto carInputDto) {
-        Car car = new Car();
-        car.setOwner(carInputDto.getOwner());
-        car.setLicenseplate(carInputDto.getLicenseplate());
-        car.setBrand(carInputDto.getBrand());
-        car.setMileage(carInputDto.getMileage());
-        car.setCarParts(carInputDto.getCarParts());
-
-
-        return car;
-
-    }
-
-
-}
 

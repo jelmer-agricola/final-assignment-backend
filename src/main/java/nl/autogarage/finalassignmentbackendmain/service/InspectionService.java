@@ -101,13 +101,8 @@ public class InspectionService {
 
         Inspection updateInspection = optionalInspection.get();
         updateInspection.setInspectionDescription(inspectionOutputDto.getInspectionDescription());
-//        updateInspection.setTotalCostOfRepair(inspectionOutputDto.getTotalCostOfRepair());
-//        updateInspection.setClientApproved(inspectionOutputDto.isClientApproved());
-
-
         boolean allRepairsFinished = updateInspection.getRepairs().stream()
                 .allMatch(Repair::isRepairFinished);
-
         if (allRepairsFinished) {
             updateInspection.setInspectionFinished(inspectionOutputDto.isInspectionFinished());
         } else {
@@ -119,32 +114,25 @@ public class InspectionService {
     }
 
     public String deleteInspection(Long id) {
-        if (inspectionRepository.existsById(id)) {
+        Inspection inspection = inspectionRepository.findById(id).orElse(null);
+        if (inspection != null) {
+            if (!inspection.getRepairs().isEmpty()) {
+                throw new BadRequestException("Repairs must be deleted before deleting the inspection");
+            }
+
             inspectionRepository.deleteById(id);
             return "Inspection with ID: " + id + " has been deleted.";
         }
         throw new RecordNotFoundException("Inspection with ID " + id + " does not exist");
     }
 
-    //    Wordt waarschijnlij kniet gebruikt
-    private Inspection transferInputDtoToInspection(InspectionInputDto inspectionInputDto) {
-        Inspection inspection = new Inspection();
-//        inspection.setTotalCostOfRepair(inspectionInputDto.getTotalCostOfRepair());
-        inspection.setInspectionDescription(inspectionInputDto.getInspectionDescription());
-        inspection.setClientApproved(inspectionInputDto.isClientApproved());
-        inspection.setInspectionFinished(inspection.isInspectionFinished());
-        return inspection;
-    }
-
-    private InspectionOutputDto transferInspectionToOutputDto(Inspection inspection) {
+    public InspectionOutputDto transferInspectionToOutputDto(Inspection inspection) {
         InspectionOutputDto inspectionOutputDto = new InspectionOutputDto();
         inspectionOutputDto.setId(inspection.getId());
-//        inspectionOutputDto.setTotalCostOfRepair(inspection.getTotalCostOfRepair());
         inspectionOutputDto.setInspectionDescription(inspection.getInspectionDescription());
         inspectionOutputDto.setClientApproved(inspection.isClientApproved());
         inspectionOutputDto.setInspectionFinished(inspection.isInspectionFinished());
         inspectionOutputDto.setRepairs(inspection.getRepairs());
-//        inspectionOutputDto.setTotalCostOfRepair(inspectionOutputDto.calculateRepairCost());
 
         return inspectionOutputDto;
     }

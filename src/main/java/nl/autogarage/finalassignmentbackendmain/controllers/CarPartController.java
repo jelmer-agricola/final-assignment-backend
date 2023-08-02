@@ -40,7 +40,7 @@ public class CarPartController {
         return ResponseEntity.ok(carPartOutputDto);
     }
     @PutMapping("{licenseplate}/status/{carpart}")
-    public ResponseEntity<CarPartOutputDto> CarPartCheck(@PathVariable String licenseplate, @PathVariable String carpart, @RequestBody CarPartInputDto carPartinputDto) {
+    public ResponseEntity<CarPartOutputDto> CarPartStatusCheck(@PathVariable String licenseplate, @PathVariable String carpart, @RequestBody CarPartInputDto carPartinputDto) {
         return ResponseEntity.ok(carPartService.CarPartStatusCheck(licenseplate, carpart, carPartinputDto));
     }
 
