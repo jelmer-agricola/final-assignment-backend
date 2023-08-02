@@ -11,19 +11,11 @@ import java.time.LocalDate;
 @Setter
 public class InvoiceInputDto {
 
-
     private Double finalCost;
     public byte[] invoicePdf;
     private boolean paid;
     private LocalDate Date;
     private Inspection inspection;
     private Car car;
-
-
-    // Constructors, getters, and setters
-
-//    private String licensseplate;
-//    private User user;
-//
 
 }
