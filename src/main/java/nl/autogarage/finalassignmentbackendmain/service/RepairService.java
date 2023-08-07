@@ -1,7 +1,6 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 
-import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
@@ -176,9 +175,4 @@ public class RepairService {
         return repairOutputDto;
 
     }
-
-
-
-
-
 }

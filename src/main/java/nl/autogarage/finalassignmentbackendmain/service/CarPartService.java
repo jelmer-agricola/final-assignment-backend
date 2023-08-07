@@ -81,8 +81,6 @@ public class CarPartService {
         return transferCarPartToOutputDto(savedCarPart);
     }
 
-
-
     private CarPartOutputDto transferCarPartToOutputDto(CarPart carPart) {
         CarPartOutputDto carPartOutputDto = new CarPartOutputDto();
         carPartOutputDto.setPartStatus(carPart.getPartStatus());

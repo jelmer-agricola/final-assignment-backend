@@ -29,14 +29,10 @@ public class CarPart {
     @Enumerated(EnumType.STRING)
     public CarPartEnum carPartEnum;
 
-
     @ManyToOne
     @JsonIgnore
     private Car car;
 
     @OneToMany(mappedBy = "carPart")
     private List<Repair> repairs;
-
-
-
 }

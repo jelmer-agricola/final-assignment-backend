@@ -1,5 +1,4 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
-import jakarta.validation.Valid;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.CarPartInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.service.CarPartService;
@@ -13,8 +12,6 @@ import java.util.List;
 public class CarPartController {
 
     private final CarPartService carPartService;
-
-
     public CarPartController(CarPartService carPartService) {
         this.carPartService = carPartService;
     }

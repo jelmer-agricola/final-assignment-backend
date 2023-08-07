@@ -1,6 +1,3 @@
---  werkt altijd van boven naar beneden.
-
-
 INSERT INTO cars (licenseplate, brand, mileage, owner)
 VALUES ('34-GBD-06', 'Toyota', 17004, 'C.S. Jansen');
 INSERT INTO cars (licenseplate, brand, mileage, owner)
@@ -77,17 +74,11 @@ VALUES (306, 'XY-987-ZZ', 'ENGINE', 'needs replacement', false, 0);
 
 
 
-
-
-
-INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
-                        client_approved)
+INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate, client_approved)
 VALUES (101, 'Tires need ONDERHOUD', false, '34-GBD-06', false);
 
 
-
-INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate,
-                        client_approved)
+INSERT INTO inspection (id, inspection_description, inspection_finished, car_licenseplate, client_approved)
 VALUES (102, 'Inspection 2', false, 'AB-123-CD', false);
 
 

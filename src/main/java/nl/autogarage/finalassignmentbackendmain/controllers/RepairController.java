@@ -1,9 +1,7 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
-import nl.autogarage.finalassignmentbackendmain.dto.outputDto.CarPartOutputDto;
 import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 import nl.autogarage.finalassignmentbackendmain.utils.ErrorUtils;
-
 import jakarta.validation.Valid;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.RepairOutputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.inputDto.RepairInputDto;
@@ -21,14 +19,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/repair")
 public class RepairController {
-
     private final RepairService repairService;
-
     public RepairController(RepairService repairService) {
         this.repairService = repairService;
     }
 
-    // ipv inspection_id
     @PostMapping("/add/{carpart}/{inspection_id}")
     public ResponseEntity<String> createRepair(@PathVariable String carpart, @PathVariable long inspection_id, @Valid @RequestBody RepairInputDto repairInputDto, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
@@ -59,7 +54,6 @@ public class RepairController {
         return ResponseEntity.ok().body(repairService.getAllRepairsFromLicenceplate(licenseplate));
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<RepairOutputDto> getRepairById(@PathVariable Long id) {
         RepairOutputDto repairOutputDto = repairService.getRepairById(id);
@@ -74,7 +68,6 @@ public class RepairController {
         return ResponseEntity.ok(repairService.SetPartRepaired(id, repairInputDto));
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRepair(@PathVariable Long id) {
         String message = repairService.deleteRepair(id);
@@ -83,6 +76,4 @@ public class RepairController {
         }
         return ResponseEntity.ok(message);
     }
-
-
 }

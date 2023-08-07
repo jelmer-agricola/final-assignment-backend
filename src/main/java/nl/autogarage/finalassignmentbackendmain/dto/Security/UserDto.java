@@ -36,8 +36,6 @@ public class UserDto {
     @JsonIgnore
     public List<Invoice> invoices;
 
-
-
     public Set<Authority> getAuthorities() {
         return authorities;
     }

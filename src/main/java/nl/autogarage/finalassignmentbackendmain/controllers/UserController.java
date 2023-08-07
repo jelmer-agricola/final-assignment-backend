@@ -5,7 +5,6 @@ import nl.autogarage.finalassignmentbackendmain.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +15,15 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-
 
     @PostMapping(value = "/add/mechanic")
     public ResponseEntity<UserDto> createMechanic(@RequestBody UserDto userDto) {;
 
         String newUsername = userService.createUser(userDto);
         userService.addAuthority(newUsername, "ROLE_MECHANIC");
-
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
@@ -39,20 +34,17 @@ public class UserController {
     public ResponseEntity<UserDto> createOfficeEmployee(@RequestBody UserDto userDto) {
         String newUsername = userService.createUser(userDto);
         userService.addAuthority(newUsername, "ROLE_OFFICE");
-
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
                 .buildAndExpand(newUsername).toUri();
 
         return ResponseEntity.created(location)
-                .build(); // Return the UserDto in the response
+                .build();
     }
 
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
-
         List<UserDto> userDtos = userService.getUsers();
-
         return ResponseEntity.ok().body(userDtos);
     }
 

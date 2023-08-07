@@ -31,7 +31,6 @@ public class User {
     private String firstname;
     private String lastname;
 
-
     @OneToMany(
             targetEntity = Authority.class,
             mappedBy = "username",
@@ -48,8 +47,5 @@ public class User {
     }
     public void removeAuthority(Authority authority) {
         this.authorities.remove(authority);
-
-
     }
-
 }

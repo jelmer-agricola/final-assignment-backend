@@ -28,8 +28,6 @@ public class Invoice {
     private Double totalCostOfRepair;
     private Double finalCost;
     public static final double periodicVehicleInspection = 25.00;
-
-
     @OneToOne
     private Inspection inspection;
 
@@ -37,15 +35,10 @@ public class Invoice {
     @JsonIgnore
     private Car car;
 
-
-
-
-
     public double calculateTotalCost() {
         double total = 0.0;
-        // The repair price can only be calculated if the customer approved repairs
         if (inspection.isClientApproved()) {
-//
+
 
             for (Repair repair : inspection.getRepairs()) {
                 if (repair.isRepairFinished()) {
@@ -65,5 +58,4 @@ public class Invoice {
         total += totalCostOfRepair;
         return total;
     }
-
 }

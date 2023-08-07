@@ -1,12 +1,10 @@
 package nl.autogarage.finalassignmentbackendmain.service;
 
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InspectionOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InspectionInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.DuplicateErrorException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
 import nl.autogarage.finalassignmentbackendmain.models.Car;
-import nl.autogarage.finalassignmentbackendmain.models.CarPart;
 import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 import nl.autogarage.finalassignmentbackendmain.models.Repair;
 import nl.autogarage.finalassignmentbackendmain.repositories.CarPartRepository;
@@ -34,7 +32,6 @@ public class InspectionService {
         this.repairRepository = repairRepository;
     }
 
-
     public InspectionOutputDto createInspection(String car_licenseplate) {
         Optional<Car> optionalCar = carRepository.findByLicenseplate(car_licenseplate);
         if (optionalCar.isEmpty()) {
@@ -52,7 +49,6 @@ public class InspectionService {
         Inspection savedInspection = inspectionRepository.save(newInspection);
         return transferInspectionToOutputDto(savedInspection);
     }
-
 
     public List<InspectionOutputDto> getAllInspections() {
         List<Inspection> inspections = inspectionRepository.findAll();
@@ -136,6 +132,4 @@ public class InspectionService {
 
         return inspectionOutputDto;
     }
-
-
 }

@@ -24,8 +24,6 @@ public class Repair {
     private String repairDescription;
     private boolean repairFinished;
 
-
-
     @ManyToOne
     @JsonIgnore
     private CarPart carPart;
@@ -33,7 +31,4 @@ public class Repair {
     @ManyToOne
     @JsonIgnore
     private Inspection inspection;
-
-
-
 }

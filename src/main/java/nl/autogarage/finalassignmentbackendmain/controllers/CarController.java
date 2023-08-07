@@ -18,7 +18,6 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
-
     public CarController(CarService carService) {
         this.carService = carService;
     }
@@ -44,24 +43,20 @@ public class CarController {
         return ResponseEntity.ok().body(carService.getAllCars());
     }
 
-
     @GetMapping("/licenseplate")
     public ResponseEntity<CarOutputDto> getCarByLicenseplate(@RequestParam String licenseplate) {
         CarOutputDto carOutputDto = carService.getCarByLicenseplate(licenseplate);
         return ResponseEntity.ok(carOutputDto);
     }
 
-
     @PutMapping("/licenseplate")
     public ResponseEntity<CarOutputDto> updateCar(@RequestParam String licenseplate, @RequestBody CarOutputDto carOutputDto) {
         return ResponseEntity.ok(carService.updateCar(licenseplate, carOutputDto));
     }
-
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteCar(@RequestParam String licenseplate) {
         String message = carService.deleteCar(licenseplate);
         return ResponseEntity.ok(message);
     }
-
 }
