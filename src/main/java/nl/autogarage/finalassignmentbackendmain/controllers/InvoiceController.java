@@ -1,6 +1,5 @@
 package nl.autogarage.finalassignmentbackendmain.controllers;
 
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
 import nl.autogarage.finalassignmentbackendmain.service.InvoiceService;
 import org.springframework.http.MediaType;
@@ -16,7 +15,6 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
-
     public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
@@ -60,8 +58,6 @@ public class InvoiceController {
         return invoiceService.downloadInvoicePdf(id);
     }
 
-
-    //    Hier wordt aangegeven dat invoice betaald word. door de .. administratie
     @PatchMapping("/{id}")
     public ResponseEntity<InvoiceOutputDto> updateInvoicePaid(@PathVariable Long id, @RequestBody boolean paid) {
         InvoiceOutputDto updatedInvoice = invoiceService.updateInvoicePaid(id, paid);
@@ -79,6 +75,4 @@ public class InvoiceController {
         }
         return ResponseEntity.ok(message);
     }
-
-
 }

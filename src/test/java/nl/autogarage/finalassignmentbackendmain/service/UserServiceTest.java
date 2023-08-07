@@ -30,7 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class UserServiceTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
-
     @MockBean
     private UserRepository userRepository;
 
@@ -296,6 +295,4 @@ class UserServiceTest {
         // Act & Assert
         assertThrows(RecordNotFoundException.class, () -> userService.removeAuthority(username, authority));
     }
-
-
 }

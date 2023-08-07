@@ -44,7 +44,6 @@ public class CarService {
             carPart.setCar(savedcar);
             carPartRepository.save(carPart);
         }
-
         return savedcar.getLicenseplate();
     }
 
@@ -76,8 +75,6 @@ public class CarService {
             updatedCar.setMileage(carOutputDto.getMileage());
             updatedCar.setOwner(carOutputDto.getOwner());
             updatedCar.setLicenseplate(carOutputDto.getLicenseplate());
-
-//        updatedCar.set(carOutputDto.getCarStatus());
             carRepository.save(updatedCar);
             return transferCarToOutputDto(updatedCar);
         }
@@ -114,7 +111,6 @@ public class CarService {
             if (car.getCarParts() != null) {
                 carOutputDto.setCarParts(car.getCarParts());
             }
-
             return carOutputDto;
         }
         public Car transferInputDtoToCar (CarInputDto carInputDto){

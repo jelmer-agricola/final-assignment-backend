@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
 
 @CrossOrigin
@@ -28,23 +27,15 @@ public class AuthenticationController {
         this.jwtUtl = jwtUtl;
     }
 
-    /*
-        Deze methode geeft de principal (basis user gegevens) terug van de ingelogde gebruiker
-    */
     @GetMapping(value = "/authenticated")
     public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
         return ResponseEntity.ok().body(principal);
     }
 
-    /*
-    Deze methode geeft het JWT token terug wanneer de gebruiker de juiste inloggegevens op geeft.
-    Hier log je dus in
-     */
    @PostMapping(value = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)  {
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
@@ -52,13 +43,9 @@ public class AuthenticationController {
         } catch (BadCredentialsException badCredentialsException) {
             throw new BadRequestException("Incorrect username or password");
         }
-
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final String jwt = jwtUtl.generateToken(userDetails);
-
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
-
-
 }
 

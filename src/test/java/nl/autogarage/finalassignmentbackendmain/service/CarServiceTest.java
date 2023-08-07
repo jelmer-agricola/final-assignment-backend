@@ -62,8 +62,6 @@ class CarServiceTest {
         carInputDto.setLicenseplate("33-AAB-3");
         carInputDto.setMileage(100);
         carInputDto.setOwner("Henk de Tank");
-
-        // Mock save() method here
         when(carRepository.save(any(Car.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -255,8 +253,6 @@ class CarServiceTest {
         assertThrows(BadRequestException.class, () -> carService.deleteCar(licensePlate));
     }
 
-
-
     @Test
     void testTransferInputDtoToCar() {
         // Arrange
@@ -276,6 +272,5 @@ class CarServiceTest {
         assertEquals("33-AAB-3", actualTransferInputDtoToCarResult.getLicenseplate());
         assertTrue(actualTransferInputDtoToCarResult.getCarParts().isEmpty());
     }
-
 }
 

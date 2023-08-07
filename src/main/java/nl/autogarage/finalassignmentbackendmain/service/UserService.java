@@ -56,7 +56,6 @@ public class UserService {
     public String createUser(UserDto userDto) {
         String randomString = RandomStringGenerator.generateAlphaNumeric(20);
         userDto.setApikey(randomString);
-//            hier decode ik hem al
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User newUser = userRepository.save(fromDtoToUser(userDto));
         return newUser.getUsername();
@@ -123,7 +122,6 @@ public class UserService {
         userDto.setFirstname(user.getFirstname());
         userDto.setLastname(user.getLastname());
 
-
         return userDto;
     }
 
@@ -139,8 +137,6 @@ public class UserService {
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());
 
-
         return user;
     }
-
 }

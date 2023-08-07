@@ -10,7 +10,6 @@ import nl.autogarage.finalassignmentbackendmain.models.Inspection;
 @Setter
 public class RepairOutputDto {
 
-//    in outputdto kan je id wel meegeven.
     private Long id;
     private String repairDescription;
     private boolean repairFinished;

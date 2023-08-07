@@ -2,7 +2,6 @@ package nl.autogarage.finalassignmentbackendmain.service;
 
 import com.lowagie.text.Font;
 import nl.autogarage.finalassignmentbackendmain.dto.outputDto.InvoiceOutputDto;
-import nl.autogarage.finalassignmentbackendmain.dto.inputDto.InvoiceInputDto;
 import nl.autogarage.finalassignmentbackendmain.exceptions.BadRequestException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.InvoiceAlreadyExistsException;
 import nl.autogarage.finalassignmentbackendmain.exceptions.RecordNotFoundException;
@@ -33,7 +32,6 @@ public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
     private final InspectionRepository inspectionRepository;
-
     private final CarRepository carRepository;
 
     public InvoiceService(InvoiceRepository invoiceRepository, InspectionRepository inspectionRepository, CarRepository carRepository) {
@@ -55,13 +53,11 @@ public class InvoiceService {
             Invoice newInvoice = new Invoice();
 
             newInvoice.setInspection(inspection);
-
             newInvoice.setPaid(false);
             newInvoice.setCar(inspection.getCar());
             newInvoice.setDate(java.time.LocalDate.now());
             newInvoice.setTotalCostOfRepair(newInvoice.calculateTotalCost());
             newInvoice.setFinalCost(newInvoice.calculateFinalCost());
-
 
             Invoice savedInvoice = invoiceRepository.save(newInvoice);
 
@@ -117,7 +113,6 @@ public class InvoiceService {
         PdfWriter.getInstance(invoicePdf, pdfOutputStream);
 
         invoicePdf.open();
-        //used font styles
         Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA);
         fontTitle.setSize(20);
         Font fontInfo = FontFactory.getFont(FontFactory.HELVETICA);
@@ -125,17 +120,12 @@ public class InvoiceService {
         Font fontSection = FontFactory.getFont(FontFactory.HELVETICA);
         fontSection.setSize(11);
 
-
-        // actual text on the pdf
-
-//    Company info
         Paragraph paragraph = new Paragraph("Garage OkaySjon\nEmail: okaysjon@garage.nl\nPostbus 0906BA Utrecht\nTelefoonnummer: 06-87654321", fontInfo);
         paragraph.setAlignment(Element.ALIGN_LEFT);
 
         Paragraph paragraph1 = new Paragraph("Factuur", fontTitle);
         paragraph1.setAlignment(Paragraph.ALIGN_LEFT);
 
-// Invoice info
         Paragraph paragraph2 = new Paragraph(
                 "Klant: " + invoice.getCar().getOwner() + "\n" +
                         "Date: " + invoice.getDate() + "\n" +
@@ -143,7 +133,6 @@ public class InvoiceService {
                         "Kenteken: " + invoice.getCar().getLicenseplate(), fontSection);
         paragraph2.setAlignment(Paragraph.ALIGN_LEFT);
 
-// Add some spacing between paragraphs
         paragraph1.setSpacingAfter(10);
         paragraph2.setSpacingAfter(10);
 
@@ -200,7 +189,6 @@ public class InvoiceService {
         }
     }
 
-
     public String deleteInvoice(Long id) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Invoice with ID " + id + " does not exist"));
@@ -212,8 +200,6 @@ public class InvoiceService {
             throw new BadRequestException("Invoice with ID " + id + " has not been paid and cannot be deleted.");
         }
     }
-
-
 
     private InvoiceOutputDto transferInvoiceToOutputDto(Invoice invoice) {
         InvoiceOutputDto invoiceOutputDto = new InvoiceOutputDto();
@@ -250,5 +236,4 @@ public class InvoiceService {
         repairitems.append("Algemene Periodieke Keuring €\t\t\t" + Invoice.periodicVehicleInspection + "\t\t\t voldaan");
         return repairitems.toString();
     }
-
 }

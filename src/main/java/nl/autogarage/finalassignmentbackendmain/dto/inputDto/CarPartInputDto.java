@@ -8,14 +8,9 @@ import nl.autogarage.finalassignmentbackendmain.models.CarPartEnum;
 @Getter
 public class CarPartInputDto {
 
-
     public CarPartEnum carPartEnum;
     private double carPartCost;
     public String partStatus;
     private boolean partIsInspected;
 
-
-
-//    public String state;
-//    public boolean checked;
 }

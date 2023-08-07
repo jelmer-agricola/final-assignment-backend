@@ -27,20 +27,4 @@ public class InspectionOutputDto {
     @JsonIgnore
     private Invoice invoice;
 
-    public double calculateRepairCost() {
-        double total = 0.0;
-        // Totale kosten voor alle repairs
-        if (repairs != null) {
-            for (Repair repair : repairs) {
-                CarPart carPart = repair.getCarPart();
-                if (carPart != null) {
-                    total += carPart.getCarPartCost();
-                }
-            }
-        } else {
-            total = 0.0;
-        }
-        return total;
-    }
-
 }

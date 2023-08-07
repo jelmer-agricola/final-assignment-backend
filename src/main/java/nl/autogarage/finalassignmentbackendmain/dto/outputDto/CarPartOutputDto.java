@@ -19,17 +19,9 @@ public class CarPartOutputDto {
 
     @JsonIgnore
     private Car car;
-
-
     @JsonIgnore
     List<Inspection> inspections;
 
-
-//    public void setCarParts(List<CarPartOutputDto> carParts) {
-//        this.carParts = carParts;
-//    }
-//    public String state;
-//    public boolean checked;
 
 
 }

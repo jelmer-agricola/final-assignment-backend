@@ -35,9 +35,4 @@ public class Inspection {
     @OneToOne(mappedBy = "inspection")
     @JsonIgnore
     private Invoice invoice;
-
-
-
-
-
 }
